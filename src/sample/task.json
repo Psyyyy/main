@@ -1,0 +1,141 @@
+{
+    "code": 200,
+    "msg": "",
+    "data": {
+        "code": "yn2aweic6qpx71j84rto0uhb",
+        "project_code": "mo4uqwfb06dxv8ez2spkl3rg",
+        "name": "ce ecee",
+        "pri": 0,
+        "execute_status": "wait",
+        "description": "",
+        "create_by": "6v7be19pwman2fird04gqu53",
+        "done_by": null,
+        "done_time": null,
+        "create_time": "2021-03-05 17:41:05",
+        "assign_to": "6v7be19pwman2fird04gqu53",
+        "deleted": 0,
+        "stage_code": "m4u3rnyxbt50q1ead769kpgo",
+        "task_tag": null,
+        "done": 0,
+        "begin_time": "",
+        "end_time": "",
+        "remind_time": null,
+        "pcode": "vi2u1yftpamhq47zks98r0j3",
+        "sort": 1179648,
+        "like": 0,
+        "star": 0,
+        "deleted_time": null,
+        "private": 1,
+        "id_num": 782,
+        "path": "vi2u1yftpamhq47zks98r0j3",
+        "schedule": "0.00",
+        "version_code": "0",
+        "features_code": "0",
+        "work_time": 0,
+        "status": 0,
+        "executor": {
+            "name": "vilson",
+            "code": "6v7be19pwman2fird04gqu53",
+            "avatar": "https://beta.vilson.xyz/static/upload/member/avatar/20210310/098bcfbd496715293bc4c5193e7694f6.jpg"
+        },
+        "parentTask": {
+            "code": "vi2u1yftpamhq47zks98r0j3",
+            "project_code": "mo4uqwfb06dxv8ez2spkl3rg",
+            "name": "11111",
+            "pri": 1,
+            "execute_status": "wait",
+            "description": "<p><img src=\"https://beta.vilson.xyz/static/upload/image/default/20200914/cc96e4f8819085c3b7689784ebc079cb.png\" style=\"max-width:100%;\"><br></p>",
+            "create_by": "6v7be19pwman2fird04gqu53",
+            "done_by": null,
+            "done_time": null,
+            "create_time": "2020-06-30 14:38:48",
+            "assign_to": "6v7be19pwman2fird04gqu53",
+            "deleted": 0,
+            "stage_code": "m4u3rnyxbt50q1ead769kpgo",
+            "task_tag": null,
+            "done": 0,
+            "begin_time": "2020-08-26 18:00",
+            "end_time": "2020-09-11 18:00",
+            "remind_time": null,
+            "pcode": "",
+            "sort": 2228224,
+            "like": 1,
+            "star": 1,
+            "deleted_time": null,
+            "private": 0,
+            "id_num": 586,
+            "path": "",
+            "schedule": "0.00",
+            "version_code": "0",
+            "features_code": "0",
+            "work_time": 8,
+            "status": 1,
+            "priText": "紧急",
+            "statusText": "已完成",
+            "liked": 1,
+            "stared": 1,
+            "tags": [
+                {
+                    "code": "07h24k1py8s6awbj3ftgleqd",
+                    "task_code": "vi2u1yftpamhq47zks98r0j3",
+                    "tag_code": "ngavlp06e79t352od8hj1x4b",
+                    "create_time": "2020-09-15 17:35:08",
+                    "tag": {
+                        "id": 199,
+                        "code": "ngavlp06e79t352od8hj1x4b",
+                        "project_code": "mo4uqwfb06dxv8ez2spkl3rg",
+                        "name": "安安",
+                        "color": "purple",
+                        "create_time": "2019-10-18 05:54:58"
+                    }
+                },
+                {
+                    "code": "7uzmrevaw2c9kh5d1nq6j4tp",
+                    "task_code": "vi2u1yftpamhq47zks98r0j3",
+                    "tag_code": "v9uy3nw6df1co40x5hsaglkm",
+                    "create_time": "2020-09-18 10:20:37",
+                    "tag": {
+                        "id": 539,
+                        "code": "v9uy3nw6df1co40x5hsaglkm",
+                        "project_code": "mo4uqwfb06dxv8ez2spkl3rg",
+                        "name": "12132132",
+                        "color": "green",
+                        "create_time": "2020-06-07 16:33:00"
+                    }
+                }
+            ],
+            "childCount": [
+                2,
+                0
+            ],
+            "hasUnDone": 1,
+            "parentDone": 1,
+            "hasComment": 0,
+            "hasSource": 2,
+            "canRead": 1
+        },
+        "parentTasks": [
+            {
+                "code": "vi2u1yftpamhq47zks98r0j3",
+                "name": "11111"
+            }
+        ],
+        "openBeginTime": 1,
+        "projectName": "AntDesign",
+        "stageName": "1",
+        "priText": "普通",
+        "statusText": "未开始",
+        "liked": 0,
+        "stared": 0,
+        "tags": [],
+        "childCount": [
+            0,
+            0
+        ],
+        "hasUnDone": 0,
+        "parentDone": 0,
+        "hasComment": 0,
+        "hasSource": 0,
+        "canRead": 1
+    }
+}
