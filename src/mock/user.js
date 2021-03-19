@@ -5,9 +5,9 @@ export default {
     code: 2000,
     data: {
       info: {
-        nickname: '令狐少侠',
-        role: 'Web 开发者',
-        avatar: 'https://portrait.gitee.com/uploads/avatars/user/1608/4826670_chinesee_1578975163.png!avatar200',
+        nickname: '皮埃斯歪',
+        role: '管理员',
+        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       },
       permissions: ['admin'],
     },

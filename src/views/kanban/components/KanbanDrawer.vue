@@ -1,6 +1,7 @@
 <template>
   <a-drawer
     width="400"
+    drawer-style="height:200px"
     :closable="false"
     :mask="false"
     :visible="visible"

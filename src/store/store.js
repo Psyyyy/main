@@ -11,6 +11,7 @@ import user from './modules/user'
 import todo from './modules/todo'
 import auth from './modules/auth'
 import project from './modules/project'
+import stage from './modules/stage'
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     todo,
     auth,
     project,
+    stage,
   },
 
   state,

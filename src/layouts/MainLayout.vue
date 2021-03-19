@@ -38,9 +38,9 @@
       </main>
 
       <!-- 页脚 -->
-      <footer class="the-footer">
+      <!-- <footer class="the-footer">
         <app-footer />
-      </footer>
+      </footer> -->
     </section>
   </main>
 </template>

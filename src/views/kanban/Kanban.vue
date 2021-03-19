@@ -1,607 +1,602 @@
-/* eslint-disable */
 <template>
-  <div class="todo-app">
-       <a-card :bordered="false">
-      <!-- <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="handleAdd"
-          >新增需求</a-button
-        >
-      </div> -->
-
-      <!--<div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-      <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{this.selectedRowKeys.length }}</a>项&nbsp;&nbsp;
-      <a style="margin-left: 24px" @click="clearSele()">清空</a>
-    </div>-->
-
-      <a-table
-        ref="table"
-        size="middle"
-        :scroll="{ y: 500 }"
-        :row-key="record => record.id"
-        :pagination="false"
-        :default-expand-all-rows="false"
-        :columns="columns"
-        :data-source="data"
-        :loading="loading"
-        show-pagination="auto"
-        :row-selection="{
-          selectedRowKeys: selectedRowKeys,
-          onChange: onSelectChange
-        }"
-        :expanded-row-keys="expandRows"
-        :expand-icon="props =>expandRowIcon(props)"
-        :custom-row="customRow"
-        :row-class-name="rowClass"
-      >
-        <!--:rowSelection="rowSelectionon"-->
-        <!-- 搜索弹框 -->
-        <div
-          slot="filterDropdown"
-          slot-scope="{
-            setSelectedKeys,
-            selectedKeys,
-            confirm,
-            clearFilters,
-            column
-          }"
-          style="padding: 8px"
-        >
-          <a-input
-            v-ant-ref="c => (searchInput = c)"
-            :placeholder="`查找${column.title}`"
-            :value="selectedKeys[0]"
-            style="width: 188px; margin-bottom: 8px; display: block;"
-            @change="
-              e => setSelectedKeys(e.target.value ? [e.target.value] : [])
-            "
-            @pressEnter="
-              () => handleSearch(selectedKeys, confirm, column.dataIndex)
-            "
-          />
-          <a-button
-            type="primary"
-            icon="search"
-            size="small"
-            style="width: 90px; margin-right: 8px"
-            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-          >
-            查找
-          </a-button>
-          <a-button
-            size="small"
-            style="width: 90px"
-            @click="() => handleReset(clearFilters)"
-          >
-            重置
-          </a-button>
+  <div>
+    <!-- 第一行 -->
+    <div class=" -mt-8 w-full pr-3">
+      <div class=" no-scroll w-full p-2 title-card">
+        <div class="wl">
+          <div class="wl">
+            <!-- 迭代阶段切换 -->
+            <div class="wl">
+              <a-dropdown :trigger="['click']" class="w-32 mr-6">
+                <div class=" text-2xl ml-4 flex items-center cursor-pointer ">
+                  <!-- <a-icon
+                    style="color:#98adf9"
+                    theme="filled"
+                    type="appstore"
+                    class="mr-2"
+                  /> -->
+                  {{ currStage }}
+                  <feather
+                    class="ml-1 text-gray-500"
+                    size="18"
+                    type="chevron-down"
+                  />
+                </div>
+                <template #overlay>
+                  <a-menu class="-ml-1 w-32">
+                    <a-menu-item
+                      style="font-size:15px"
+                      v-for="{ id, name } in stageList"
+                      :key="id"
+                      @click="changeStageTo(id, name)"
+                    >
+                      {{ name }}
+                    </a-menu-item>
+                  </a-menu>
+                </template>
+              </a-dropdown>
+            </div>
+            <div>
+              <div
+                class=" flex-no-wrap inline-block "
+                style="color:#bdc0c9;white-space:nowrap;vertical-align:sub;width:30px;margin-left:-20px;margin-top:7px"
+              >
+                2021.1.1~2021.3.1
+                <a-icon
+                  style="ccursor:pointer;color:#98adf9"
+                  class="text-xl ml-1"
+                  type="tag"
+                  @click="target"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- 搜索图标 -->
-        <a-icon
-          slot="filterIcon"
-          slot-scope="filtered"
-          type="search"
-          :style="{ color: filtered ? '#108ee9' : undefined }"
-        />
-        <!-- 需求条目 -->
-
-        <template slot="task" slot-scope="text, record, index, column">
-          <!-- 搜索结果展示 -->
-          <span
-            v-if="searchText && searchedColumn === column.dataIndex"
-            class="task-pointer"
-            @click="showTask = true"
-          >
-            <template
-              v-for="(fragment, i) in text
-                .toString()
-                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-            >
-              <mark
-                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                :key="i"
-                class="highlight"
-                >{{ fragment }}</mark
+        <div class="wr">
+          <div class="wr mt-1 mr-4">
+            <a-button type="primary" class="mr-4" @click="showDrawer=true">筛选</a-button>
+            <a-radio-group default-value="task">
+              <a-radio-button value="task" @click="showTaskBoard"
+                >看板视图</a-radio-button
               >
-              <template v-else>{{ fragment }}</template>
-            </template>
-          </span>
-
-          <template v-else>
-            <span class="task-pointer" @click="showTask = true">{{
-              text
-            }}</span>
-            <!-- <editable-cell
-            :text="text"
-            @change="onCellChange(record.key, 'name', $event)"
-          /> -->
-          </template>
-        </template>
-        <span slot="all" style="margin-right:5px"
-          ><div
-            class="all-open-icon"
-            @click="expandAllRow"
-            v-show="!isExpandAll"
-          >
-            +
-          </div>
-          <div class="all-open-icon" @click="closeAllRow" v-show="isExpandAll">
-            -
-          </div>
-          需求</span
-        >
-        <!-- 优先级 -->
-        <span slot="rank" slot-scope="rank">
-          <div style="text-align:center" v-if="rank !== ''">
-            <a-tag
-              :color="
-                rank === '3' ? 'red' : rank === '2' ? 'geekblue' : 'green'
-              "
-            >
-              {{ rank === "3" ? "高" : rank === "2" ? "中" : "低" }}
-            </a-tag>
-          </div>
-        </span>
-        <!-- 负责人 -->
-        <template slot="member" slot-scope="text, record, index, column">
-          <!-- 搜索结果展示 -->
-          <span v-if="searchText && searchedColumn === column.dataIndex">
-            <template
-              v-for="(fragment, i) in text
-                .toString()
-                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-            >
-              <mark
-                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                :key="i"
-                class="highlight"
-                >{{ fragment }}</mark
+              <a-radio-button value="bug" @click="showBugBoard"
+                >列表视图</a-radio-button
               >
-              <template v-else>{{ fragment }}</template>
-            </template>
-          </span>
+            </a-radio-group>
+          </div>
+          <!-- <h3 class="title-card__title text-xl"> <a-button @click="backToEntry">迭代</a-button></h3> -->
 
-          <template v-else>
-            <span>{{ text }}</span>
-            <!-- <editable-cell
-            :text="text"
-            @change="onCellChange(record.key, 'name', $event)"
-          /> -->
-          </template>
-        </template>
-        <!-- 操作 -->
-        <span slot="action" slot-scope="">
-          <template>
-            <a-button
-              type="primary"
-              icon="edit"
-              size="small"
+          <!-- <p class="mb-6 text-gray-600">使用 setFieldsValue 来动态设置其他控件的值。</p> -->
+        </div>
+      </div>
+    </div>
+    <!-- 第二行 -->
+    <div>
+      <a-button
+        class="inline mb-4"
+        size="large"
+        type="primary"
+        @click="showTask = true"
+        >创建{{ isTaskShow ? "需求" : "缺陷" }}</a-button
+      >
+      <div class="ml-4 inline">
+        <a-radio-group default-value="task">
+          <a-radio-button value="task" @click="showTaskBoard"
+            >需求</a-radio-button
+          >
+          <a-radio-button value="bug" @click="showBugBoard"
+            >缺陷</a-radio-button
+          >
+        </a-radio-group>
+      </div>
+    </div>
+    <!-- 看板 -->
+    <div class="kb">
+      <div class="kb-col" v-for="(it, i) in kbList" :key="i">
+        <div class="kb-col__title overflow-hidden mb-1 flex items-center">
+          <span class="kb-col__input"
+            ><span class="ml-4"
+              >{{ it.title }} · {{ it.dataList.length }}</span
+            ></span
+          >
+
+          <!-- <a-dropdown class="ml-40 pl-4" :trigger="['click']">
+            <feather class="cursor-pointer" size="20" type="more-vertical" />
+            <template #overlay>
+               单个看板的菜单 -->
+          <!-- <a-menu>
+                <a-menu-item @click="$message.success('已复制看板链接')">
+                  复制看板链接
+                </a-menu-item>
+                <a-menu-item @click="deleteBoard(it.title)">
+                  删除此看板
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown> -->
+        </div>
+        <div class="kb-col__board">
+        <draggable class=" " v-model="it.dataList" v-bind="dragOptions">
+          <transition-group tag="ul">
+            <li
+              class="kb-col__item"
+              v-for="{ id, label, content, items, members } in it.dataList"
+              :key="id"
+              :data-border="label"
               @click="showTask = true"
-            />
+            >
+              <div v-html="content"></div>
+              <div v-if="items" class="mt-4 flex items-center text-xs">
+                <div
+                  class="mr-2 flex items-center"
+                  v-for="{ item, value } in items"
+                  :key="item"
+                >
+                  <feather class="mr-1" size="12" :type="itemIcon[item]" />
+                  {{ value }}
+                </div>
 
-            <!-- <a-divider type="vertical" /> -->
-            <a-popconfirm placement="topRight" title="删除本菜单与下级？">
-              <a-button type="danger" icon="delete" size="small" />
-            </a-popconfirm>
-          </template>
-        </span>
-      </a-table>
+                <div class="ml-auto flex-1 flex flex-wrap justify-end">
+                  <a-avatar
+                    class="kb-col__avatar text-xs primary bg-primary-light"
+                    v-for="{ id, avatar } in members"
+                    :key="id"
+                    :size="22"
+                    >{{ avatar }}</a-avatar
+                  >
+                </div>
+              </div>
+            </li>
+          </transition-group>
+        </draggable>
+        <!-- <div v-show="currAdd.title === it.title" class="mb-2">
+          <a-textarea
+            class="mb-1"
+            v-model.trim="currAdd.content"
+            :auto-size="{ minRows: 3, maxRows: 5 }"
+          />
+          <a-button class="mr-2" size="small" type="primary" @click="addNewItem"
+            >提交</a-button
+          >
+          <a-button size="small" type="danger">取消</a-button>
+        </div> -->
+        <!-- <div class="flex items-center">
+          <div
+            class="flex items-center cursor-pointer"
+            @click="currAdd.title = it.title"
+          >
+            <feather size="15" type="plus" />
+            创建新项
+          </div>
+        </div> -->
+        </div>
 
-      <!-- <add-form ref="addForm" @ok="handleOk"/>
-    <edit-form ref="editForm" @ok="handleOk"/> -->
-    </a-card>
+      </div>
+    </div>
+
+    <!-- <filter-drawer
+      :visible="showDrawer"
+      :data-source="currEdit"
+      @close="showDrawer = false"
+    /> -->
 
     <task-detail :pop-visible="showTask" @close="showTask = false" />
   </div>
-
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+import FilterDrawer from './components/FilterDrawer.vue'
 import TaskDetail from '../task/Task.vue'
 
 export default {
-  components: { TaskDetail },
-  data() {
-    return {
-      data: [
-        {
-          id: '1',
-          task: '开发功能',
-          rank: '3',
-          stage: '迭代1',
-          state: '规划中',
-          member: 'judy',
-          start: '2021.1.1',
-          end: '2021.3.1',
-          children: [
-            {
-              id: '11',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '3',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'jack',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '12',
-              task: '开发功能',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '13',
-              task:
-                '故人西辞黄鹤楼，烟花三月下扬州,故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '1',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'lily',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-          ],
-        },
-        {
-          id: '2',
-          task: '故人西辞黄鹤楼，烟花三月下扬州',
-          rank: '1',
-          stage: '迭代1',
-          state: '规划中',
-          member: 'amy',
-          start: '2021.1.1',
-          end: '2021.3.1',
-          children: [],
-        },
-        {
-          id: '3',
-          task: '故人西辞黄鹤楼，烟花三月下扬州',
-          rank: '1',
-          stage: '迭代1',
-          state: '规划中',
-          member: 'monica',
-          start: '2021.1.1',
-          end: '2021.3.1',
-          children: [
-            {
-              id: '31',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '32',
-              task: '开发功能',
-              rank: '3',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'joey',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '33',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '34',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-          ],
-        },
-      ],
-      expandRows: [],
-      isExpandAll: false,
-      showTask: false,
-      loading: false,
-      isTodoMenuOpened: true,
-      searchText: '',
-      searchInput: null,
-      searchedColumn: '',
-      columns: [
-        {
-          dataIndex: 'task',
-          key: 'task',
-          ellipsis: true,
-          width: '250px',
-          slots: { title: 'all' },
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'task',
-          },
-          onFilter: (value, record) => record.task.children.task
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          },
-        },
-        {
-          title: 'ID',
-          dataIndex: 'id',
-          key: 'id',
-          scopedSlots: { customRender: 'id' },
-          width: '60px',
-        },
-        {
-          title: '优先级',
-          dataIndex: 'rank',
-          key: 'rank',
-          width: '85px',
-          defaultSortOrder: 'descend',
-          sorter: (a, b) => a.rank - b.rank,
-          scopedSlots: { customRender: 'rank' },
-        },
-        {
-          title: '迭代',
-          key: 'stage',
-          dataIndex: 'stage',
-        },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          key: 'state',
-        },
-        {
-          title: '处理人',
-          dataIndex: 'member',
-          key: 'member',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'member',
-          },
-          onFilter: (value, record) => record.member.children.member
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          },
-        },
-        {
-          title: '预计开始',
-          dataIndex: 'start',
-          key: 'start',
-        },
-        {
-          title: '预计结束',
-          dataIndex: 'end',
-          key: 'end',
-        },
-        // {
-        //   title: '操作',
-        //   key: 'action',
+  name: 'Kanban',
 
-        //   scopedSlots: { customRender: 'action' },
-        // },
-      ],
-      selectedRowKeys: [],
-      typeDict: [],
-      clickRowId: '',
-    }
-  },
+  components: { draggable, FilterDrawer, TaskDetail },
 
-  created() {},
+  data: () => ({
+    stageList: [
+      { name: '迭代1', id: '0', target: '下个月上线' },
+      { name: '迭代2', id: '1', target: '日活3万' },
+    ],
+    kbList: [
+      {
+        id: 'board1',
+        title: '定制主题',
+        dataList: [
+          {
+            id: '1',
+            label: 'primary',
+            content: '君自故乡来，应知故乡事。来日绮窗前，寒梅著花未？🌺',
+            items: [
+              { item: 'time', value: '1-6' },
+              { item: 'msg', value: 14 },
+            ],
+            members: [
+              { id: '1', avatar: '头' },
+              { id: '2', avatar: '像' },
+            ],
+          },
+          {
+            id: '2',
+            label: 'warning',
+            content: '昨夜裙带解，今朝蟢子飞。',
+            items: [
+              { item: 'time', value: '2-4' },
+              { item: 'msg', value: 19 },
+            ],
+            members: [
+              { id: '1', avatar: 'B' },
+              { id: '2', avatar: 'V' },
+            ],
+          },
+          {
+            id: '3',
+            label: 'danger',
+            content: '铅华不可弃，莫是藁砧归。',
+            items: [{ item: 'time', value: '1-9' }],
+          },
+          {
+            id: '4',
+            label: 'success',
+            content: '闺中少妇不知愁，春日凝妆上翠楼。',
+            items: [
+              { item: 'time', value: '6-6' },
+              { item: 'msg', value: 1 },
+            ],
+          },
+          {
+            id: '5',
+            label: 'info',
+            content: '忽见陌头杨柳色，悔教夫婿觅封侯。',
+            items: [
+              { item: 'time', value: '4-1' },
+              { item: 'msg', value: 45 },
+            ],
+            members: [
+              { id: '1', avatar: 'A' },
+              { id: '2', avatar: 'V' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'board2',
+        title: '常见问题',
+        dataList: [
+          {
+            id: '6',
+            label: 'secondary',
+            content: '九月九日忆山东兄弟',
+            items: [
+              { item: 'time', value: '6-9' },
+              { item: 'msg', value: 19 },
+            ],
+          },
+          {
+            id: '7',
+            label: 'secondary',
+            content: '独在异乡为异客，每逢佳节倍思亲。',
+            items: [
+              { item: 'time', value: '7-1' },
+              { item: 'msg', value: 11 },
+            ],
+          },
+          {
+            id: '8',
+            content: '遥知兄弟登高处，遍插茱萸少一人。🐸',
+          },
+          {
+            id: '9',
+            content: '<img width=100% src=""><p>点击编辑看板卡片 👀</p>',
+          },
+        ],
+      },
+      {
+        id: 'board3',
+        title: '支持我们',
+        dataList: [
+          {
+            id: '10',
+            label: 'success',
+            content: '千山鸟飞绝，万径人踪灭。',
+            items: [
+              { item: 'time', value: '6-9' },
+              { item: 'msg', value: 19 },
+            ],
+            members: [
+              { id: '1', avatar: '我' },
+              { id: '2', avatar: '是' },
+              { id: '3', avatar: '头' },
+              { id: '4', avatar: '像' },
+            ],
+          },
+          {
+            id: '11',
+            label: 'primary',
+            content: '孤舟蓑笠翁',
+            items: [
+              { item: 'time', value: '7-16' },
+              { item: 'msg', value: 11 },
+            ],
+            members: [
+              { id: '1', avatar: '头' },
+              { id: '2', avatar: '像' },
+            ],
+          },
+          {
+            id: '12',
+            label: 'warning',
+            content: '独钓寒江雪🐣',
+            items: [
+              { item: 'time', value: '4-9' },
+              { item: 'msg', value: 19 },
+            ],
+          },
+          {
+            id: '13',
+            label: 'danger',
+            content: '独在异乡为异客，每逢佳节倍思亲。',
+            items: [
+              { item: 'time', value: '7-1' },
+              { item: 'msg', value: 11 },
+            ],
+            members: [
+              { id: '1', avatar: '头' },
+              { id: '2', avatar: '像' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'board2',
+        title: '常见问题',
+        dataList: [
+          {
+            id: '6',
+            label: 'secondary',
+            content: '九月九日忆山东兄弟',
+            items: [
+              { item: 'time', value: '6-9' },
+              { item: 'msg', value: 19 },
+            ],
+          },
+          {
+            id: '7',
+            label: 'secondary',
+            content: '独在异乡为异客，每逢佳节倍思亲。',
+            items: [
+              { item: 'time', value: '7-1' },
+              { item: 'msg', value: 11 },
+            ],
+          },
+          {
+            id: '8',
+            content: '遥知兄弟登高处，遍插茱萸少一人。🐸',
+          },
+          {
+            id: '9',
+            content: '<img width=100% src=""><p>点击编辑看板卡片 👀</p>',
+          },
+        ],
+      },
+    ],
+    itemIcon: {
+      time: 'clock',
+      msg: 'message-square',
+    },
+    // dragOptions: {
+    //   animation: 200,
+    //   group: 'description',
+    //   disabled: false,
+    //   ghostClass: 'ghost',
+    // },
+    currAdd: { id: '', title: '', content: '' },
+    currEdit: {
+      title: '这是一个看板标题',
+      time: null,
+      label: 'primary',
+      content: '',
+      fileName: '',
+    },
+    showDrawer: false,
+    showTask: false,
+    isTagetShow: false,
+    isTaskShow: true,
+  }),
+
   methods: {
-    onSelectChange(selectedRowKeys) {
-      // console.log(selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
-    },
-    clearSele() {
-      this.selectedRowKeys = []
+    addNewBoard() {
+      this.kbList.push({ title: '默认标题', dataList: [] })
     },
 
-    // 条目搜索
-    handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm()
-
-      const [first] = selectedKeys
-      // console.log(first)
-      this.searchText = first
-      this.searchedColumn = dataIndex
-    },
-    handleReset(clearFilters) {
-      clearFilters()
-      this.searchText = ''
-    },
-
-    handleAdd() {
-      const { data } = this
-      const random = Math.ceil(Math.random() * 30)
-      const newData = {
-        id: random,
-        task: '',
-        rank: '',
-        stage: '',
-        state: '',
-        member: '',
-        start: '',
-        end: '',
-      }
-      this.data = [...data, newData]
-    },
-    onCellChange(key, dataIndex, value) {
-      const dataSource = [...this.dataSource]
-      const target = dataSource.find((item) => item.key === key)
-      if (target) {
-        target[dataIndex] = value
-        this.dataSource = dataSource
-      }
-    },
-
-    expandAllRow() {
-      this.isExpandAll = true
-
-      const expandRowKeys = []
-      const rows = [...this.data]
-      // console.log(rows)
-      for (let i = 0; i < rows.length; i += 1) {
-        const row = rows[i]// row是一行数据
-        // const { rowKey } = this
-        // console.log(rowKey)
-
-        if (row.children !== undefined) {
-          expandRowKeys.push(`${row.id}`)
-          for (let k = 0; k < row.children.length; k += 1) {
-            const childRow = row.children[k]
-            if (childRow.children !== undefined) expandRowKeys.push(`${childRow.id}`)
+    addNewItem() {
+      if (this.currAdd.content.length > 0) {
+        this.kbList.some((el) => {
+          if (el.title === this.currAdd.title) {
+            el.dataList.push({ id: '10086', content: this.currAdd.content })
+            this.reset()
+            return true
           }
-        }
-        // const key = typeof rowKey === 'function' ? rowKey(row, i) : row[rowKey]
-        // if (key === undefined) {
-        //   expandRowKeys.push(`${i}`)
-        // } else {
-        //   expandRowKeys.push(`${key}`)
-        // }
+          return false
+        })
       }
-      // console.log(expandRowKeys)
-
-      this.expandRows = expandRowKeys
     },
-    closeAllRow() {
-      this.isExpandAll = false
-      this.expandRows = []
-    },
-    // 单个展开
-    expandRowIcon(props) {
-      if (props.record.children !== undefined && props.record.children.length > 0) {
-        const { id } = props.record
-        if (props.expanded) {
-          return <div class="all-open-icon" onClick={ () => {
-            this.expandRows.pop()
 
-            // console.log(this.expandRows)
-          }}>-</div>
-        }
-
-        return <div class="all-open-icon" onClick={() => {
-          this.expandRows.push(`${id}`)
-        }}>+</div>
-      }
-      return <span style={{ marginRight: 8 }}></span>
-    },
-    // 鼠标移动悬浮
-    customRow(record) {
-      return {
-      // 这个style就是我自定义的属性，也就是官方文档中的props
-        style: {
+    deleteBoard(boardTitle) {
+      this.$confirm({
+        title: (
+          <p>
+            此操作将删除<span class="warning">「{boardTitle}」</span>看板
+          </p>
+        ),
+        content: '请点击确定按钮以删除',
+        onOk: () => {
+          // MOCK: 模拟删除一个看板
+          this.kbList.some((el, i, self) => {
+            if (el.title === boardTitle) {
+              self.splice(i, 1)
+              return true
+            }
+            return false
+          })
         },
-        on: {
-          click: () => {
-            this.clickRowId = record.id
-          },
-          mouseenter: (event) => {
-            event.currentTarget.style.transform = 'translateY(-3px)'
-            event.currentTarget.style.boxShadow = '0 15px 30px -5px rgba(71, 95, 123, 0.1)'
-            event.currentTarget.style.backgroundColor = '#fff'
-            event.currentTarget.style.transition = 'all 0.3s ease'
-            event.currentTarget.style.cursor = 'pointer'
-          },
-          mouseleave: (event) => {
-            event.currentTarget.style.transform = ''
-            event.currentTarget.style.boxShadow = ''
-          },
-        },
-      }
+      })
     },
-    // // 隔行变色
-    rowClass(record) {
-      console.log(record.id === this.clickRowId)
-      // let className = 'light-row'
-      // if (index % 2 === 1) className = 'dark-row'
-      // return className
-      return record.id === this.clickRowId ? 'clickRowColor' : ''
+
+    orderList() {
+      this.list = this.list.sort((one, two) => one.order - two.order)
+    },
+    onMove({ relatedContext, draggedContext }) {
+      const relatedElement = relatedContext.element
+      const draggedElement = draggedContext.element
+      return (
+        (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+      )
+    },
+    // 删除任务
+    delTask(index, k) {
+      this.dragList[index].list.splice(k, 1)
+    },
+    // 删除任务阶段
+    delStage(index) {
+      this.dragList.splice(index, 1)
+    },
+    changeStageTo(id, name) {
+      console.log(id)
+      console.log(name)
+      this.$store.commit('stage/SET_CURR_STAGE_NAME', name)
+      this.$store.commit('stage/SET_CURR_STAGE_ID', id)
+      window.localStorage.setItem('currStage', name)
+      window.localStorage.setItem('currStageId', id)
+
+      console.log(this.$store.state.stage.currStage)
+      // 这里需要向后台提交id拿项目数据，拿回来后重新渲染当前界面
+      // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目
+    },
+    target() {
+      const h = this.$createElement
+      this.$info({
+        title: '迭代目标：',
+        content: h('div', {}, [
+          h(
+            'h3',
+            this.stageList[window.localStorage.getItem('currStageId')].target,
+          ),
+        ]),
+        onOk() {},
+      })
+    },
+    showTaskBoard() {
+      this.isTaskShow = true
+      // 点击重新拉取kb数组，重新渲染
+    },
+    showBugBoard() {
+      // 点击重新拉取kb数组，重新渲染
+      this.isTaskShow = false
     },
   },
-
+  computed: {
+    dragOptions() {
+      return {
+        animation: 1,
+        group: 'description',
+        disabled: !this.editable,
+        ghostClass: 'ghost',
+      }
+    },
+    listString() {
+      return JSON.stringify(this.kbList, null, 2)
+    },
+    currStage() {
+      return this.$store.state.stage.currStage
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
+.noscroll {
+  overflow-y: hidden;
+}
+.kb {
+  @apply flex flex-none items-start justify-start overflow-x-auto;
+  overflow-x: auto;
+  //display:inline-block;
+  whith-space: nowrap;
+  &-col {
+    @apply mr-8 mb-4 p-4 bg-gray-200 rounded-lg list-none;
+    box-shadow: 0 10px 20px -2px #cbced6;
+    flex-shrink: 0;
+    width: 330px;
+    height: 520px;
+    &__title {
+      margin-left: -16px;
+      width: 330px;
+      background-color: #edf2f7;
+      z-index: 999;
+      height: 40px;
+      font-size: 18px;
+      margin-top: -10px;
+      border-radius: 2px;
+      // box-shadow: 0 10px 15px -5px rgba($secondary, 0.1);
+      //position: fixed;
+    }
+    &__board{
+       flex-shrink: 0;
+        overflow: auto;
+           height: 440px;
+    }
+    &__item {
+      @apply relative mb-4 p-3 pl-4 rounded bg-white cursor-pointer;
+      box-shadow: 0 10px 15px -5px rgba($secondary, 0.1);
 
-.table-operator {
-  margin-bottom: 18px;
-}
-button {
-  margin-right: 8px;
-}
-.task-pointer {
-  cursor: pointer; //变小手
-  &:hover {
-    color: #108ee9; //变色
+      @each $color in primary, secondary, success, warning, danger, info {
+        &[data-border="#{$color}"] {
+          &::before {
+            @apply absolute top-0 left-0 h-full w-1 overflow-hidden;
+            content: "";
+            background: map-get($color-map, $color);
+          }
+        }
+      }
+    }
+    &__avatar {
+      @apply relative -ml-2 cursor-pointer;
+      transition: $transition;
+      border: 2px solid #fff;
+      &:hover {
+        transform: translateY(-3px);
+        z-index: 10;
+      }
+    }
   }
 }
-.all-open-icon {
-  margin-right: 8px;
-  margin-top: -13px;
-  text-align: center; //文字居中（垂直、水平）
-  display: inline-block;
-  font-size: 15px; //文字大小
-  width: 17px;
-  height: 17px;
-  line-height: 13px;
-  border-radius: 2px; //圆角
-  color: #475f7b; //文字颜色
-  background-color: #fff; //盒子颜色
-  border: 1px solid #d6d4d4; //文字边框样式
-  cursor: pointer; //鼠标变小手
-  &:hover {
-    //鼠标悬停样式
-    color: #6485ff; //变色
-    border: 1px solid #6485ff;
-    transition: all 0.3s;
-  }
-
+.title-card {
+  //apply bg-gray-200;
+  box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+  height: 55px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  //border: 1px solid #dfdada;
+  position: relative;
+  // apply flex-no-wrap p-2 rounded-lg bg-white overflow-auto;
+  // &__title {
+  //   apply ml-2  text-2xl font-bold;
+  //   color: rgba($secondary, 0.8);
+  // }
 }
-  .todo-app {
-  @apply relative w-full flex bg-white rounded-lg overflow-hidden;
-  margin-top:-30px;
-  height: 600px;
-  min-height: 600px;
-
-  .left {
-    width: 20%;
-    min-width: 200px;
-    height: 100%;
-    border-right: 1px solid #eee;
-  }
-
-  .right {
-    @apply h-full;
-    width: 80%;
-
-  }
-
+.wl {
+  width: 48%;
+  float: left;
+}
+.wr {
+  float: right;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  height: 10px;
+  background-color: transparent;
 }
 </style>

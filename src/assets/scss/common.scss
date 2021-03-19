@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
 
 html,
 body {
@@ -31,8 +31,8 @@ img {
   @apply p-6 rounded-lg bg-white overflow-auto;
 
   &__title {
-    @apply mb-3 text-2xl font-bold;
-    color: rgba($secondary, .8);
+    @apply text-2xl font-bold;
+    color: rgba($secondary, 0.8);
   }
 }
 

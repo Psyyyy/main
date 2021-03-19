@@ -90,20 +90,20 @@ export const asyncRoutes = [
       },
     ],
   },
-  // 需求
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/task',
-        name: 'Task',
-        component: () => import('@/views/task/TaskDetail.vue'),
-        meta: { title: '需求详情', icon: 'check-circle' },
-      },
-    ],
-  },
+  // // 需求
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: '/task',
+  //       name: 'Task',
+  //       component: () => import('@/views/task/TaskDetail.vue'),
+  //       meta: { title: '需求详情', icon: 'check-circle' },
+  //     },
+  //   ],
+  // },
 
   // 任务列表
   {
@@ -112,10 +112,10 @@ export const asyncRoutes = [
     single: true,
     children: [
       {
-        path: '/todo',
-        name: 'Todo',
-        component: () => import('@/views/todo/Todo.vue'),
-        meta: { title: '任务列表', icon: 'check-circle' },
+        path: '/task',
+        name: 'Task',
+        component: () => import('@/views/task/TaskList'),
+        meta: { title: '需求管理', icon: 'check-circle' },
       },
     ],
   },

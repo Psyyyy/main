@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <a-modal
     width="70%"
                class="task-detail-modal"

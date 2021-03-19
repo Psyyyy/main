@@ -4,8 +4,8 @@ import {
   Card, ConfigProvider, Col, Checkbox, Dropdown, DatePicker, Drawer, Divider,
   Empty, Form, Input, Icon, List,
   message, Menu, Modal, notification, Popconfirm, Progress, Popover,
-  Result, Row, Spin, Select, Skeleton, Switch,
-  Table, Tabs, Tag, Timeline, Tooltip, Upload,
+  Result, Row, Radio, Spin, Select, Skeleton, Switch,
+  Table, Tabs, Tag, Tree, Timeline, Tooltip, Upload,
 } from 'ant-design-vue'
 
 Vue.config.productionTip = false
@@ -32,6 +32,7 @@ Vue.use(Modal)
 Vue.use(Popconfirm)
 Vue.use(Progress)
 Vue.use(Popover)
+Vue.use(Radio)
 Vue.use(Result)
 Vue.use(Row)
 Vue.use(Spin)
@@ -39,6 +40,7 @@ Vue.use(Select)
 Vue.use(Skeleton)
 Vue.use(Switch)
 Vue.use(Table)
+Vue.use(Tree)
 Vue.use(Tabs)
 Vue.use(Tag)
 Vue.use(Timeline)
