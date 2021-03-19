@@ -96,6 +96,9 @@ export default {
     selectedKeys() {
       return this.$store.state.todo.barKey
     },
+    isSideMenuOpened() {
+      return this.$store.state.isSideMenuOpened
+    },
   },
 
   methods: {
@@ -114,4 +117,13 @@ export default {
 .todo-bar-menu {
   border: none;
 }
+// .open-btn{
+//  &.todo-close {
+//     margin-left: 190px !important;
+//   }
+// &.todo-open {
+//     margin-left: 162px !important;
+//   }
+//  z-index:999;
+// }
 </style>

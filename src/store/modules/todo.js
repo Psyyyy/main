@@ -59,7 +59,6 @@ const mutations = {
     state.currEditTodo = todoItem
   },
 }
-
 const actions = {
 }
 

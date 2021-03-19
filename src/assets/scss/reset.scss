@@ -9,7 +9,7 @@
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #C0C0C0;
+  background-color: #c0c0c0;
   border: none;
 }
 
@@ -49,4 +49,7 @@
 
 .ant-table-body {
   background: white;
+}
+.ant-table-thead > tr > th {
+  background: #f8f9fc;
 }

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <a-button type="primary" @click="showModal">
-      Open Modal with async logic
-    </a-button>
     <a-modal
     width="70%"
                class="task-detail-modal"
