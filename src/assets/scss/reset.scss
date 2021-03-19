@@ -51,5 +51,15 @@
   background: white;
 }
 .ant-table-thead > tr > th {
-  background: #f8f9fc;
+  background: #f8f9fcb6;
+}
+//表格隔行变色
+// .light-row {
+//   background: #fff !important;
+// }
+// .dark-row {
+//   background: #e7e5e5 !important;
+// }
+.clickRowColor {
+  background: #f7f9ff !important;
 }

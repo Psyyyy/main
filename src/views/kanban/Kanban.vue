@@ -29,8 +29,9 @@
           onChange: onSelectChange
         }"
         :expanded-row-keys="expandRows"
-        :expand-icon="props => test(props)"
+        :expand-icon="props =>expandRowIcon(props)"
         :custom-row="customRow"
+        :row-class-name="rowClass"
       >
         <!--:rowSelection="rowSelectionon"-->
         <!-- 搜索弹框 -->
@@ -398,15 +399,16 @@ export default {
           dataIndex: 'end',
           key: 'end',
         },
-        {
-          title: '操作',
-          key: 'action',
+        // {
+        //   title: '操作',
+        //   key: 'action',
 
-          scopedSlots: { customRender: 'action' },
-        },
+        //   scopedSlots: { customRender: 'action' },
+        // },
       ],
       selectedRowKeys: [],
       typeDict: [],
+      clickRowId: '',
     }
   },
 
@@ -491,8 +493,8 @@ export default {
       this.isExpandAll = false
       this.expandRows = []
     },
-
-    test(props) {
+    // 单个展开
+    expandRowIcon(props) {
       if (props.record.children !== undefined && props.record.children.length > 0) {
         const { id } = props.record
         if (props.expanded) {
@@ -509,20 +511,22 @@ export default {
       }
       return <span style={{ marginRight: 8 }}></span>
     },
-    customRow() {
+    // 鼠标移动悬浮
+    customRow(record) {
       return {
       // 这个style就是我自定义的属性，也就是官方文档中的props
         style: {
         },
         on: {
+          click: () => {
+            this.clickRowId = record.id
+          },
           mouseenter: (event) => {
-            console.log(event.currentTarget)
             event.currentTarget.style.transform = 'translateY(-3px)'
             event.currentTarget.style.boxShadow = '0 15px 30px -5px rgba(71, 95, 123, 0.1)'
             event.currentTarget.style.backgroundColor = '#fff'
             event.currentTarget.style.transition = 'all 0.3s ease'
             event.currentTarget.style.cursor = 'pointer'
-            console.log(event.currentTarget.style)
           },
           mouseleave: (event) => {
             event.currentTarget.style.transform = ''
@@ -531,19 +535,20 @@ export default {
         },
       }
     },
+    // // 隔行变色
+    rowClass(record) {
+      console.log(record.id === this.clickRowId)
+      // let className = 'light-row'
+      // if (index % 2 === 1) className = 'dark-row'
+      // return className
+      return record.id === this.clickRowId ? 'clickRowColor' : ''
+    },
   },
 
 }
 </script>
 
-<style lang="less" scoped>
-.body{
-  :global{
-    .ant-table-thead>tr>th{
-      background:#000;
-    }
-  }
-}
+<style lang="scss" scoped>
 
 .table-operator {
   margin-bottom: 18px;
