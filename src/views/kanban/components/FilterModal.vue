@@ -8,13 +8,12 @@
     >
       <!-- 底部按钮 -->
       <template slot="footer">
-        <a-button key="back" @click="handleCancel">
+        <a-button key="back" >
           重置
         </a-button>
         <a-button
           key="submit"
           type="primary"
-          :loading="loading"
           @click="handleOk"
         >
           筛选
@@ -24,7 +23,7 @@
       <a-form-model
         ref="ruleForm"
         :model="form"
-        :rules="rules"
+
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
@@ -133,26 +132,26 @@ export default {
     //   type: Array,
     //   required: true,
     // },
-    member: {
-      type: Array,
-      required: false,
-    },
-    stage: {
-      type: Array,
-      required: false,
-    },
-    rank: {
-      type: Array,
-      required: true,
-    },
-    state: {
-      type: Array,
-      required: true,
-    },
-    title: {
-      type: Array,
-      required: false,
-    },
+    // member: {
+    //   type: Array,
+    //   required: false,
+    // },
+    // stage: {
+    //   type: Array,
+    //   required: false,
+    // },
+    // rank: {
+    //   type: Array,
+    //   required: true,
+    // },
+    // state: {
+    //   type: Array,
+    //   required: true,
+    // },
+    // title: {
+    //   type: Array,
+    //   required: false,
+    // },
   },
   computed: {
     isFilterModalOpened() {
@@ -203,15 +202,15 @@ export default {
     },
     // 表单部分
     onSubmit() {
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          console.log('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-        return true
-      })
+      // this.$refs.ruleForm.validate((valid) => {
+      //   if (valid) {
+      //     console.log('submit!')
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      //   return true
+      // })
     },
     resetForm() {
       this.$refs.ruleForm.resetFields()

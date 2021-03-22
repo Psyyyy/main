@@ -7,7 +7,9 @@
           <div class="wl">
             <div class="wl mr-2 mt-1">
               <!-- 创建迭代按钮 -->
-              <a-button class="text-xl" @click="addStage">+</a-button>
+              <a-button class="text-xl" @click="isAddStageVisible = true"
+                >+</a-button
+              >
             </div>
             <!-- 迭代阶段切换 -->
             <div class="wl">
@@ -185,8 +187,21 @@
       <task-list></task-list>
     </div>
     <filter-modal />
-
     <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
+    <a-modal :rules="stageRules" :visible="isAddStageVisible" title="创建迭代" @ok="addStage" @cancel="closeAddStage">
+     <div> <a-form-model class="pl-2" layout="horizontal" :model="newStage"  :label-col="labelCol"
+    :wrapper-col="wrapperCol">
+        <a-form-model-item label="迭代名称" type="name">
+          <a-input v-model="newStage.name" />
+        </a-form-model-item>
+        <a-form-model-item label="起止时间">
+          <a-range-picker width="200px" v-model="newStage.start" type="date" />
+        </a-form-model-item>
+        <a-form-model-item label="迭代目标">
+          <a-input v-model="newStage.target" type="textarea" />
+        </a-form-model-item>
+      </a-form-model></div>
+    </a-modal>
   </div>
 </template>
 
@@ -207,6 +222,8 @@ export default {
   },
 
   data: () => ({
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 },
     stageList: [
       { name: '迭代1', id: '0', target: '下个月上线' },
       { name: '迭代2', id: '1', target: '日活3万' },
@@ -416,6 +433,20 @@ export default {
     isTagetShow: false,
     isTaskShow: true,
     isKbShow: true,
+    newStage: {
+      id: '', // 连数据库后就不自己设这个了
+      name: '',
+      target: '',
+      start: undefined,
+      end: undefined,
+    },
+    isAddStageVisible: false,
+    stageRules: { // 暂时没用到
+      name: [
+        { required: true, message: '请输入名称', trigger: 'blur' },
+      ],
+      date: [{ required: true, message: '请选择日期', trigger: 'change' }],
+    },
   }),
 
   methods: {
@@ -535,8 +566,19 @@ export default {
 
     // 创建迭代
     addStage() {
-      // this.$store.commit('stage/SET_STAGE_List', newStage)
+      console.log(this.newStage)
+      this.$store.commit('stage/SET_STAGE_List', this.newStage) // 后面就是commit去数据库了，很多这些commit到store的搭前后端后都要移到数据库
+      this.isAddStageVisible = false
       // 做个创建迭代的弹窗
+    },
+    closeAddStage() {
+      this.isAddStageVisible = false
+    },
+    onStageDateChange(date, dateString) {
+      // console.log(date, dateString)
+      const { start, end } = dateString
+      this.newStage.start = start
+      this.newStage.end = end
     },
   },
   computed: {
