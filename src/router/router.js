@@ -130,110 +130,152 @@ export const asyncRoutes = [
         path: '/kanban',
         name: 'Kanban',
         component: () => import('@/views/kanban/Kanban.vue'),
-        meta: { title: '看板', icon: 'server' },
+        meta: { title: '迭代管理', icon: 'trello' },
+      },
+    ],
+  },
+  // 缺陷列表
+  {
+    path: '',
+    component: MainLayout,
+    single: true,
+    children: [
+      {
+        path: '/bug',
+        name: 'Bug',
+        component: () => import('@/views/bug/Bug.vue'),
+        meta: { title: '缺陷管理', icon: 'alert-circle' },
+      },
+    ],
+  },
+  // 成员列表
+  {
+    path: '',
+    component: MainLayout,
+    single: true,
+    children: [
+      {
+        path: '/team',
+        name: 'Team',
+        component: () => import('@/views/team/Team.vue'),
+        meta: { title: '团队管理', icon: 'users' },
+      },
+    ],
+  },
+  // 文档列表
+  {
+    path: '',
+    component: MainLayout,
+    single: true,
+    children: [
+      {
+        path: '/file',
+        name: 'File',
+        component: () => import('@/views/file/File.vue'),
+        meta: { title: '文件管理', icon: 'folder' },
       },
     ],
   },
 
-  // 富文本编辑器
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/quill',
-        name: 'Quill',
-        component: () => import('@/views/editor/Quill.vue'),
-        meta: { title: '富文本编辑器', icon: 'credit-card' },
-      },
-    ],
-  },
+  // // 富文本编辑器
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: '/quill',
+  //       name: 'Quill',
+  //       component: () => import('@/views/editor/Quill.vue'),
+  //       meta: { title: '富文本编辑器', icon: 'credit-card' },
+  //     },
+  //   ],
+  // },
 
-  // 文件上传
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/file-upload',
-        name: 'FileUpload',
-        component: () => import('@/views/file-upload/FileUpload.vue'),
-        meta: { title: '文件上传', icon: 'upload-cloud' },
-      },
-    ],
-  },
+  // // 文件上传
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: '/file-upload',
+  //       name: 'FileUpload',
+  //       component: () => import('@/views/file-upload/FileUpload.vue'),
+  //       meta: { title: '文件上传', icon: 'upload-cloud' },
+  //     },
+  //   ],
+  // },
 
-  // 表单
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/form',
-        name: 'Form',
-        component: () => import('@/views/form/Form.vue'),
-        meta: { title: '表单', icon: 'list' },
-      },
-    ],
-  },
+  // // 表单
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: '/form',
+  //       name: 'Form',
+  //       component: () => import('@/views/form/Form.vue'),
+  //       meta: { title: '表单', icon: 'list' },
+  //     },
+  //   ],
+  // },
 
-  // 更多页面
-  {
-    path: '',
-    component: MainLayout,
-    meta: { title: '骨架和404', icon: 'grid', openKey: 'morePage' },
-    children: [
-      {
-        path: '/skeleton',
-        name: 'Skeleton',
-        component: () => import('@/views/pages/Skeleton.vue'),
-        meta: { title: '骨架屏', openKey: 'morePage' },
-      },
-      {
-        path: '/not-found',
-        name: 'NotFound',
-        component: () => import('@/views/pages/NotFound.vue'),
-        meta: { title: '404 页面', openKey: 'morePage' },
-      },
-      {
-        path: '/server-error',
-        name: 'ServerError',
-        component: () => import('@/views/pages/ServerError.vue'),
-        meta: { title: '500 页面', openKey: 'morePage' },
-      },
-    ],
-  },
-  // 图标库
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/icon-lib',
-        name: 'IconLib',
-        component: () => import('@/views/icon-lib/IconLib.vue'),
-        meta: { title: '图标库', icon: 'heart' },
-      },
-    ],
-  },
-  // 主题颜色
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/colors',
-        name: 'Colors',
-        component: () => import('@/views/colors/Colors.vue'),
-        meta: { title: '主题颜色', icon: 'coffee' },
-      },
-    ],
-  },
+  // // 更多页面
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   meta: { title: '骨架和404', icon: 'grid', openKey: 'morePage' },
+  //   children: [
+  //     {
+  //       path: '/skeleton',
+  //       name: 'Skeleton',
+  //       component: () => import('@/views/pages/Skeleton.vue'),
+  //       meta: { title: '骨架屏', openKey: 'morePage' },
+  //     },
+  //     {
+  //       path: '/not-found',
+  //       name: 'NotFound',
+  //       component: () => import('@/views/pages/NotFound.vue'),
+  //       meta: { title: '404 页面', openKey: 'morePage' },
+  //     },
+  //     {
+  //       path: '/server-error',
+  //       name: 'ServerError',
+  //       component: () => import('@/views/pages/ServerError.vue'),
+  //       meta: { title: '500 页面', openKey: 'morePage' },
+  //     },
+  //   ],
+  // },
+  // // 图标库
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: '/icon-lib',
+  //       name: 'IconLib',
+  //       component: () => import('@/views/icon-lib/IconLib.vue'),
+  //       meta: { title: '图标库', icon: 'heart' },
+  //     },
+  //   ],
+  // },
+  // // 主题颜色
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: '/colors',
+  //       name: 'Colors',
+  //       component: () => import('@/views/colors/Colors.vue'),
+  //       meta: { title: '主题颜色', icon: 'coffee' },
+  //     },
+  //   ],
+  // },
 
   // // 外链
   // {
@@ -263,17 +305,17 @@ export const asyncRoutes = [
   //   ],
   // },
 
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: process.env.VUE_APP_DOC_URL,
-        meta: { title: '官方文档', icon: 'book-open' },
-      },
-    ],
-  },
+  // {
+  //   path: '',
+  //   component: MainLayout,
+  //   single: true,
+  //   children: [
+  //     {
+  //       path: process.env.VUE_APP_DOC_URL,
+  //       meta: { title: '官方文档', icon: 'book-open' },
+  //     },
+  //   ],
+  // },
 
   // 个人中心
   {

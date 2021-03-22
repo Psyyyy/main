@@ -1,14 +1,18 @@
 <template>
-  <div>
+  <div class="kanban">
     <!-- 第一行 -->
     <div class=" -mt-8 w-full pr-3">
       <div class=" no-scroll w-full p-2 title-card">
         <div class="wl">
           <div class="wl">
+            <div class="wl mr-2 mt-1">
+              <!-- 创建迭代按钮 -->
+              <a-button class="text-xl" @click="addStage">+</a-button>
+            </div>
             <!-- 迭代阶段切换 -->
             <div class="wl">
               <a-dropdown :trigger="['click']" class="w-32 mr-6">
-                <div class=" text-2xl ml-4 flex items-center cursor-pointer ">
+                <div class=" text-2xl ml-2 flex items-center cursor-pointer ">
                   <!-- <a-icon
                     style="color:#98adf9"
                     theme="filled"
@@ -36,10 +40,10 @@
                 </template>
               </a-dropdown>
             </div>
-            <div>
+            <div class="wl">
               <div
                 class=" flex-no-wrap inline-block "
-                style="color:#bdc0c9;white-space:nowrap;vertical-align:sub;width:30px;margin-left:-20px;margin-top:7px"
+                style="color:#bdc0c9;white-space:nowrap;width:30px;margin-left:-60px;margin-top:7px"
               >
                 2021.1.1~2021.3.1
                 <a-icon
@@ -54,12 +58,14 @@
         </div>
         <div class="wr">
           <div class="wr mt-1 mr-4">
-            <a-button type="primary" class="mr-4" @click="showDrawer=true">筛选</a-button>
+            <a-button type="primary" class="mr-4" @click="onOpenFilter()"
+              >筛选</a-button
+            >
             <a-radio-group default-value="task">
-              <a-radio-button value="task" @click="showTaskBoard"
+              <a-radio-button value="task" @click="showKbBoard"
                 >看板视图</a-radio-button
               >
-              <a-radio-button value="bug" @click="showBugBoard"
+              <a-radio-button value="bug" @click="showListBoard"
                 >列表视图</a-radio-button
               >
             </a-radio-group>
@@ -70,41 +76,42 @@
         </div>
       </div>
     </div>
-    <!-- 第二行 -->
-    <div>
-      <a-button
-        class="inline mb-4"
-        size="large"
-        type="primary"
-        @click="showTask = true"
-        >创建{{ isTaskShow ? "需求" : "缺陷" }}</a-button
-      >
-      <div class="ml-4 inline">
-        <a-radio-group default-value="task">
-          <a-radio-button value="task" @click="showTaskBoard"
-            >需求</a-radio-button
-          >
-          <a-radio-button value="bug" @click="showBugBoard"
-            >缺陷</a-radio-button
-          >
-        </a-radio-group>
+    <div v-if="isKbShow">
+      <!-- 第二行 -->
+      <div>
+        <a-button
+          class="inline mb-4"
+          size="large"
+          type="primary"
+          @click="showTaskModal = true"
+          >创建{{ isTaskShow ? "需求" : "缺陷" }}</a-button
+        >
+        <div class="ml-4 inline">
+          <a-radio-group default-value="task">
+            <a-radio-button value="task" @click="showKbBoard('task')"
+              >需求</a-radio-button
+            >
+            <a-radio-button value="bug" @click="showKbBoard('bug')"
+              >缺陷</a-radio-button
+            >
+          </a-radio-group>
+        </div>
       </div>
-    </div>
-    <!-- 看板 -->
-    <div class="kb">
-      <div class="kb-col" v-for="(it, i) in kbList" :key="i">
-        <div class="kb-col__title overflow-hidden mb-1 flex items-center">
-          <span class="kb-col__input"
-            ><span class="ml-4"
-              >{{ it.title }} · {{ it.dataList.length }}</span
-            ></span
-          >
+      <!-- 看板 -->
+      <div class="kb">
+        <div class="kb-col" v-for="(it, i) in kbList" :key="i">
+          <div class="kb-col__title overflow-hidden mb-1 flex items-center">
+            <span class="kb-col__input"
+              ><span class="ml-4"
+                >{{ it.title }} · {{ it.dataList.length }}</span
+              ></span
+            >
 
-          <!-- <a-dropdown class="ml-40 pl-4" :trigger="['click']">
+            <!-- <a-dropdown class="ml-40 pl-4" :trigger="['click']">
             <feather class="cursor-pointer" size="20" type="more-vertical" />
             <template #overlay>
                单个看板的菜单 -->
-          <!-- <a-menu>
+            <!-- <a-menu>
                 <a-menu-item @click="$message.success('已复制看板链接')">
                   复制看板链接
                 </a-menu-item>
@@ -114,42 +121,42 @@
               </a-menu>
             </template>
           </a-dropdown> -->
-        </div>
-        <div class="kb-col__board">
-        <draggable class=" " v-model="it.dataList" v-bind="dragOptions">
-          <transition-group tag="ul">
-            <li
-              class="kb-col__item"
-              v-for="{ id, label, content, items, members } in it.dataList"
-              :key="id"
-              :data-border="label"
-              @click="showTask = true"
-            >
-              <div v-html="content"></div>
-              <div v-if="items" class="mt-4 flex items-center text-xs">
-                <div
-                  class="mr-2 flex items-center"
-                  v-for="{ item, value } in items"
-                  :key="item"
+          </div>
+          <div class="kb-col__board">
+            <draggable class=" " v-model="it.dataList" v-bind="dragOptions">
+              <transition-group tag="ul">
+                <li
+                  class="kb-col__item"
+                  v-for="{ id, label, content, items, members } in it.dataList"
+                  :key="id"
+                  :data-border="label"
+                  @click="showTaskModal = true"
                 >
-                  <feather class="mr-1" size="12" :type="itemIcon[item]" />
-                  {{ value }}
-                </div>
+                  <div v-html="content"></div>
+                  <div v-if="items" class="mt-4 flex items-center text-xs">
+                    <div
+                      class="mr-2 flex items-center"
+                      v-for="{ item, value } in items"
+                      :key="item"
+                    >
+                      <feather class="mr-1" size="12" :type="itemIcon[item]" />
+                      {{ value }}
+                    </div>
 
-                <div class="ml-auto flex-1 flex flex-wrap justify-end">
-                  <a-avatar
-                    class="kb-col__avatar text-xs primary bg-primary-light"
-                    v-for="{ id, avatar } in members"
-                    :key="id"
-                    :size="22"
-                    >{{ avatar }}</a-avatar
-                  >
-                </div>
-              </div>
-            </li>
-          </transition-group>
-        </draggable>
-        <!-- <div v-show="currAdd.title === it.title" class="mb-2">
+                    <div class="ml-auto flex-1 flex flex-wrap justify-end">
+                      <a-avatar
+                        class="kb-col__avatar text-xs primary bg-primary-light"
+                        v-for="{ id, avatar } in members"
+                        :key="id"
+                        :size="22"
+                        >{{ avatar }}</a-avatar
+                      >
+                    </div>
+                  </div>
+                </li>
+              </transition-group>
+            </draggable>
+            <!-- <div v-show="currAdd.title === it.title" class="mb-2">
           <a-textarea
             class="mb-1"
             v-model.trim="currAdd.content"
@@ -160,7 +167,7 @@
           >
           <a-button size="small" type="danger">取消</a-button>
         </div> -->
-        <!-- <div class="flex items-center">
+            <!-- <div class="flex items-center">
           <div
             class="flex items-center cursor-pointer"
             @click="currAdd.title = it.title"
@@ -169,30 +176,35 @@
             创建新项
           </div>
         </div> -->
+          </div>
         </div>
-
       </div>
     </div>
+    <!-- 列表 -->
+    <div v-if="!isKbShow" class="mt-10">
+      <task-list></task-list>
+    </div>
+    <filter-modal />
 
-    <!-- <filter-drawer
-      :visible="showDrawer"
-      :data-source="currEdit"
-      @close="showDrawer = false"
-    /> -->
-
-    <task-detail :pop-visible="showTask" @close="showTask = false" />
+    <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
-import FilterDrawer from './components/FilterDrawer.vue'
+import FilterModal from './components/FilterModal.vue'
 import TaskDetail from '../task/Task.vue'
+import TaskList from '../task/TaskList.vue'
 
 export default {
   name: 'Kanban',
 
-  components: { draggable, FilterDrawer, TaskDetail },
+  components: {
+    TaskList,
+    draggable,
+    FilterModal,
+    TaskDetail,
+  },
 
   data: () => ({
     stageList: [
@@ -400,9 +412,10 @@ export default {
       fileName: '',
     },
     showDrawer: false,
-    showTask: false,
+    showTaskModal: false,
     isTagetShow: false,
     isTaskShow: true,
+    isKbShow: true,
   }),
 
   methods: {
@@ -487,13 +500,43 @@ export default {
         onOk() {},
       })
     },
-    showTaskBoard() {
-      this.isTaskShow = true
+    showKbBoard(type) {
+      if (type === 'task') {
+        // 切换到需求看板
+        this.isTaskShow = true
+      }
+      if (type === 'bug') {
+        // 切换到缺陷看板
+        this.isTaskShow = false
+      }
+      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
+      this.currShow = type
+      this.isKbShow = true
       // 点击重新拉取kb数组，重新渲染
     },
-    showBugBoard() {
+    showListBoard(type) {
       // 点击重新拉取kb数组，重新渲染
-      this.isTaskShow = false
+      if (type === 'task') {
+        // 切换到需求列表
+        this.isTaskShow = true
+      }
+      if (type === 'bug') {
+        // 切换到缺陷列表
+        this.isTaskShow = false
+      }
+      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
+      this.currShow = type
+      this.isKbShow = false
+    },
+    onOpenFilter(type) {
+      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
+      this.$store.commit('filter/SET_FILTER_MODAL_STATUS', true)
+    },
+
+    // 创建迭代
+    addStage() {
+      // this.$store.commit('stage/SET_STAGE_List', newStage)
+      // 做个创建迭代的弹窗
     },
   },
   computed: {
@@ -510,6 +553,16 @@ export default {
     },
     currStage() {
       return this.$store.state.stage.currStage
+    },
+    currEditStage() {
+      return this.$store.state.filter.currEditFilter
+    },
+
+    isFilterModalOpened() {
+      return this.$store.state.filter.isFilterModalOpened
+    },
+    currFilterType() {
+      return this.$store.state.filter.currFilterType
     },
   },
 }
@@ -542,10 +595,10 @@ export default {
       // box-shadow: 0 10px 15px -5px rgba($secondary, 0.1);
       //position: fixed;
     }
-    &__board{
-       flex-shrink: 0;
-        overflow: auto;
-           height: 440px;
+    &__board {
+      flex-shrink: 0;
+      overflow: auto;
+      height: 440px;
     }
     &__item {
       @apply relative mb-4 p-3 pl-4 rounded bg-white cursor-pointer;
@@ -588,7 +641,6 @@ export default {
   // }
 }
 .wl {
-  width: 48%;
   float: left;
 }
 .wr {

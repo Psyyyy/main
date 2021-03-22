@@ -12,6 +12,7 @@ import todo from './modules/todo'
 import auth from './modules/auth'
 import project from './modules/project'
 import stage from './modules/stage'
+import filter from './modules/filter'
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     auth,
     project,
     stage,
+    filter,
   },
 
   state,
