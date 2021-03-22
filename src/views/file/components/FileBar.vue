@@ -1,11 +1,17 @@
 <template>
   <div>
     <div class="px-6 py-6">
-      <a-button
+      <a-upload
+      multiple
+      name="file"
+      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+      :headers="headers"
+      @change="handleChange"
+    >
+     <a-button
         class="w-full flex justify-center items-center"
         size="large"
         type="primary"
-        @click="onOpenDrawer"
       >
         <feather
           class="mr-1"
@@ -14,6 +20,8 @@
         />
         上传文件
       </a-button>
+    </a-upload>
+
     </div>
 
     <perfect-scrollbar
@@ -90,6 +98,9 @@ export default {
       { id: '7', label: '迭代', color: 'warning' },
       { id: '8', label: '缺陷', color: 'danger' },
     ],
+    headers: {
+      authorization: 'authorization-text',
+    },
   }),
 
   computed: {
@@ -102,12 +113,19 @@ export default {
   },
 
   methods: {
-    onOpenDrawer() {
-      this.$store.commit('file/SET_FILE_DRAWER_STATUS', true)
-    },
 
     onClickMenuItem({ key }) {
       this.$store.commit('file/SET_FILE_BAR_KEY', key)
+    },
+    handleChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList)
+      }
+      if (info.file.status === 'done') {
+        this.$message.success(`成功上传 ${info.file.name}`)
+      } else if (info.file.status === 'error') {
+        this.$message.error(`${info.file.name} 上传失败`)
+      }
     },
   },
 }

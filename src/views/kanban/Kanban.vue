@@ -186,6 +186,7 @@
     <div v-if="!isKbShow" class="mt-10">
       <task-list></task-list>
     </div>
+
     <filter-modal />
     <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
     <a-modal :rules="stageRules" :visible="isAddStageVisible" title="创建迭代" @ok="addStage" @cancel="closeAddStage">
@@ -203,6 +204,7 @@
       </a-form-model></div>
     </a-modal>
   </div>
+
 </template>
 
 <script>

@@ -27,7 +27,7 @@ export default {
 .file-app {
   @apply relative w-full flex bg-white rounded-lg overflow-hidden;
   height: $full-height;
-  min-height: 500px;
+  min-height: 630px;
 
   .left {
     width: 22%;
