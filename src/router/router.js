@@ -148,20 +148,6 @@ export const asyncRoutes = [
       },
     ],
   },
-  // 成员列表
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    children: [
-      {
-        path: '/team',
-        name: 'Team',
-        component: () => import('@/views/team/Team.vue'),
-        meta: { title: '团队管理', icon: 'users' },
-      },
-    ],
-  },
   // 文档列表
   {
     path: '',
@@ -173,6 +159,20 @@ export const asyncRoutes = [
         name: 'File',
         component: () => import('@/views/file/File.vue'),
         meta: { title: '文件管理', icon: 'folder' },
+      },
+    ],
+  },
+  // 成员列表
+  {
+    path: '',
+    component: MainLayout,
+    single: true,
+    children: [
+      {
+        path: '/team',
+        name: 'Team',
+        component: () => import('@/views/team/Team.vue'),
+        meta: { title: '团队管理', icon: 'users' },
       },
     ],
   },

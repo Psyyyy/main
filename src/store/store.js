@@ -13,6 +13,8 @@ import auth from './modules/auth'
 import project from './modules/project'
 import stage from './modules/stage'
 import filter from './modules/filter'
+import file from './modules/file'
+import team from './modules/team'
 
 Vue.use(Vuex)
 
@@ -24,6 +26,8 @@ export default new Vuex.Store({
     project,
     stage,
     filter,
+    file,
+    team,
   },
 
   state,
