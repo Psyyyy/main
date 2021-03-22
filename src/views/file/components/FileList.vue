@@ -30,7 +30,7 @@
           <a class="ml-1 mr-2" slot="actions">
             <a-tooltip placement="top">
               <template slot="title">
-                编辑权限
+                重命名文件
               </template>
               <feather size="20" type="edit" />
             </a-tooltip>
@@ -38,10 +38,10 @@
           <a class="ml-1 mr-2" slot="actions">
             <a-tooltip placement="top">
               <template slot="title">
-                停用账号
+                删除文件
               </template>
-              <a-popconfirm placement="topRight" title="确定停用该成员帐号？">
-                <feather size="20" type="slash" />
+              <a-popconfirm placement="topRight" title="确定删除该文件？">
+                <feather size="20" type="trash" />
                 <!-- <a-button type="danger" icon="delete" size="small" /> -->
               </a-popconfirm>
             </a-tooltip>
@@ -161,28 +161,28 @@ export default {
       {
         end: 'ppt',
         icon: 'file-ppt',
-        color: '#d14424',
+        color: '#ff5b5c',
       },
       {
         end: 'pptx',
         icon: 'file-ppt',
-        color: '#d14424',
+        color: '#ff5b5c',
       },
 
       {
         end: 'pdf',
         icon: 'file-pdf',
-        color: '#d14424',
+        color: '#ff5b5c',
       },
       {
         end: 'doc',
         icon: 'file-word',
-        color: '',
+        color: '#6485ff',
       },
       {
         end: 'docx',
         icon: 'file-word',
-        color: '',
+        color: '#6485ff',
       },
       {
         end: 'xls',

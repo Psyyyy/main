@@ -25,7 +25,7 @@ export default {
 
 <style lang="scss" scoped>
 .file-app {
-  @apply relative w-full flex bg-white rounded-lg overflow-hidden;
+  @apply relative w-full flex bg-white -mt-5 rounded-lg overflow-hidden;
   height: $full-height;
   min-height: 630px;
 

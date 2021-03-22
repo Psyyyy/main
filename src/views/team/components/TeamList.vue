@@ -64,6 +64,7 @@
             <a-avatar
               class="ml-6"
               slot="avatar"
+              :size="42"
               src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
             />
           </a-list-item-meta>

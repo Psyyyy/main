@@ -8,9 +8,11 @@
       :headers="headers"
       @change="handleChange"
     >
-     <a-button
-        class="w-full flex justify-center items-center"
+  <div style="width:230px">
+       <a-button
+        class=" flex justify-center items-center"
         size="large"
+        block
         type="primary"
       >
         <feather
@@ -20,6 +22,7 @@
         />
         上传文件
       </a-button>
+  </div>
     </a-upload>
 
     </div>
