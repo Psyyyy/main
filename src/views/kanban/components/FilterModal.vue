@@ -47,7 +47,7 @@
         </a-form-model-item>
         <!-- 迭代筛选（下拉框） -->
         <a-form-model-item
-          v-if="currFilterType == 'stage'"
+          v-if="currFilterType !== 'stage'"
           label="迭代"
           prop="stage"
         >

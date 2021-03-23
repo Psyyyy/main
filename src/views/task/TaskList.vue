@@ -1,22 +1,49 @@
 /* eslint-disable */
 <template>
   <div class="todo-app">
-    <div >
+    <div>
 
-<div class="task-list pl-6">
-  <!-- <a-button
-                  class=" w-30 flex "
-                  size="large"
-                  type="primary"
-                  @click="handleAdd"
-                >
-                  <feather class="mr-1" size="20" type="plus" />
-                  新增需求
-                </a-button> -->
+      <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
+         <h3 class="section-card__title">需求管理</h3>
+        <div class="flex ml-auto">
+          <div></div>
+          <a-button
+            class="ml-1 w-30 flex "
+            size="medium"
+            type="primary"
+            @click="handleAdd"
+            block
+          >
+            <feather class="mr-1 mt-1" size="20" type="plus" />
+            新增需求
+          </a-button>
+          <a-button
+            size="medium"
+            class="ml-1 mr-4 flex"
+            @click="onOpenFilter()"
+          >
+            <feather class="mr-1 mt-1" size="18" type="search" />
+            筛选</a-button
+          >
+        </div>
+        <div class="mr-4">
+          <a-dropdown :placement="bottomCenter">
+            <a-button size="medium">更多操作<a-icon type="down" /></a-button>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a>导入需求</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a>导出需求</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
 
-                </div>
-      <a-card :bordered="false">
-        <!-- <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
+        </div>
+      </div>
+      <div>
+        <a-card :bordered="false">
+          <!-- <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
             <i class="anticon anticon-info-circle ant-alert-icon"></i
             >已选择&nbsp;<a style="font-weight: 600">{{
               this.selectedRowKeys.length
@@ -24,190 +51,209 @@
             >项&nbsp;&nbsp;
             <a style="margin-left: 24px" @click="clearSele()">清空</a>
           </div> -->
-        <!-- 需求表格 -->
-        <a-table
-          ref="table"
-          size="middle"
-          :scroll="{ y: 500 }"
-          :row-key="record => record.id"
-          :pagination="false"
-          :default-expand-all-rows="false"
-          :columns="columns"
-          :data-source="data"
-          :loading="loading"
-          show-pagination="auto"
-          :row-selection="{
-            selectedRowKeys: selectedRowKeys,
-            onChange: onSelectChange
-          }"
-          :expanded-row-keys="expandRows"
-          :expand-icon="props => expandRowIcon(props)"
-          :custom-row="customRow"
-          :row-class-name="rowClass"
-        >
-          <!--:rowSelection="rowSelectionon"-->
-          <!-- 搜索弹框 -->
-          <div
-            slot="filterDropdown"
-            slot-scope="{
-              setSelectedKeys,
-              selectedKeys,
-              confirm,
-              clearFilters,
-              column
+          <!-- 需求表格 -->
+          <a-table
+            ref="table"
+            size="middle"
+            :scroll="{ y: 500 }"
+            :row-key="record => record.id"
+            :pagination="false"
+            :default-expand-all-rows="false"
+            :columns="columns"
+            :data-source="data"
+            :loading="loading"
+            show-pagination="auto"
+            :row-selection="{
+              selectedRowKeys: selectedRowKeys,
+              onChange: onSelectChange
             }"
-            style="padding: 8px"
+            :expanded-row-keys="expandRows"
+            :expand-icon="props => expandRowIcon(props)"
+            :custom-row="customRow"
+            :row-class-name="rowClass"
           >
-            <a-input
-              v-ant-ref="c => (searchInput = c)"
-              :placeholder="`查找${column.title}`"
-              :value="selectedKeys[0]"
-              style="width: 188px; margin-bottom: 8px; display: block;"
-              @change="
-                e => setSelectedKeys(e.target.value ? [e.target.value] : [])
-              "
-              @pressEnter="
-                () => handleSearch(selectedKeys, confirm, column.dataIndex)
-              "
-            />
-            <a-button
-              type="primary"
-              icon="search"
-              size="small"
-              style="width: 90px; margin-right: 8px"
-              @click="
-                () => handleSearch(selectedKeys, confirm, column.dataIndex)
-              "
+            <!--:rowSelection="rowSelectionon"-->
+            <!-- 搜索弹框 -->
+            <div
+              slot="filterDropdown"
+              slot-scope="{
+                setSelectedKeys,
+                selectedKeys,
+                confirm,
+                clearFilters,
+                column
+              }"
+              style="padding: 8px"
             >
-              查找
-            </a-button>
-            <a-button
-              size="small"
-              style="width: 90px"
-              @click="() => handleReset(clearFilters)"
-            >
-              重置
-            </a-button>
-          </div>
-          <!-- 搜索图标 -->
-          <a-icon
-            slot="filterIcon"
-            slot-scope="filtered"
-            type="search"
-            :style="{ color: filtered ? '#108ee9' : undefined }"
-          />
-          <!-- 需求条目 -->
-
-          <template slot="task" slot-scope="text, record, index, column">
-            <!-- 搜索结果展示 -->
-            <span
-              v-if="searchText && searchedColumn === column.dataIndex"
-              class="task-pointer"
-              @click="showTask = true"
-            >
-              <template
-                v-for="(fragment, i) in text
-                  .toString()
-                  .split(
-                    new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i')
-                  )"
-              >
-                <mark
-                  v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                  :key="i"
-                  class="highlight"
-                  >{{ fragment }}</mark
-                >
-                <template v-else>{{ fragment }}</template>
-              </template>
-            </span>
-
-            <template v-else>
-              <span class="task-pointer" @click="showTask = true">{{
-                text
-              }}</span>
-              <!-- <editable-cell
-            :text="text"
-            @change="onCellChange(record.key, 'name', $event)"
-          /> -->
-            </template>
-          </template>
-          <span slot="all" style="margin-right:5px"
-            ><div
-              class="expand-icon"
-              @click="expandAllRow"
-              v-show="!isExpandAll"
-            >
-              +
-            </div>
-            <div class="expand-icon" @click="closeAllRow" v-show="isExpandAll">
-              -
-            </div>
-            任务</span
-          >
-          <!-- 优先级 -->
-          <span slot="rank" slot-scope="rank">
-            <div style="text-align:center" v-if="rank !== ''">
-              <a-tag
-                :color="
-                  rank === '3' ? 'red' : rank === '2' ? 'geekblue' : 'green'
+              <a-input
+                v-ant-ref="c => (searchInput = c)"
+                :placeholder="`查找${column.title}`"
+                :value="selectedKeys[0]"
+                style="width: 188px; margin-bottom: 8px; display: block;"
+                @change="
+                  e => setSelectedKeys(e.target.value ? [e.target.value] : [])
+                "
+                @pressEnter="
+                  () => handleSearch(selectedKeys, confirm, column.dataIndex)
+                "
+              />
+              <a-button
+                type="primary"
+                icon="search"
+                size="small"
+                style="width: 90px; margin-right: 8px"
+                @click="
+                  () => handleSearch(selectedKeys, confirm, column.dataIndex)
                 "
               >
-                {{ rank === "3" ? "高" : rank === "2" ? "中" : "低" }}
-              </a-tag>
-            </div>
-          </span>
-          <!-- 负责人 -->
-          <template slot="member" slot-scope="text, record, index, column">
-            <!-- 搜索结果展示 -->
-            <span v-if="searchText && searchedColumn === column.dataIndex">
-              <template
-                v-for="(fragment, i) in text
-                  .toString()
-                  .split(
-                    new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i')
-                  )"
+                查找
+              </a-button>
+              <a-button
+                size="small"
+                style="width: 90px"
+                @click="() => handleReset(clearFilters)"
               >
-                <mark
-                  v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                  :key="i"
-                  class="highlight"
-                  >{{ fragment }}</mark
-                >
-                <template v-else>{{ fragment }}</template>
-              </template>
-            </span>
+                重置
+              </a-button>
+            </div>
+            <!-- 搜索图标 -->
+            <a-icon
+              slot="filterIcon"
+              slot-scope="filtered"
+              type="search"
+              :style="{ color: filtered ? '#108ee9' : undefined }"
+            />
+            <!-- 需求条目 -->
 
-            <template v-else>
-              <span>{{ text }}</span>
-              <!-- <editable-cell
+            <template slot="task" slot-scope="text, record, index, column">
+              <!-- 搜索结果展示 -->
+              <span
+                v-if="searchText && searchedColumn === column.dataIndex"
+                class="task-pointer"
+                @click="showTask = true"
+              >
+                <template
+                  v-for="(fragment, i) in text
+                    .toString()
+                    .split(
+                      new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i')
+                    )"
+                >
+                  <mark
+                    v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                    :key="i"
+                    class="highlight"
+                    >{{ fragment }}</mark
+                  >
+                  <template v-else>{{ fragment }}</template>
+                </template>
+              </span>
+
+              <template v-else>
+                <span class="task-pointer" @click="showTask = true">{{
+                  text
+                }}</span>
+                <!-- <editable-cell
             :text="text"
             @change="onCellChange(record.key, 'name', $event)"
           /> -->
+              </template>
             </template>
-          </template>
-          <!-- 操作 -->
-          <span style="text-align:center" slot="action" slot-scope="">
-            <template>
-              <!-- <a-divider type="vertical" /> -->
-              <a-popconfirm placement="topRight" title="删除本菜单与下级？">
-                <a-icon
-                  class="cursor-pointer"
-                  type="delete"
-                  theme="twoTone"
-                  two-tone-color="#ea2e47"
-                />
-                <!-- <a-button type="danger" icon="delete" size="small" /> -->
-              </a-popconfirm>
-            </template>
-          </span>
-        </a-table>
+            <span slot="all" style="margin-right:5px"
+              ><div
+                class="expand-icon"
+                @click="expandAllRow"
+                v-show="!isExpandAll"
+              >
+                +
+              </div>
+              <div
+                class="expand-icon"
+                @click="closeAllRow"
+                v-show="isExpandAll"
+              >
+                -
+              </div>
+              任务</span
+            >
+            <!-- 优先级 -->
+            <span slot="rank" slot-scope="rank">
+              <div style="text-align:center" v-if="rank !== ''">
+                <a-tag
+                  :color="
+                    rank === '3' ? '#ff5b5c' : rank === '2' ? '#fdac41' : '#28c175'
+                  "
+                >
+                  {{ rank === "3" ? "非常紧急" : rank === "2" ? "紧急" : "普通" }}
+                </a-tag>
+              </div>
+            </span>
 
-        <!-- <add-form ref="addForm" @ok="handleOk"/>
+            <!-- 状态 -->
+                        <span slot="state" slot-scope="state">
+              <div style="text-align:center" v-if="state !== ''">
+                <a-tag
+                  :color="
+                    state === '规划中' ? 'green' : state === '实现中' ? 'blue' : '#c6c8ce'
+                  "
+                >
+                  {{ state }}
+                </a-tag>
+              </div>
+            </span>
+            <!-- 负责人 -->
+            <template slot="member" slot-scope="text, record, index, column">
+              <!-- 搜索结果展示 -->
+              <span v-if="searchText && searchedColumn === column.dataIndex">
+                <template
+                  v-for="(fragment, i) in text
+                    .toString()
+                    .split(
+                      new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i')
+                    )"
+                >
+                  <mark
+                    v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                    :key="i"
+                    class="highlight"
+                    >{{ fragment }}</mark
+                  >
+                  <template v-else>{{ fragment }}</template>
+                </template>
+              </span>
+
+              <template v-else>
+                <span>{{ text }}</span>
+                <!-- <editable-cell
+            :text="text"
+            @change="onCellChange(record.key, 'name', $event)"
+          /> -->
+              </template>
+            </template>
+            <!-- 操作 -->
+            <span style="text-align:center" slot="action" slot-scope="">
+              <template>
+                <!-- <a-divider type="vertical" /> -->
+                <a-popconfirm placement="topRight" title="删除本菜单与下级？">
+                  <a-icon
+                    class="cursor-pointer"
+                    type="delete"
+                    theme="twoTone"
+                    two-tone-color="#ea2e47"
+                  />
+                  <!-- <a-button type="danger" icon="delete" size="small" /> -->
+                </a-popconfirm>
+              </template>
+            </span>
+          </a-table>
+
+          <!-- <add-form ref="addForm" @ok="handleOk"/>
     <edit-form ref="editForm" @ok="handleOk"/> -->
-      </a-card>
-      <task-detail :pop-visible="showTask" @close="showTask = false" />
+        </a-card>
+      </div>
 
+      <task-detail :pop-visible="showTask" @close="showTask = false" />
+      <filter-modal />
     </div>
   </div>
 </template>
@@ -216,13 +262,14 @@
 import { Empty } from 'ant-design-vue'
 // import STable from '../../components/Table'
 import TaskDetail from './Task.vue'
+import FilterModal from '../kanban/components/FilterModal.vue'
 // import { getOrgTree } from '@/api/modular/system/orgManage'
 // import { getUserPage, sysUserDelete, sysUserChangeStatus, sysUserResetPwd } from '@/api/modular/system/userManage'
 // import { sysDictTypeDropDown } from '@/api/modular/system/dictManage'
 
 export default {
   name: 'TaskList',
-  components: { TaskDetail },
+  components: { TaskDetail, FilterModal },
   data() {
     return {
       columns: [
@@ -275,6 +322,7 @@ export default {
           title: '状态',
           dataIndex: 'state',
           key: 'state',
+          scopedSlots: { customRender: 'state' },
         },
         {
           title: '处理人',
@@ -320,7 +368,7 @@ export default {
           task: '开发功能',
           rank: '3',
           stage: '迭代1',
-          state: '规划中',
+          state: '实现中',
           member: 'judy',
           start: '2021.1.1',
           end: '2021.3.1',
@@ -351,7 +399,7 @@ export default {
                 '故人西辞黄鹤楼，烟花三月下扬州,故人西辞黄鹤楼，烟花三月下扬州',
               rank: '1',
               stage: '迭代1',
-              state: '规划中',
+              state: '实现中',
               member: 'lily',
               start: '2021.1.1',
               end: '2021.3.1',
@@ -374,7 +422,7 @@ export default {
           task: '故人西辞黄鹤楼，烟花三月下扬州',
           rank: '1',
           stage: '迭代1',
-          state: '规划中',
+          state: '已完成',
           member: 'monica',
           start: '2021.1.1',
           end: '2021.3.1',
@@ -384,7 +432,7 @@ export default {
               task: '故人西辞黄鹤楼，烟花三月下扬州',
               rank: '2',
               stage: '迭代1',
-              state: '规划中',
+              state: '实现中',
               member: 'amy',
               start: '2021.1.1',
               end: '2021.3.1',
@@ -589,15 +637,14 @@ export default {
       return record.id === this.clickRowId ? 'clickRowColor' : ''
     },
     onOpenFilter() {
-      // 切换过来的时候改过了
-      // this.$store.commit('filter/SET_FILTER_MODAL_TYPE', this.currFilterType)
+      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'task')
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', true)
     },
   },
   computed: {
-    currFilterType() {
-      return this.$store.state.filter.currFilterType
-    },
+    // currFilterType() {
+    //   return this.$store.state.filter.currFilterType
+    // },
   },
 }
 </script>
@@ -683,5 +730,4 @@ button {
     color: #3f4a56;
   }
 }
-
 </style>

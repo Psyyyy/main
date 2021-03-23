@@ -1,17 +1,16 @@
 <template>
   <div>
-
     <a-modal
-    width="70%"
-               class="task-detail-modal"
-:dialog-style="{ top: '30px' }"
-            :closable="false"
-            :visible=" changeVisible"
-            title=""
-            :footer="null"
-            @cancel="detailClose"
+      width="70%"
+      class="task-detail-modal"
+      :dialog-style="{ top: '30px' }"
+      :closable="false"
+      :visible="changeVisible"
+      title=""
+      :footer="null"
+      @cancel="detailClose"
     >
-     <task-detail @close="detailClose"></task-detail>
+      <task-detail @close="detailClose"></task-detail>
     </a-modal>
   </div>
 </template>
@@ -72,28 +71,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.task-detail-modal {
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*flex: 1;*/
+  /*min-height: 1px;*/
+  /*min-width: 1px;*/
 
-  .task-detail-modal {
-        /*display: flex;*/
-        /*justify-content: center;*/
-        /*flex: 1;*/
-        /*min-height: 1px;*/
-        /*min-width: 1px;*/
+  &.ant-modal {
+    padding-bottom: 0;
+  }
 
-        &.ant-modal {
-            padding-bottom: 0;
+  .ant-modal-content {
+    /*overflow: hidden;*/
 
-        }
-
-        .ant-modal-content {
-
-            /*overflow: hidden;*/
-
-            .ant-modal-body {
-                padding-top: 0 !important;
-
-            }
-
-        }
+    .ant-modal-body {
+      padding-top: 0 !important;
     }
+  }
+}
 </style>

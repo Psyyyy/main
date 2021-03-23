@@ -2,7 +2,6 @@
   <div class="task-detail" id="task-detail">
     <a-spin class="task-detail-spin" :spinning="loading">
       <div class="task-header" :class="{ disabled: task.deleted }">
-        <!-- 任务详情标题行 -->
         <span class="head-title" v-if="!task.deleted">
           <!-- 存在父任务，索引 -->
           <span v-if="task.parentTask">
@@ -27,15 +26,15 @@
                     </span> -->
         <span class="header-action text-right">
           <!-- <template v-if="!task.deleted"> -->
-               <template>
-                   <!-- 点击无效，待查 -->
+          <template>
+            <!-- 点击无效，待查 -->
             <a-dropdown
               :trigger="['click']"
               placement="bottomCenter"
-              @click="visibleTaskMenu=true"
+              @click="visibleTaskMenu = true"
               v-model="visibleTaskMenu"
             >
-            <!-- 对任务的操作 后面把这里换成【删除任务】和【移动任务】可能做做【订阅任务】就行-->
+              <!-- 对任务的操作 后面把这里换成【删除任务】和【移动任务】可能做做【订阅任务】就行-->
               <a-tooltip :mouse-enter-delay="0.5">
                 <template slot="title">
                   <span>打开菜单</span>
@@ -43,7 +42,7 @@
                 <a class="action-item muted"><a-icon type="ellipsis"/></a>
               </a-tooltip>
               <a-menu @click="doTask" class="field-right-menu" slot="overlay">
-                  <!-- 方法未实现，待做 -->
+                <!-- 方法未实现，待做 -->
                 <a-menu-item key="move">
                   <a-icon type="snippets" />
                   <span>移动任务 *</span>
@@ -74,12 +73,12 @@
       <div class="task-wrap">
         <div class="task-content">
           <div class="content-left">
-            <vue-scroll :ops="scrollOps" >
+            <vue-scroll :ops="scrollOps">
               <div class="task-title" :class="{ disabled: task.deleted }">
                 <a-input
                   ref="inputTitle"
+                  @blur="doName"
                   auto-focus
-
                   v-model="task.name"
                   size="large"
                   v-show="showEditName"
@@ -88,11 +87,7 @@
                   <template slot="title">
                     <span>点击即可编辑</span>
                   </template>
-                  <div
-                    class="title-text"
-
-                    v-show="!showEditName"
-                  >
+                  <div class="title-text" v-show="!showEditName">
                     {{ task.name }}
                   </div>
                 </a-tooltip>
@@ -127,7 +122,7 @@
                               <a-tag v-if="task.done" color="green"
                                 >已完成</a-tag
                               >
-                              <span v-show="!task.done">未完成</span>
+                              <span v-show="!task.done" color="grey">未完成</span>
                             </span>
                           </a-tooltip>
                           <!-- <a-menu class="field-right-menu" slot="overlay"
@@ -180,9 +175,8 @@
                             class="field-right-menu"
                             slot="overlay"
                             :selectable="false"
-
                           >
-                            <!-- <a-menu-item
+                            <a-menu-item
                               :key="status.id"
                               v-for="status in taskStatusList"
                             >
@@ -194,7 +188,7 @@
                                   v-show="task.status == status.id"
                                 ></a-icon>
                               </div>
-                            </a-menu-item> -->
+                            </a-menu-item>
                           </a-menu>
                         </a-dropdown>
                       </div>
@@ -450,19 +444,23 @@
                             :upload-img-headers="editorConfig.uploadImgHeaders"
                             :menus="editorConfig.menus"
                           ></editor> -->
-                          <div class="action-btn pull-right">
-                            <a
-                              type="text"
-                              class="cancel-text muted"
+                          <editor
+                            ref="vueWangeditor"
+                            id="editor"
+                            :menus="editorConfig.menus"
+                          ></editor>
+                          <div class="action-btn float-right mt-2 ">
+                            <a-button
+                              class="mr-2"
                               @click="showTaskDescriptionEdit = false"
                             >
                               取消
-                            </a>
+                            </a-button>
+
                             <a-button
                               type="primary"
                               html-type="submit"
                               class="middle-btn"
-
                               >保存
                             </a-button>
                           </div>
@@ -482,7 +480,7 @@
                           :disabled="!!task.deleted"
                         >
                           <span>
-                            <a-tag>{{ task.priText }}</a-tag>
+                            <a-tag  :color="priColor(task.pri)">{{ task.priText }}</a-tag>
                           </span>
                           <a-menu
                             class="field-right-menu"
@@ -492,7 +490,7 @@
                           >
                             <a-menu-item :key="0">
                               <div class="menu-item-content">
-                                <a-tag>普通</a-tag>
+                                <a-tag :color="priColor(0)">普通</a-tag>
                                 <a-icon
                                   type="check"
                                   class="check muted"
@@ -502,7 +500,7 @@
                             </a-menu-item>
                             <a-menu-item :key="1">
                               <div class="menu-item-content">
-                                <a-tag>紧急</a-tag>
+                                <a-tag :color="priColor(1)">紧急</a-tag>
                                 <a-icon
                                   type="check"
                                   class="check muted"
@@ -512,7 +510,7 @@
                             </a-menu-item>
                             <a-menu-item :key="2">
                               <div class="menu-item-content">
-                                <a-tag>非常紧急</a-tag>
+                                <a-tag :color="priColor(2)">非常紧急</a-tag>
                                 <a-icon
                                   type="check"
                                   class="check muted"
@@ -525,65 +523,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="component-mount task-tag">
-                    <div class="field">
-                      <div class="field-left">
-                        <a-icon type="tag" />
-                        <span class="field-name">标签</span>
-                      </div>
-                      <div class="field-right">
-                        <div class="inline-block">
-                          <a-tag
-                            :color="tag.tag.color"
-                            v-for="(tag, index) in task.tags"
-                            :key="index"
-                          >
-                            {{ tag.tag.name }}
-                            <a-icon type="close" />
-                          </a-tag>
-                        </div>
-                        <a-dropdown
-                          :trigger="['click']"
-                          v-model="visibleTaskTagMenu"
-                          :disabled="!!task.deleted"
-                          placement="bottomCenter"
-                        >
-                          <a-tooltip
-                            :mouse-enter-delay="0.5"
-                            v-if="!task.deleted"
-                          >
-                            <template slot="title">
-                              <span>添加标签</span>
-                            </template>
-                            <div class="inline-block">
-                              <a-icon
-                                class="member-item invite"
-                                type="plus-circle"
-                                theme="twoTone"
-                              />
-                            </div>
-                          </a-tooltip>
-                          <div class="inline-block">
-                            <a-icon
-                              class="member-item invite"
-                              type="plus-circle"
-                              theme="twoTone"
-                            />
-                          </div>
-                          <div slot="overlay">
-                            <task-tag-menu
-                              v-if="visibleTaskTagMenu"
-                              :project-code="projectCodeCurrent"
-                              :task-code="code"
-                              @change="taskTagChange"
-                              @update="taskTagUpdate"
-                              @delete="taskTagDelete"
-                            ></task-tag-menu>
-                          </div>
-                        </a-dropdown>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="component-mount task-tag"></div>
                   <div class="component-mount">
                     <div class="field">
                       <div class="field-left">
@@ -607,7 +547,7 @@
                           <div class="task-list" v-show="childTaskList.length">
                             <div v-for="done in [0, 1]" :key="done">
                               <div
-                                v-for="(childTask) in childTaskList"
+                                v-for="childTask in childTaskList"
                                 :key="childTask.code"
                               >
                                 <div
@@ -627,9 +567,7 @@
                                         >子任务尚未全部完成，无法完成父任务</span
                                       >
                                     </template>
-                                    <div
-                                      class="check-box-wrapper task-item"
-                                    >
+                                    <div class="check-box-wrapper task-item">
                                       <a-icon
                                         class="check-box"
                                         :class="{
@@ -791,24 +729,20 @@
                                   </div>
                                 </a-dropdown>
                                 <div class="task-item task-input">
-                                  <a-input
-                                    v-model="childTaskName"
-
-                                  />
+                                  <a-input v-model="childTaskName" />
                                 </div>
                               </div>
                               <div class="action-btn text-right">
-                                <a
-                                  type="text"
-                                  class="cancel-text muted"
+                                <a-button
+                                  class="mr-2"
                                   @click="showChildTask = false"
-                                  >取消</a
                                 >
+                                  取消
+                                </a-button>
                                 <a-button
                                   type="primary"
                                   html-type="submit"
                                   class="middle-btn"
-
                                   >保存
                                 </a-button>
                               </div>
@@ -833,94 +767,6 @@
                             >
                               <a-icon type="plus" style="margin-right: 6px;" />
                               添加子任务
-                            </a>
-                          </a-tooltip>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="component-mount">
-                    <div class="field">
-                      <div class="field-left" style="width: 100%">
-                        <a-icon type="clock-circle" />
-                        <span class="field-name"
-                          >工时
-                          <span v-if="workTimeList.length">
-                            · 实际工时 {{ workTimeTotal }} 小时，工时记录
-                            {{ workTimeList.length }} 条，预估工时
-                            {{ task.work_time }} 小时
-                            <a class="muted m-l-sm">
-                              <a-icon class="task-item" type="edit" />
-                            </a>
-                          </span>
-                          <span v-else>
-                            <span v-if="task.work_time">
-                              · 预估工时 {{ task.work_time }} 小时</span
-                            >
-                            <a-tooltip>
-                              <template slot="title">
-                                <span>设置预估工时</span>
-                              </template>
-                              <a class="muted m-l-sm" >
-                                <a-icon class="task-item" type="edit" />
-                              </a>
-                            </a-tooltip>
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="component-mount">
-                    <div class="field">
-                      <div class="block-field width-block">
-                        <div class="task-child">
-                          <div class="task-list" v-show="workTimeList.length">
-                            <div
-                              v-for="workTime in workTimeList"
-                              :key="workTime.code"
-                            >
-                              <div class="list-item task m-l-xs">
-                                <div class="task-item task-title hover-none">
-                                  <div class="title-text">
-                                    <a-tooltip :mouse-enter-delay="0.5">
-                                      <template slot="title">
-                                        <span v-if="workTime.member">{{
-                                          workTime.member.name
-                                        }}</span>
-                                        <span v-else>待认领</span>
-                                      </template>
-                                      <a-avatar
-                                        class="task-item"
-                                        size="small"
-                                        icon="user"
-                                        :src="workTime.member.avatar"
-                                      ></a-avatar>
-                                    </a-tooltip>
-                                    {{ workTime.member.name }}
-                                    {{ workTime.begin_time }}开始 工时为
-                                    {{ workTime.num }} 小时
-                                    <div
-                                      class="muted"
-                                      v-show="workTime.content"
-                                      style="padding-left: 40px;margin-top: 6px;"
-                                    >
-                                      {{ workTime.content }}
-                                    </div>
-                                  </div>
-                                </div>
-                                <a class="muted">
-                                  <a-icon class="task-item" type="edit" />
-                                </a>
-                                <a class="muted">
-                                  <a-icon class="task-item" type="delete" />
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                          <a-tooltip placement="top">
-                            <a class="add-handler">
-                              <a-icon type="plus" style="margin-right: 6px;" />
-                              添加工时
                             </a>
                           </a-tooltip>
                         </div>
@@ -1108,11 +954,7 @@
               </div>
               <vue-scroll>
                 <div class="log-list muted">
-                  <a
-                    class="show-more muted"
-                    v-show="checkShowMoreLog"
-
-                  >
+                  <a class="show-more muted" v-show="checkShowMoreLog">
                     <a-icon type="ellipsis" />
                     显示较早的 {{ taskLogTotal - taskLogList.length }} 条动态
                   </a>
@@ -1184,7 +1026,6 @@
                 placement="top"
                 :visible="showMentions"
                 arrow-point-at-center
-
               >
                 <template slot="content">
                   <div class="mentions-content" style="width: 200px;">
@@ -1192,7 +1033,6 @@
                       class="mentions-wrapper"
                       v-for="member in taskMemberList"
                       :key="member.id"
-
                     >
                       <a-avatar :src="member.avatar" icon="user" :size="28" />
                       <span class="muted name m-l-xs">{{ member.name }}</span>
@@ -1210,9 +1050,7 @@
                   style="margin-right: 24px;"
                 />
               </a-popover>
-              <a-button class="middle-btn" type="primary"
-                >评论</a-button
-              >
+              <a-button class="middle-btn" type="primary">评论</a-button>
             </div>
           </div>
         </div>
@@ -1223,146 +1061,20 @@
       :project-code="projectCodeCurrent"
       v-if="showInviteMember"
     ></invite-project-member>
-    <!-- <a-modal
-      class="work-time-modal"
-      v-model="workTimeDo.modalStatus"
-      :title="workTimeDo.modalTitle"
-      :body-style="{ paddingBottom: '1px' }"
-      @ok="workTimeHandleSubmit"
-      :confirm-loading="workTimeDo.confirmLoading"
-    > -->
-    <a-modal
-      class="work-time-modal"
-      v-model="workTimeDo.modalStatus"
-      :title="workTimeDo.modalTitle"
-      :body-style="{ paddingBottom: '1px' }"
-      :confirm-loading="workTimeDo.confirmLoading"
-    >
-      <a-form
-        layout="vertical"
-        @submit.prevent="workTimeHandleSubmit"
-        :form="workTimeDo.form"
-      >
-        <div>
-          <div style="font-size: 15px;">登记任务</div>
-          <div>{{ task.name }}</div>
-          <a-divider class="m-t-xs m-b-md"></a-divider>
-        </div>
-        <div class="work-time-stats">
-          <div class="work-time-item">
-            <div class="muted title">预估工时</div>
-            <span class="work-time-num">{{ task.work_time }}</span>
-            <span>小时</span>
-          </div>
-          <div class="work-time-item">
-            <div class="muted title">剩余工时</div>
-            <span class="work-time-num">
-              <template v-if="task.work_time - workTimeTotal < 0">0</template>
-              <template v-else>{{ task.work_time - workTimeTotal }}</template>
-            </span>
-            <span>小时</span>
-          </div>
-        </div>
-        <a-row :gutter="24">
-          <a-col :span="12">
-            <a-form-item label="开始时间">
-              <a-date-picker
-                show-time
-                format="YYYY年MM月DD日 HH:mm"
-                allow-clear
-                placeholder="请选择日期"
-                v-decorator="[
-                  'begin_time',
-                  {
-                    rules: [{ required: true, message: '请选择日期' }],
-                    validateTrigger: 'change'
-                  }
-                ]"
-              >
-              </a-date-picker>
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="消耗时间">
-              <a-input
-                type="text"
-                placeholder="请输入数字"
-                addon-after="小时"
-                v-decorator="[
-                  'num',
-                  {
-                    rules: [{ required: true, message: '请输入消耗时间' }],
-                    validateTrigger: 'change'
-                  }
-                ]"
-              >
-              </a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :span="24">
-            <a-form-item label="工作内容">
-              <a-textarea
-                :rows="4"
-                type="text"
-                placeholder="在这期间做了什么"
-                v-decorator="['content']"
-              >
-              </a-textarea>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
-    </a-modal>
-    <!-- <a-modal
-      v-model="plainWorkTime.modalStatus"
-      :title="plainWorkTime.modalTitle"
-      :body-style="{ paddingBottom: '1px' }"
-      @ok="workTimePlainHandleSubmit"
-      :confirm-loading="plainWorkTime.confirmLoading"
-    > -->
-     <a-modal
-      v-model="plainWorkTime.modalStatus"
-      :title="plainWorkTime.modalTitle"
-      :body-style="{ paddingBottom: '1px' }"
-
-      :confirm-loading="plainWorkTime.confirmLoading"
-    >
-      <a-form
-        layout="vertical"
-        @submit.prevent="workTimePlainHandleSubmit"
-        :form="plainWorkTime.form"
-      >
-        <a-form-item label="">
-          <a-input
-            type="text"
-            placeholder="请输入数字"
-            addon-after="小时"
-            v-decorator="[
-              'work_time',
-              {
-                rules: [{ required: true, message: '请输入预估工时' }],
-                validateTrigger: 'change'
-              }
-            ]"
-          >
-          </a-input>
-        </a-form-item>
-      </a-form>
-    </a-modal>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-// import editor from '../../components/editor.vue'
+import $ from 'jquery'
+import editor from '../../components/editor.vue'
 
 export default {
-
   name: 'task-detail',
-  //   components: {
-  //     editor,
+  components: {
+    editor,
+  },
 
-  //   },
   props: {
     taskCode: {
       type: [String],
@@ -1418,7 +1130,8 @@ export default {
         executor: {
           name: 'vilson',
           code: '6v7be19pwman2fird04gqu53',
-          avatar: 'https://beta.vilson.xyz/static/upload/member/avatar/20210310/098bcfbd496715293bc4c5193e7694f6.jpg',
+          avatar:
+            'https://beta.vilson.xyz/static/upload/member/avatar/20210310/098bcfbd496715293bc4c5193e7694f6.jpg',
         },
         parentTask: {
           code: 'vi2u1yftpamhq47zks98r0j3',
@@ -1426,7 +1139,8 @@ export default {
           name: '11111',
           pri: 1,
           execute_status: 'wait',
-          description: '<p><img src="https://beta.vilson.xyz/static/upload/image/default/20200914/cc96e4f8819085c3b7689784ebc079cb.png" style="max-width:100%;"><br></p>',
+          description:
+            '<p><img src="https://beta.vilson.xyz/static/upload/image/default/20200914/cc96e4f8819085c3b7689784ebc079cb.png" style="max-width:100%;"><br></p>',
           create_by: '6v7be19pwman2fird04gqu53',
           done_by: null,
           done_time: null,
@@ -1486,10 +1200,7 @@ export default {
               },
             },
           ],
-          childCount: [
-            2,
-            0,
-          ],
+          childCount: [2, 0],
           hasUnDone: 1,
           parentDone: 1,
           hasComment: 0,
@@ -1510,16 +1221,21 @@ export default {
         liked: 0,
         stared: 0,
         tags: [],
-        childCount: [
-          0,
-          0,
-        ],
+        childCount: [0, 0],
         hasUnDone: 0,
         parentDone: 0,
         hasComment: 0,
         hasSource: 0,
         canRead: 1,
       },
+      // 颜色是看板的
+      taskStatusList: [
+        { id: 0, name: '未开始', color: 'rgba(0, 0, 0, 0.65)' },
+        { id: 1, name: '已完成', color: '#1890ff' },
+        { id: 2, name: '进行中', color: '#52c41a' },
+        { id: 3, name: '挂起', color: '#f5222d' },
+        { id: 4, name: '测试中', color: '#faad14' },
+      ],
       // taskStatusList: COMMON.TASK_STATUS,
       taskLogList: [],
       taskLogTotal: 0,
@@ -1591,20 +1307,6 @@ export default {
       comment: '',
       commenting: false,
 
-      /* 工时 */
-      workTimeDo: {
-        form: this.$form.createForm(this),
-        info: null,
-        modalTitle: '登记工时记录',
-        modalStatus: false,
-        confirmLoading: false,
-      },
-      plainWorkTime: {
-        form: this.$form.createForm(this),
-        modalTitle: '设置预估工时',
-        modalStatus: false,
-        confirmLoading: false,
-      },
       // 显示评论提及
       showMentions: false,
       mentionsList: [],
@@ -1703,18 +1405,22 @@ export default {
       switch (actionKey) {
         case 'delete':
           this.$confirm({
-            title: <p>此操作将删除<span class="warning">「xxx」</span>任务</p>,
+            title: (
+              <p>
+                此操作将删除<span class="warning">「xxx」</span>任务
+              </p>
+            ),
             content: '您确定要删除该任务吗？',
             onOk: () => {
               console.log('已删除')
               // MOCK: 模拟删除一个看板
-            //   this.kbList.some((el, i, self) => {
-            //     if (el.title === boardTitle) {
-            //       self.splice(i, 1)
-            //       return true
-            //     }
-            //     return false
-            //   })
+              //   this.kbList.some((el, i, self) => {
+              //     if (el.title === boardTitle) {
+              //       self.splice(i, 1)
+              //       return true
+              //     }
+              //     return false
+              //   })
             },
           })
           break
@@ -1739,11 +1445,87 @@ export default {
         return false
       }
       this.showTaskDescriptionEdit = true
-      this.initContent(this.task.description)
+      // this.initContent(this.task.description)
       return true
     },
+    // 更新数据库 修改优先级
     doPri(item) {
-      this.editTask({ pri: item.key })
+      // this.editTask({ pri: item.key })
+    },
+
+    // 任务标题
+    editTitle() {
+      this.showEditName = true
+      this.$nextTick(() => {
+        this.$refs.inputTitle.focus()
+      })
+    },
+    doName() {
+      this.showEditName = false
+      if (!this.task.name.trim() || this.task.name === this.taskName) {
+        // trim清楚空格
+        this.task.name = this.taskName
+        return false
+      }
+      this.editTask({ name: this.task.name })
+      return true
+    },
+    // editTask(data) {
+    //   data.taskCode = this.code
+    //   // edit是接口的方法，调用更新数据库，异步
+    //   edit(data).then((res) => {
+    //     const result = checkResponse(res)
+    //     if (!result) {
+    //       return false
+    //     }
+    //     this.getTask()
+    //   })
+    // },
+
+    /* 任务备注 */
+    initContent(value) {
+      if (value) {
+        this.$refs.vueWangeditor.setHtml(value) // 富文本编辑器
+      } else {
+        this.$refs.vueWangeditor.setHtml('')
+      }
+      this.$nextTick(() => {
+        this.checkShowMoreDesc(false, true)
+      })
+    },
+    checkShowMoreDesc(show = false, init = false) {
+      const dom = $('.description-txt')
+      if (!init) {
+        if (show) {
+          this.showMoreDesc = true
+          dom.css('max-height', () => '100%')
+        } else {
+          this.showMoreDesc = false
+          dom.css('max-height', () => '300px')
+        }
+      }
+      if (init) {
+        const height = dom.height()
+        if (height >= 300) {
+          this.hasMoreDesc = true
+          return true
+        }
+        this.hasMoreDesc = false
+        return false
+      }
+      return false
+    },
+
+    /* 任务紧急程度 */
+    priColor(pri) {
+      switch (pri) {
+        case 1:
+          return '#ff9900'
+        case 2:
+          return '#ed3f14'
+        default:
+          return 'green'
+      }
     },
   },
 }
@@ -1849,7 +1631,7 @@ export default {
     .task-content {
       display: flex;
       justify-content: flex-start;
-      height:70vh;//弹框高度（自适应）
+      height: 75vh; //弹框高度（自适应）
       .content-left {
         border-right: 1px solid #e5e5e5;
         min-width: 560px;
@@ -2018,7 +1800,7 @@ export default {
                         &.check-box {
                           .anticon-check {
                             visibility: visible;
-                            top: 14px;
+                            top: 12px;
                             left: 18px;
                           }
                         }
@@ -2063,10 +1845,12 @@ export default {
               }
 
               .field-name {
+                font-weight: bold;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 padding-left: 8px;
+                margin-top: 5px;
               }
 
               .task-description {
@@ -2157,6 +1941,7 @@ export default {
 
                 .anticon {
                   font-size: 14px;
+                  display: block;
                 }
 
                 .log-content {
@@ -2223,5 +2008,8 @@ export default {
       }
     }
   }
+}
+.w-e-text-container {
+  height: 150px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
 }
 </style>

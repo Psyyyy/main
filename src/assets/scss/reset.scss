@@ -46,7 +46,12 @@
     @apply flex items-center justify-center;
   }
 }
-
+.ant-table {
+  font-size: 17px;
+}
+.ant-card-body {
+  padding: 20px;
+}
 .ant-table-body {
   background: white;
 }
@@ -65,4 +70,7 @@
 }
 .ant-form {
   padding-left: 60px;
+}
+.anticon svg {
+  display: block;
 }

@@ -351,6 +351,20 @@ export const asyncRoutes = [
       },
     ],
   },
+  // 我的任务
+  {
+    path: '',
+    hidden: true,
+    component: MainLayout,
+    single: true,
+    children: [
+      {
+        path: '/todo',
+        name: 'Todo',
+        component: () => import('@/views/todo/Todo.vue'),
+      },
+    ],
+  },
 
   { path: '*', redirect: '/not-found', hidden: true },
 ]

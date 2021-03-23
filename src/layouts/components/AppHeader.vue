@@ -107,11 +107,6 @@ export default {
     // ],
     menuItems: [
       {
-        label: '官方文档',
-        name: 'https://docs.leoku.top',
-        icon: 'book-open',
-      },
-      {
         label: '个人中心',
         name: 'Profile',
         icon: 'user',
