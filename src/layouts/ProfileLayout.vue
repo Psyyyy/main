@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="section-card">
+    <div class="-mt-3 section-card">
       <div class="flex">
         <div
           v-for="({ name, text, icon }) in [
           { text: '账号设置', name: 'Account', icon: 'settings' },
           { text: '个人信息', name: 'Information', icon: 'user' },
-          { text: '安全设置', name: 'Security', icon: 'terminal' },
+          { text: '修改密码', name: 'Security', icon: 'lock' },
         ]"
           :key="name"
           class="tab-nav mr-4"

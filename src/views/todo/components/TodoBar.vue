@@ -1,20 +1,5 @@
 <template>
   <div>
-    <div class="px-6 py-6">
-      <a-button
-        class="w-full flex justify-center items-center"
-        size="large"
-        type="primary"
-        @click="onOpenDrawer"
-      >
-        <feather
-          class="mr-1"
-          size="20"
-          type="plus"
-        />
-        创建任务
-      </a-button>
-    </div>
 
     <perfect-scrollbar
       style="height: calc(100% - 88px);"

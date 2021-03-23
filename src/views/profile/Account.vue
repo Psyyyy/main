@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <div class="flex items-center">
       <a-avatar
         :size="80"
@@ -41,7 +41,7 @@
       </a-form>
     </div>
 
-    <div>
+    <!-- <div>
       <table class="permission-table">
         <thead>
           <tr>
@@ -100,7 +100,7 @@
           </tr>
         </tbody>
       </table>
-    </div>
+    </div> -->
 
     <div class="mt-6 flex justify-end">
       <a-button

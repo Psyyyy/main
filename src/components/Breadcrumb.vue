@@ -1,5 +1,5 @@
 <template>
-  <a-breadcrumb v-if="breadcrumbList.length > 0">
+  <a-breadcrumb class="-mt-8" v-if="breadcrumbList.length > 0">
     <a-breadcrumb-item
       v-for="({ title }, i) in breadcrumbList"
       :key="i"
