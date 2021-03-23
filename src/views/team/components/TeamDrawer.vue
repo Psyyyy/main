@@ -51,7 +51,7 @@
       <a-tabs default-active-key="1">
         <a-tab-pane key="1" tab="详细资料">
           <div class="ml-3">
-            <a-descriptions title="详细信息">
+            <a-descriptions :column="4" title="详细信息">
               <a-descriptions-item span="2" label="姓名">
                 {{ currTeam.title }}
               </a-descriptions-item>

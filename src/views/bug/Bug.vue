@@ -3,12 +3,11 @@
   <div class="todo-app">
     <div>
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
-            <h3 class="section-card__title">缺陷管理</h3>
+        <h3 class="section-card__title">缺陷管理</h3>
         <div class="flex ml-auto">
           <div></div>
           <a-button
             class="ml-1 w-30 flex "
-            size="medium"
             type="primary"
             @click="handleAdd"
             block
@@ -16,18 +15,14 @@
             <feather class="mr-1 mt-1" size="20" type="plus" />
             新增缺陷
           </a-button>
-          <a-button
-            size="medium"
-            class="ml-1 mr-4 flex"
-            @click="onOpenFilter()"
-          >
+          <a-button class="ml-1 mr-4 flex" @click="onOpenFilter()">
             <feather class="mr-1 mt-1" size="18" type="search" />
             筛选</a-button
           >
         </div>
         <div class="mr-4">
-          <a-dropdown :placement="bottomCenter">
-            <a-button size="medium">更多操作<a-icon type="down" /></a-button>
+          <a-dropdown>
+            <a-button>更多操作<a-icon type="down"/></a-button>
             <a-menu slot="overlay">
               <a-menu-item>
                 <a>导入缺陷</a>
@@ -37,7 +32,6 @@
               </a-menu-item>
             </a-menu>
           </a-dropdown>
-
         </div>
       </div>
       <div>
@@ -180,20 +174,30 @@
               <div style="text-align:center" v-if="rank !== ''">
                 <a-tag
                   :color="
-                    rank === '3' ? '#ff5b5c' : rank === '2' ? '#fdac41' : '#28c175'
+                    rank === '3'
+                      ? '#ff5b5c'
+                      : rank === '2'
+                      ? '#fdac41'
+                      : '#28c175'
                   "
                 >
-                  {{ rank === "3" ? "非常紧急" : rank === "2" ? "紧急" : "普通" }}
+                  {{
+                    rank === "3" ? "非常紧急" : rank === "2" ? "紧急" : "普通"
+                  }}
                 </a-tag>
               </div>
             </span>
 
             <!-- 状态 -->
-                        <span slot="state" slot-scope="state">
+            <span slot="state" slot-scope="state">
               <div style="text-align:center" v-if="state !== ''">
                 <a-tag
                   :color="
-                    state === '规划中' ? 'green' : state === '实现中' ? 'blue' : '#c6c8ce'
+                    state === '规划中'
+                      ? 'green'
+                      : state === '实现中'
+                      ? 'blue'
+                      : '#c6c8ce'
                   "
                 >
                   {{ state }}
@@ -229,7 +233,7 @@
           /> -->
               </template>
             </template>
-                       <template slot="tester" slot-scope="text, record, index, column">
+            <template slot="tester" slot-scope="text, record, index, column">
               <!-- 搜索结果展示 -->
               <span v-if="searchText && searchedColumn === column.dataIndex">
                 <template
