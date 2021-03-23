@@ -365,6 +365,20 @@ export const asyncRoutes = [
       },
     ],
   },
+  // 我的消息
+  {
+    path: '',
+    hidden: true,
+    component: MainLayout,
+    single: true,
+    children: [
+      {
+        path: '/notice',
+        name: 'Notice',
+        component: () => import('@/views/notice/Notice.vue'),
+      },
+    ],
+  },
 
   { path: '*', redirect: '/not-found', hidden: true },
 ]

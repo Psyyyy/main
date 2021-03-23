@@ -1,25 +1,15 @@
 <template>
-  <a-popover
-    v-model="visible"
-    trigger="click"
-    placement="bottom"
-  >
-    <template #content>
-      <div class="w-64">
-        <div class="flex justify-between items-center">
-          <div class="text-gray-900">5 条新通知</div>
-          <div
-            class="text-gray-500 hover:primary transition cursor-pointer"
-            @click="setAllNoticeRead()"
-          >全部已读</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <a-spin :spinning="spinning">
-          <ul class="notice-list -mx-4 px-2">
+  <div>
+    <div class="section-card mb-8 ">
+      <h3 class="section-card__title flex items-center text-xl">
+       全部通知
+       <a-button class="ml-4 mt-1" size="small">
+           全部标为已读 <a-icon type="check"></a-icon>
+       </a-button>
+      </h3>
+<div class="mt-2"> <ul class="notice-list ">
             <li
-              class="p-2 flex items-center text-sm rounded cursor-pointer transition"
+              class="notice-item p-2 flex items-center text-sm rounded"
               v-for="({ id, title, time, type }) in noticeList"
               :key="id"
               :class="`hover-${noticeTypes[type].color}`"
@@ -40,30 +30,17 @@
                 <div class="text-gray-500">{{ time }}</div>
               </div>
             </li>
-          </ul>
-        </a-spin>
+          </ul></div>
+    </div>
 
-        <div class="divider"></div>
-
-        <div @click="checkNotice" class="primary text-center cursor-pointer opacity-75 hover:opacity-100 transition">查看全部通知</div>
-      </div>
-    </template>
-    <a-badge
-      dot
-      class="mt-1"
-    >
-      <feather type="bell" />
-    </a-badge>
-  </a-popover>
+  </div>
 </template>
 
 <script>
-export default {
-  name: 'HeaderNotice',
 
+export default {
+  name: 'Notice',
   data: () => ({
-    visible: false,
-    spinning: false,
     noticeList: [
       {
         id: '1', title: '订单已创建', time: '2 分钟前', type: 'primary',
@@ -109,40 +86,16 @@ export default {
     },
   }),
 
-  methods: {
-    setAllNoticeRead() {
-      this.spinning = true
-      setTimeout(() => {
-        this.spinning = false
-      }, 1000)
-    },
-    checkNotice() {
-      this.visible = false
-      this.$router.push({ name: 'Notice' })
-      console.log(this.$router)
-    },
-  },
 }
 </script>
 
 <style lang="scss" scoped>
-@each $color in primary, success, warning, danger, info {
-  .hover-#{$color}:hover {
-    background: rgba(var(--#{$color}), 0.06);
-    .title {
-      color: rgba(var(--#{$color}), 1);
+.notice-item{
+        transition: $transition;
+    &:hover {
+        cursor:pointer;
+      box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+      transform: translateY(-3px);
     }
-  }
-}
-
-.notice-list {
-  max-height: 290px;
-  overflow-y: auto;
-}
-
-.divider {
-  @apply my-2 bg-gray-300;
-  width: 100%;
-  height: 1px;
 }
 </style>

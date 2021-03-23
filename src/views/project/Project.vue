@@ -528,11 +528,6 @@ export default {
   data: () => ({
     menuItems: [
       {
-        label: '官方文档',
-        name: 'https://docs.leoku.top',
-        icon: 'book-open',
-      },
-      {
         label: '个人中心',
         name: 'Profile',
         icon: 'user',
@@ -789,6 +784,7 @@ export default {
       } else if (isValidUrl(name)) {
         window.open(name, '_blank', 'noopener')
       } else {
+        console.log(name)
         this.$router.push({ name })
       }
     },

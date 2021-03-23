@@ -9,7 +9,6 @@
           <div></div>
           <a-button
             class="ml-1 w-30 flex "
-            size="medium"
             type="primary"
             @click="handleAdd"
             block
@@ -18,7 +17,6 @@
             新增需求
           </a-button>
           <a-button
-            size="medium"
             class="ml-1 mr-4 flex"
             @click="onOpenFilter()"
           >
@@ -27,8 +25,8 @@
           >
         </div>
         <div class="mr-4">
-          <a-dropdown :placement="bottomCenter">
-            <a-button size="medium">更多操作<a-icon type="down" /></a-button>
+          <a-dropdown>
+            <a-button >更多操作<a-icon type="down" /></a-button>
             <a-menu slot="overlay">
               <a-menu-item>
                 <a>导入需求</a>

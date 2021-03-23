@@ -14,14 +14,15 @@
             <!-- 迭代阶段切换 -->
             <div class="wl">
               <a-dropdown :trigger="['click']" class="w-32 mr-6">
-                <div class=" text-2xl ml-2 flex items-center cursor-pointer ">
+                <div class=" text-2xl ml-1 flex items-center cursor-pointer ">
                   <!-- <a-icon
                     style="color:#98adf9"
                     theme="filled"
                     type="appstore"
                     class="mr-2"
                   /> -->
-                  {{ currStage }}
+                   <h3 class="section-card__title">  {{ currStage }}</h3>
+
                   <feather
                     class="ml-1 text-gray-500"
                     size="18"
@@ -36,6 +37,7 @@
                       :key="id"
                       @click="changeStageTo(id, name)"
                     >
+
                       {{ name }}
                     </a-menu-item>
                   </a-menu>
