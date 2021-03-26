@@ -3,10 +3,12 @@
  */
 
 import request from '@/plugins/axios'
+// import request from './request'
 
 export function login(data) {
+  console.log('login:', data)
   return request({
-    url: '/user/login',
+    url: '/login',
     method: 'post',
     data,
   })
@@ -14,7 +16,7 @@ export function login(data) {
 
 export function logout(data) {
   return request({
-    url: '/user/logout',
+    url: '/logout',
     method: 'post',
     data,
   })

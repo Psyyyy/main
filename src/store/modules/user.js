@@ -4,7 +4,7 @@ import { resetRouter } from '@/router/router'
 
 const state = {
   permissions: null, // NOTE: 此处 permission 不能初始化为空数组
-  info: {},
+  info: {}, // 存储用户信息
 }
 
 const mutations = {
@@ -17,10 +17,12 @@ const mutations = {
 }
 
 const actions = {
-  async login(_, { account, password }) {
+  async login(_, { username, password }) {
     try {
-      const { data: { token } } = await login({ account, password })
-      setToken(token)
+      const { data: result } = await login({ username, password })
+      // console.log('store', result.token)
+      setToken(result.token)
+
       return true
     } catch {
       return false
@@ -32,7 +34,7 @@ const actions = {
       commit('SET_USER_PERMISSIONS', null)
       removeToken()
       resetRouter() // NOTE: 重置路由，不然会出现路由重复的情况
-      await logout()
+      // await logout()
       return true
     } catch {
       return false

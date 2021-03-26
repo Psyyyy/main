@@ -55,14 +55,14 @@
               <a-descriptions-item span="2" label="姓名">
                 {{ currTeam.title }}
               </a-descriptions-item>
-              <a-descriptions-item span="2" label="电话">
+              <a-descriptions-item span="2" label="邮箱">
                 {{ currTeam.email }}
               </a-descriptions-item>
               <a-descriptions-item span="2" label="职位">
                 {{ currTeam.job }}
               </a-descriptions-item>
-              <a-descriptions-item span="2" label="加入时间">
-                2021.3.1
+              <a-descriptions-item span="2" label="电话">
+                18934898742
               </a-descriptions-item>
               <a-descriptions-item span="2" label="所属部门">
                 事业部

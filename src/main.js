@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import errorHandler from '@/utils/error-handler'
 import vuescroll from 'vuescroll'
+import axios from 'axios'
 import App from './App.vue'
 import router from './router/router'
 import store from './store/store'
@@ -33,6 +34,7 @@ Vue.prototype.$vuescrollConfig = {
     keepShow: false,
   },
 }
+Vue.prototype.$http = axios
 new Vue({
   router,
   store,

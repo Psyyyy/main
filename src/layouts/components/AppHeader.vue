@@ -212,6 +212,7 @@ export default {
     async logOut() {
       const CAN_LOGOUT = await this.$store.dispatch('user/logout')
       if (CAN_LOGOUT) {
+        this.$message.success('成功退出')
         this.$router.replace({ name: 'Login' })
       }
     },

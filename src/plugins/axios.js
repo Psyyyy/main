@@ -11,7 +11,8 @@ const errorHandler = (error) => {
 }
 
 const service = axios.create({
-  baseURL: process.env.VUE_APP_REQUEST_BASE_URL,
+  // baseURL: process.env.VUE_APP_REQUEST_BASE_URL,http://120.53.120.229:8888/api/private/v1/
+  baseURL: 'http://127.0.0.1:8888/api/private/v1/',
   timeout: 20000,
   responseType: 'json',
   withCredentials: true,
@@ -21,7 +22,7 @@ service.interceptors.request.use(
   (config) => {
     const token = getToken()
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      config.headers.Authorization = `${token}`
     }
     return config
   },
@@ -31,12 +32,11 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const { data } = response
+    console.log('axios', data)
+    if (data.meta.status !== 200) {
+      Message.warning(data.meta.msg)
 
-    const { code, message = '接口异常' } = data
-    if (code !== 2000) {
-      Message.warning(message)
-
-      if (code === 4018) {
+      if (data.meta.status === 4018) {
         removeToken()
         window.location.reload()
       }
