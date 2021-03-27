@@ -10,10 +10,9 @@ import { isArray, isFunction } from '@/utils/util'
  */
 function hasPermission(permissions, { meta }) {
   const permissionKeyName = process.env.VUE_APP_ROUTE_PERMISSION_KEY_NAME || 'permission'
-  console.log(meta)
+  // console.log(isArray(meta?.[permissionKeyName]))
   if (isArray(meta?.[permissionKeyName])) { // 关键在这里， permission就是在这里设定的
-    console.log(meta.permission.every((el) => permissions.includes(el)))
-    return meta.permission.every((el) => permissions.includes(el))// 返回false或者true
+    return meta.permission.some((el) => permissions.includes(el))// 返回false或者true
   }
 
   if (isFunction(meta?.[permissionKeyName])) {

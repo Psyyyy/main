@@ -49,7 +49,7 @@ const actions = {
         role: '管理员',
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       },
-      permissions: ['normal'],
+      permissions: ['admin'],
     }
     commit('SET_USER_INFO', data.info)
     // commit('SET_USER_PERMISSIONS', data.permissions)

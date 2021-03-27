@@ -74,7 +74,7 @@ export const asyncRoutes = [
   {
     path: '',
     meta: {
-      permission: ['normal'], title: '仪表盘', icon: 'monitor', openKey: 'dashboard',
+      permission: ['normal', 'admin'], title: '仪表盘', icon: 'monitor', openKey: 'dashboard',
     },
     component: MainLayout,
     children: [
@@ -82,13 +82,13 @@ export const asyncRoutes = [
         path: 'ecommerce',
         name: 'Ecommerce',
         component: Ecommerce,
-        meta: { permission: ['normal'], title: '统计面板', openKey: 'dashboard' },
+        meta: { permission: ['normal', 'admin'], title: '统计面板', openKey: 'dashboard' },
       },
       {
         path: 'analytics',
         name: 'Analytics',
         component: () => import('@/views/dashboard/Analytics.vue'),
-        meta: { permission: ['normal'], title: '数据分析', openKey: 'dashboard' },
+        meta: { permission: ['admin'], title: '数据分析', openKey: 'dashboard' },
       },
     ],
   },
@@ -112,12 +112,13 @@ export const asyncRoutes = [
     path: '',
     component: MainLayout,
     single: true,
+    meta: { permission: ['normal', 'admin'] },
     children: [
       {
         path: '/task',
         name: 'Task',
         component: () => import('@/views/task/TaskList'),
-        meta: { title: '需求管理', icon: 'check-circle' },
+        meta: { permission: ['normal', 'admin'], title: '需求管理', icon: 'check-circle' },
       },
     ],
   },
@@ -127,12 +128,13 @@ export const asyncRoutes = [
     path: '',
     component: MainLayout,
     single: true,
+    meta: { permission: ['normal', 'admin'] },
     children: [
       {
         path: '/kanban',
         name: 'Kanban',
         component: () => import('@/views/kanban/Kanban.vue'),
-        meta: { title: '迭代管理', icon: 'trello' },
+        meta: { permission: ['normal', 'admin'], title: '迭代管理', icon: 'trello' },
       },
     ],
   },
@@ -140,13 +142,14 @@ export const asyncRoutes = [
   {
     path: '',
     component: MainLayout,
+    meta: { permission: ['normal', 'admin'] },
     single: true,
     children: [
       {
         path: '/bug',
         name: 'Bug',
         component: () => import('@/views/bug/Bug.vue'),
-        meta: { title: '缺陷管理', icon: 'alert-circle' },
+        meta: { permission: ['normal', 'admin'], title: '缺陷管理', icon: 'alert-circle' },
       },
     ],
   },
@@ -154,13 +157,14 @@ export const asyncRoutes = [
   {
     path: '',
     component: MainLayout,
+    meta: { permission: ['normal', 'admin'] },
     single: true,
     children: [
       {
         path: '/file',
         name: 'File',
         component: () => import('@/views/file/File.vue'),
-        meta: { title: '文件管理', icon: 'folder' },
+        meta: { permission: ['normal', 'admin'], title: '文件管理', icon: 'folder' },
       },
     ],
   },
@@ -168,13 +172,14 @@ export const asyncRoutes = [
   {
     path: '',
     component: MainLayout,
+    meta: { permission: ['admin'] },
     single: true,
     children: [
       {
         path: '/team',
         name: 'Team',
         component: () => import('@/views/team/Team.vue'),
-        meta: { title: '团队管理', icon: 'users' },
+        meta: { permission: ['admin'], title: '团队管理', icon: 'users' },
       },
     ],
   },
@@ -335,19 +340,19 @@ export const asyncRoutes = [
             path: 'account',
             name: 'Account',
             component: () => import('@/views/profile/Account.vue'),
-            meta: { title: '账号设置', breadcrumb: ['个人中心', '账号设置'] },
+            meta: { permission: ['normal', 'admin'], title: '账号设置', breadcrumb: ['个人中心', '账号设置'] },
           },
           {
             path: 'information',
             name: 'Information',
             component: () => import('@/views/profile/Information.vue'),
-            meta: { title: '个人信息', breadcrumb: ['个人中心', '个人信息'] },
+            meta: { permission: ['normal', 'admin'], title: '个人信息', breadcrumb: ['个人中心', '个人信息'] },
           },
           {
             path: 'security',
             name: 'Security',
             component: () => import('@/views/profile/Security.vue'),
-            meta: { title: '安全设置', breadcrumb: ['个人中心', '安全设置'] },
+            meta: { permission: ['normal', 'admin'], title: '安全设置', breadcrumb: ['个人中心', '安全设置'] },
           },
         ],
       },
