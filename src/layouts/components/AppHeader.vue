@@ -246,7 +246,8 @@ export default {
       // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目
     },
     backToEntry() {
-      this.$router.push('Project')
+      this.$router.push({ name: 'Project' })
+      // this.$router.push('Project')
     },
   },
 }

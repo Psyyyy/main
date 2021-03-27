@@ -42,8 +42,17 @@ const actions = {
   },
 
   async getUserInfo({ commit }) {
-    const { data } = await getUserInfo()
+    // const { data } = await getUserInfo()
+    const data = {
+      info: {
+        nickname: '皮埃斯歪',
+        role: '管理员',
+        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+      },
+      permissions: ['admin'],
+    }
     commit('SET_USER_INFO', data.info)
+    // commit('SET_USER_PERMISSIONS', data.permissions)
     commit('SET_USER_PERMISSIONS', data.permissions)
     return data
   },
