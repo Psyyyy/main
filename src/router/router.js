@@ -184,156 +184,18 @@ export const asyncRoutes = [
     ],
   },
 
-  // // 富文本编辑器
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/quill',
-  //       name: 'Quill',
-  //       component: () => import('@/views/editor/Quill.vue'),
-  //       meta: { title: '富文本编辑器', icon: 'credit-card' },
-  //     },
-  //   ],
-  // },
-
-  // // 文件上传
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/file-upload',
-  //       name: 'FileUpload',
-  //       component: () => import('@/views/file-upload/FileUpload.vue'),
-  //       meta: { title: '文件上传', icon: 'upload-cloud' },
-  //     },
-  //   ],
-  // },
-
-  // // 表单
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/form',
-  //       name: 'Form',
-  //       component: () => import('@/views/form/Form.vue'),
-  //       meta: { title: '表单', icon: 'list' },
-  //     },
-  //   ],
-  // },
-
-  // // 更多页面
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   meta: { title: '骨架和404', icon: 'grid', openKey: 'morePage' },
-  //   children: [
-  //     {
-  //       path: '/skeleton',
-  //       name: 'Skeleton',
-  //       component: () => import('@/views/pages/Skeleton.vue'),
-  //       meta: { title: '骨架屏', openKey: 'morePage' },
-  //     },
-  //     {
-  //       path: '/not-found',
-  //       name: 'NotFound',
-  //       component: () => import('@/views/pages/NotFound.vue'),
-  //       meta: { title: '404 页面', openKey: 'morePage' },
-  //     },
-  //     {
-  //       path: '/server-error',
-  //       name: 'ServerError',
-  //       component: () => import('@/views/pages/ServerError.vue'),
-  //       meta: { title: '500 页面', openKey: 'morePage' },
-  //     },
-  //   ],
-  // },
-  // // 图标库
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/icon-lib',
-  //       name: 'IconLib',
-  //       component: () => import('@/views/icon-lib/IconLib.vue'),
-  //       meta: { title: '图标库', icon: 'heart' },
-  //     },
-  //   ],
-  // },
-  // // 主题颜色
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/colors',
-  //       name: 'Colors',
-  //       component: () => import('@/views/colors/Colors.vue'),
-  //       meta: { title: '主题颜色', icon: 'coffee' },
-  //     },
-  //   ],
-  // },
-
-  // // 外链
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/disabled',
-  //       name: 'Disabled',
-  //       disabled: true,
-  //       meta: { title: '被禁用的菜单', icon: 'zap-off' },
-  //     },
-  //   ],
-  // },
-
-  // 考虑做一个集成GitHub链接的界面？
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: process.env.VUE_APP_PROJECT_URL,
-  //       meta: { title: 'Github 仓库', icon: 'github' },
-  //     },
-  //   ],
-  // },
-
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: process.env.VUE_APP_DOC_URL,
-  //       meta: { title: '官方文档', icon: 'book-open' },
-  //     },
-  //   ],
-  // },
-
   // 个人中心
   {
     path: '',
     hidden: true,
+    meta: { permission: ['normal', 'admin'] },
     component: MainLayout,
     children: [
       {
         path: '/profile',
         name: 'Profile',
         redirect: '/profile/account',
+        meta: { permission: ['normal', 'admin'] },
         component: () => import('@/layouts/ProfileLayout.vue'),
         children: [
           {
@@ -364,11 +226,13 @@ export const asyncRoutes = [
     hidden: true,
     component: MainLayout,
     single: true,
+    meta: { permission: ['normal', 'admin'] },
     children: [
       {
         path: '/todo',
         name: 'Todo',
         component: () => import('@/views/todo/Todo.vue'),
+        meta: { permission: ['normal', 'admin'] },
       },
     ],
   },
@@ -377,12 +241,14 @@ export const asyncRoutes = [
     path: '',
     hidden: true,
     component: MainLayout,
+    meta: { permission: ['normal', 'admin'] },
     single: true,
     children: [
       {
         path: '/notice',
         name: 'Notice',
         component: () => import('@/views/notice/Notice.vue'),
+        meta: { permission: ['normal', 'admin'] },
       },
     ],
   },

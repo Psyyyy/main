@@ -952,7 +952,7 @@ export default {
         this.$refs.addFormRef.validate(async (valid, field) => {
         // 有未校验通过的字段
           if (!valid) {
-            return this.$message.error('存在错误字段，无法提交')
+            return this.$message.error('存在错误字段，无法创建')
           }
           this.newProject.founder = this.info.id
           this.newProject.createTime = Date.parse(new Date()) / 1000
@@ -974,7 +974,7 @@ export default {
         this.$refs.addFormRef.validate(async (valid, field) => {
         // 有未校验通过的字段
           if (!valid) {
-            return this.$message.error('存在错误字段，无法提交')
+            return this.$message.error('存在错误字段，无法提交编辑')
           }
           const res = await updateProject(this.currEditProject)
           // 更新项目失败

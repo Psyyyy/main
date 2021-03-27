@@ -118,7 +118,7 @@ export default {
     },
     checkNotice() {
       this.visible = false
-      this.$router.push({ name: 'Notice' })
+      this.$router.push({ path: '/notice' })
       console.log(this.$router)
     },
   },
