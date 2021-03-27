@@ -73,20 +73,22 @@ export const asyncRoutes = [
   // 仪表盘
   {
     path: '',
-    meta: { title: '仪表盘', icon: 'monitor', openKey: 'dashboard' },
+    meta: {
+      permission: ['normal'], title: '仪表盘', icon: 'monitor', openKey: 'dashboard',
+    },
     component: MainLayout,
     children: [
       {
         path: 'ecommerce',
         name: 'Ecommerce',
         component: Ecommerce,
-        meta: { title: '统计面板', openKey: 'dashboard' },
+        meta: { permission: ['normal'], title: '统计面板', openKey: 'dashboard' },
       },
       {
         path: 'analytics',
         name: 'Analytics',
         component: () => import('@/views/dashboard/Analytics.vue'),
-        meta: { title: '数据分析', openKey: 'dashboard' },
+        meta: { permission: ['normal'], title: '数据分析', openKey: 'dashboard' },
       },
     ],
   },

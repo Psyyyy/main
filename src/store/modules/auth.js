@@ -10,9 +10,10 @@ import { isArray, isFunction } from '@/utils/util'
  */
 function hasPermission(permissions, { meta }) {
   const permissionKeyName = process.env.VUE_APP_ROUTE_PERMISSION_KEY_NAME || 'permission'
-
-  if (isArray(meta?.[permissionKeyName])) {
-    return meta.permission.every((el) => permissions.includes(el))
+  console.log(meta)
+  if (isArray(meta?.[permissionKeyName])) { // 关键在这里， permission就是在这里设定的
+    console.log(meta.permission.every((el) => permissions.includes(el)))
+    return meta.permission.every((el) => permissions.includes(el))// 返回false或者true
   }
 
   if (isFunction(meta?.[permissionKeyName])) {
@@ -20,21 +21,21 @@ function hasPermission(permissions, { meta }) {
   }
 
   // 默认是具有权限的，所以返回 true
-  return true
+  return false
 }
 
 /**
  * 2.对已定义的动态路由进行过滤
  *
- * @param {Array.<Object>} routes 已定义的动态路由
+ * @param {Array.<Object>} routes 已定义的动态路由数组
  * @param {Array.<string>} permissions 用户拥有的权限标识数组
  */
 export function filterAsyncRoutes(routes, permissions) {
   const res = routes.map((route) => {
-    const tmp = { ...route }
-    if (hasPermission(permissions, tmp)) {
+    const tmp = { ...route }// tmp就是数组中一个对象
+    if (hasPermission(permissions, tmp)) { // haspermission返回true，说明这个路由数组中的这个对象可以访问
       if (tmp.children) {
-        tmp.children = filterAsyncRoutes(tmp.children, permissions)
+        tmp.children = filterAsyncRoutes(tmp.children, permissions)// 如果存在子路由，对子路由进行遍历
       }
       return tmp
     }
