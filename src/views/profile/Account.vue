@@ -143,7 +143,7 @@ export default {
         {
           label: '昵称',
           placeholder: '请输入昵称',
-          decorator: ['nickname', { initialValue: '令狐少侠' }],
+          decorator: ['nickname', { initialValue: '皮埃斯歪' }],
         },
         {
           label: '邮箱',

@@ -45,6 +45,7 @@ const actions = {
     // const { data } = await getUserInfo()
     const data = {
       info: {
+        id: '1',
         nickname: '皮埃斯歪',
         role: '管理员',
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',

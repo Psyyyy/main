@@ -5,7 +5,7 @@
       <div class="w-1/3 pr-3">
         <div class="dashboard-card">
           <div class="mb-12">
-            <h2 class="text-2xl text-gray-700 font-bold">令狐少侠，恭喜你</h2>
+            <h2 class="text-2xl text-gray-700 font-bold">皮埃斯歪，恭喜你</h2>
             <h3 class="text-gray-600">成为本月最佳销售员</h3>
           </div>
           <div class="flex items-end">
@@ -223,7 +223,7 @@
             <li
               class="py-2 flex items-center"
               v-for="({ name, title, percent, sales, color }) in [
-                { name: '令狐少侠', title: '销售经理', percent: 90, sales: 89059, color: 'primary' },
+                { name: '皮埃斯歪', title: '销售经理', percent: 90, sales: 89059, color: 'primary' },
                 { name: '郭靖', title: '销售总监', percent: 84, sales: 82154, color: 'success' },
                 { name: '周伯通', title: '销售专员', percent: 76, sales: 77368, color: 'warning' },
                 { name: '张三丰', title: '销售专员', percent: 70, sales: 66345, color: 'danger' },

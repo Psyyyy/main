@@ -2,7 +2,7 @@
 <template>
   <div class="todo-app">
     <div>
-      <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
+      <div class="relative flex flex-no-wrap bug-list mt-3 pl-6">
         <h3 class="section-card__title">缺陷管理</h3>
         <div class="flex ml-auto">
           <div></div>
@@ -118,12 +118,12 @@
             />
             <!-- 需求条目 -->
 
-            <template slot="task" slot-scope="text, record, index, column">
+            <template slot="bug" slot-scope="text, record, index, column">
               <!-- 搜索结果展示 -->
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
-                class="task-pointer"
-                @click="showTask = true"
+                class="bug-pointer"
+                @click="showBug = true"
               >
                 <template
                   v-for="(fragment, i) in text
@@ -143,7 +143,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer" @click="showTask = true">{{
+                <span class="bug-pointer" @click="showBug = true">{{
                   text
                 }}</span>
                 <!-- <editable-cell
@@ -283,7 +283,7 @@
         </a-card>
       </div>
 
-      <task-detail :pop-visible="showTask" @close="showTask = false" />
+      <bug :pop-visible="showBug" @close="showBug = false" />
       <filter-modal />
     </div>
   </div>
@@ -292,30 +292,30 @@
 <script>
 import { Empty } from 'ant-design-vue'
 // import STable from '../../components/Table'
-import TaskDetail from '../task/Task.vue'
+import Bug from './BugModal.vue'
 import FilterModal from '../kanban/components/FilterModal.vue'
 // import { getOrgTree } from '@/api/modular/system/orgManage'
 // import { getUserPage, sysUserDelete, sysUserChangeStatus, sysUserResetPwd } from '@/api/modular/system/userManage'
 // import { sysDictTypeDropDown } from '@/api/modular/system/dictManage'
 
 export default {
-  name: 'TaskList',
-  components: { TaskDetail, FilterModal },
+  name: 'BugList',
+  components: { Bug, FilterModal },
   data() {
     return {
       columns: [
         {
-          dataIndex: 'task',
-          key: 'task',
+          dataIndex: 'bug',
+          key: 'bug',
           ellipsis: true,
           width: '400px',
           slots: { title: 'all' },
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'task',
+            customRender: 'bug',
           },
-          onFilter: (value, record) => record.task.children.task
+          onFilter: (value, record) => record.bug.children.bug
             .toString()
             .toLowerCase()
             .includes(value.toLowerCase()),
@@ -412,7 +412,7 @@ export default {
       data: [
         {
           id: '1',
-          task: '开发功能',
+          bug: '开发功能',
           rank: '3',
           stage: '迭代1',
           state: '实现中',
@@ -423,7 +423,7 @@ export default {
           children: [
             {
               id: '11',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
+              bug: '故人西辞黄鹤楼，烟花三月下扬州',
               rank: '3',
               stage: '迭代1',
               state: '规划中',
@@ -434,7 +434,7 @@ export default {
             },
             {
               id: '12',
-              task: '开发功能',
+              bug: '开发功能',
               rank: '2',
               stage: '迭代1',
               state: '规划中',
@@ -445,7 +445,7 @@ export default {
             },
             {
               id: '13',
-              task:
+              bug:
                 '故人西辞黄鹤楼，烟花三月下扬州,故人西辞黄鹤楼，烟花三月下扬州',
               rank: '1',
               stage: '迭代1',
@@ -459,7 +459,7 @@ export default {
         },
         {
           id: '2',
-          task: '故人西辞黄鹤楼，烟花三月下扬州',
+          bug: '故人西辞黄鹤楼，烟花三月下扬州',
           rank: '1',
           stage: '迭代1',
           state: '规划中',
@@ -471,7 +471,7 @@ export default {
         },
         {
           id: '3',
-          task: '故人西辞黄鹤楼，烟花三月下扬州',
+          bug: '故人西辞黄鹤楼，烟花三月下扬州',
           rank: '1',
           stage: '迭代1',
           state: '已完成',
@@ -482,7 +482,7 @@ export default {
           children: [
             {
               id: '31',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
+              bug: '故人西辞黄鹤楼，烟花三月下扬州',
               rank: '2',
               stage: '迭代1',
               state: '实现中',
@@ -493,7 +493,7 @@ export default {
             },
             {
               id: '32',
-              task: '开发功能',
+              bug: '开发功能',
               rank: '3',
               stage: '迭代1',
               state: '规划中',
@@ -504,7 +504,7 @@ export default {
             },
             {
               id: '33',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
+              bug: '故人西辞黄鹤楼，烟花三月下扬州',
               rank: '2',
               stage: '迭代1',
               state: '规划中',
@@ -515,7 +515,7 @@ export default {
             },
             {
               id: '34',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
+              bug: '故人西辞黄鹤楼，烟花三月下扬州',
               rank: '2',
               stage: '迭代1',
               state: '规划中',
@@ -529,7 +529,7 @@ export default {
       ],
       expandRows: [],
       isExpandAll: false,
-      showTask: false,
+      showBug: false,
       loading: false,
       isTodoMenuOpened: true,
       searchText: '',
@@ -539,7 +539,6 @@ export default {
       typeDict: [],
       clickRowId: '',
       selectValue: ['china'],
-      treeLoading: false,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       nouseData: '',
     }
@@ -575,7 +574,7 @@ export default {
       const random = Math.ceil(Math.random() * 30)
       const newData = {
         id: random,
-        task: '',
+        bug: '',
         rank: '',
         stage: '',
         state: '',
@@ -694,7 +693,7 @@ export default {
       return record.id === this.clickRowId ? 'clickRowColor' : ''
     },
     onOpenFilter() {
-      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'task')
+      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'bug')
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', true)
     },
   },
@@ -713,7 +712,7 @@ export default {
 button {
   margin-right: 8px;
 }
-.task-pointer {
+.bug-pointer {
   cursor: pointer; //变小手
   &:hover {
     color: #108ee9; //变色

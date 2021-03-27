@@ -34,6 +34,7 @@ Vue.prototype.$vuescrollConfig = {
     keepShow: false,
   },
 }
+
 Vue.prototype.$http = axios
 new Vue({
   router,

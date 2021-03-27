@@ -61,7 +61,9 @@
               style="border-bottom: 1px solid #eee;"
               class="mb-2 px-4 py-3 flex items-center "
             >
-              <h3 class="dashboard-card-title">我的项目（ {{todos.length}} ）</h3>
+              <h3 class="dashboard-card-title">
+                我的项目（ {{ projectList.length }} ）
+              </h3>
               <div class="ml-auto flex items-center">
                 <a-dropdown class="mr-3">
                   <div class="flex items-center cursor-pointer">
@@ -116,7 +118,7 @@
                     class="w-full flex justify-center items-center"
                     size="large"
                     type="primary"
-                    @click="newProject"
+                    @click="isAddProjectVisible = true"
                   >
                     <feather size="15" type="plus" />
                     创建新项目
@@ -132,31 +134,38 @@
             >
               <ul>
                 <li
-                  class="px-5 py-4 flex items-center hover:bg-gray-100 transition"
-                  v-for="({ id, title, tag, tagColor, avatar }, i) in todos"
-                  :key="id"
+                  class="px-5 py-4 flex items-center project-list-item"
+                  v-for="({
+                    pro_id,
+                    pro_title,
+                    pro_content,
+                    pro_create_time,
+                    finish_task_sum,
+                    all_task_sum
+                  },
+                  i) in projectList"
+                  :key="pro_id"
+                   @click="enterProject(pro_id, pro_title)"
                 >
-                  <a-checkbox v-model="todos[i].done" />
+                  <a-checkbox v-model="projectList[i].pro_done" />
                   <div class="mx-4 truncate text-gray-600">
-                    {{ title }}
+                    {{ pro_title
+                    }}
+                    <span class="ml-4 text-base text-gray-400">{{pro_content}}</span>
                   </div>
-                  <div
-                    class="ml-auto flex items-center text-sm rounded-lg"
-                    :style="
-                      `padding: .1rem 1rem; background: rgba(var(--${tagColor}), .2);`
-                    "
-                    :class="tagColor"
-                  >
-                    {{ tag }}
+                  <div class="flex-1 text-right">
+                    <span class="ml-4 text-gray-400">项目进度：</span>
+                    <a-progress
+                      class="w-40  mr-10"
+                      :stroke-width="4"
+                      stroke-color="#6485ff"
+                      :percent="percentCalc(finish_task_sum, all_task_sum)"
+                    /> <span class="flex-1 mr-2 text-right text-gray-400">{{
+                    pro_create_time | dateFormat
+                  }}</span>
                   </div>
-                  <a-avatar
-                    class="mx-3"
-                    :style="
-                      `color: rgba(var(--${tagColor}), 1); background-color: rgba(var(--${tagColor}), .15);`
-                    "
-                    >{{ avatar }}</a-avatar
-                  >
-                  <a-dropdown>
+
+                  <a-dropdown class="ml-auto">
                     <div
                       class="flex items-center text-base text-gray-500 cursor-pointer"
                     >
@@ -170,23 +179,25 @@
                       <a-menu>
                         <a-menu-item
                           class="flex items-center"
-                          @click="editTodo(id)"
+                          @click="openEditModal(pro_id,pro_title,pro_content)"
                         >
                           <feather
                             class="mr-2 cursor-pointer"
                             size="16"
                             type="edit"
+
                           ></feather>
                           编辑
                         </a-menu-item>
                         <a-menu-item
                           class="flex items-center"
-                          @click="editTodo(id)"
+                          @click="openDeleteModal(pro_title)"
                         >
                           <feather
                             class="mr-2 cursor-pointer"
                             size="16"
                             type="trash"
+
                           ></feather>
                           删除
                         </a-menu-item>
@@ -202,13 +213,13 @@
               style="height:450px"
               class="overflow-auto p-2"
             >
-              <a-list :grid="{ xs: 4 }" :data-source="todos">
+              <a-list :grid="{ xs: 4 }" :data-source="projectList">
                 <a-list-item slot="renderItem" slot-scope="item">
                   <a-card
                     class="card-focus"
                     :body-style="{ padding: 15 }"
-                    :key="item.id"
-                    @click="enterProject(item.id,item.title)"
+                    :key="item.pro_id"
+                    @click="enterProject(item.pro_id, item.pro_title)"
                   >
                     <a-avatar
                       class="flex items-center justify-center mx-auto mt-0 py-2 max-w-full"
@@ -219,14 +230,18 @@
                     />
                     <a-divider class="m-0" />
                     <div>
-                      <span class="text-xl">{{ item.id }}</span>
+                      <span class="text-xl">{{ item.pro_title }}</span>
                       <div style="color:#C7C7C7">
-                        <div class="project-content">{{ item.title }}</div>
+                        <div class="project-content">
+                          {{ item.pro_content }}
+                        </div>
                         <a-progress
                           :stroke-width="4"
-                          :stroke-color="`rgba(var(--${item.tagColor}), 1)`"
+                          stroke-color="#6485ff"
                           :show-info="false"
-                          :percent="item.percent"
+                          :percent="
+                            percentCalc(item.finish_task_sum, item.all_task_sum)
+                          "
                         />
                         <a-avatar
                           class="items-center justify-center"
@@ -234,7 +249,47 @@
                           :icon="info.avatar ? '' : 'user'"
                           :src="info.avatar"
                         />
-                        <span class="float-right mt-3">{{ item.tag }}</span>
+                        <a-dropdown class="float-right mt-3">
+                          <div
+                            class="flex items-center text-base text-gray-500 cursor-pointer"
+                          >
+                            <feather
+                              class="cursor-pointer"
+                              size="20"
+                              type="more-vertical"
+                            ></feather>
+                          </div>
+                          <template #overlay>
+                            <a-menu>
+                              <a-menu-item
+                                class="flex items-center"
+                                @click="openEditModal(item.pro_id,item.pro_title,item.pro_content)"
+                              >
+                                <feather
+                                  class="mr-2 cursor-pointer"
+                                  size="16"
+                                  type="edit"
+
+                                ></feather>
+                                编辑
+                              </a-menu-item>
+                              <a-menu-item
+                                class="flex items-center"
+                                @click="openDeleteModal(item.pro_title)"
+                              >
+                                <feather
+                                  class="mr-2 cursor-pointer"
+                                  size="16"
+                                  type="trash"
+                                ></feather>
+                                删除
+                              </a-menu-item>
+                            </a-menu>
+                          </template>
+                        </a-dropdown>
+                        <span class="float-right mt-3">{{
+                          item.pro_create_time | dateFormat
+                        }}</span>
                       </div>
                     </div>
                   </a-card>
@@ -285,14 +340,16 @@
         </div>
       </section>
       <section class="col w-1/3">
-       <!-- 我的团队 -->
+        <!-- 我的团队 -->
         <div class="mb-3 px-1 ">
           <div class="dashboard-card p-0">
             <div
               style="border-bottom: 1px solid #eee;"
               class="flex mb-2 px-3 py-1 flex items-center"
             >
-              <h3 class=" dashboard-card-title">团队进度<span>（ {{team.length}} ）</span></h3>
+              <h3 class=" dashboard-card-title">
+                团队进度<span>（ {{ team.length }} ）</span>
+              </h3>
             </div>
             <div class="team">
               <div
@@ -331,7 +388,9 @@
               style="border-bottom: 1px solid #eee;"
               class="mb-2 px-3 py-4 flex items-center"
             >
-              <h3 class="dashboard-card-title">我的任务（ {{todos.length}} ）</h3>
+              <h3 class="dashboard-card-title">
+                我的任务（ {{ todos.length }} ）
+              </h3>
               <div class="ml-auto flex items-center">
                 <a-dropdown class="mr-2">
                   <div class="flex items-center cursor-pointer">
@@ -430,7 +489,6 @@
         </div>
         <!-- 文档动态 -->
         <div class="mb-3 px-1 ">
-
           <div class="dashboard-card p-0">
             <div
               style="border-bottom: 1px solid #eee;"
@@ -507,8 +565,59 @@
             </div>
           </div>
         </div>
-
       </section>
+      <!-- 添加项目 -->
+      <a-modal
+        :visible.sync="isAddProjectVisible"
+        title="创建项目"
+        @ok="editProject('add')"
+        @cancel="closeProjectModal"
+      >
+        <div>
+          <a-form-model
+            ref="addFormRef"
+            :rules="projectRules"
+            class="pl-2"
+            layout="horizontal"
+            :model="newProject"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+          >
+            <a-form-model-item label="项目名称" prop="title" type="name">
+              <a-input v-model="newProject.title" />
+            </a-form-model-item>
+            <a-form-model-item label="项目简介" prop="content">
+              <a-input v-model="newProject.content" type="textarea" />
+            </a-form-model-item>
+          </a-form-model>
+        </div>
+      </a-modal>
+      <!-- 编辑项目 -->
+            <a-modal
+        :visible.sync="isEditVisible"
+        title="编辑项目信息"
+        @ok="editProject('update')"
+        @cancel="isEditVisible=false"
+      >
+        <div>
+          <a-form-model
+            ref="addFormRef"
+            :rules="projectRules"
+            class="pl-2"
+            layout="horizontal"
+            :model="currEditProject"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+          >
+            <a-form-model-item label="项目名称" prop="title" type="name">
+              <a-input v-model="currEditProject.title" />
+            </a-form-model-item>
+            <a-form-model-item label="项目简介" prop="content">
+              <a-input v-model="currEditProject.content" type="textarea" />
+            </a-form-model-item>
+          </a-form-model>
+        </div>
+      </a-modal>
     </div>
   </main>
 </template>
@@ -516,6 +625,9 @@
 <script>
 import _debounce from 'lodash.debounce'
 // import reqwest from 'reqwest'
+import {
+  getProjectList, newProject, updateProject, deleteProject,
+} from '@/api/project'
 import screenfull from 'screenfull'
 import { isValidUrl } from '@/utils/util'
 import infiniteScroll from 'vue-infinite-scroll'
@@ -526,6 +638,9 @@ export default {
   components: { HeaderNotice },
   directives: { infiniteScroll },
   data: () => ({
+    labelCol: { span: 5 },
+    wrapperCol: { span: 14 },
+    projectList: [],
     menuItems: [
       {
         label: '个人中心',
@@ -729,12 +844,28 @@ export default {
         state: 'danger',
       },
     ],
-
+    newProject: {
+      title: '',
+      content: '',
+      createTime: '',
+      founder: '',
+    },
+    projectRules: {
+      title: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
+      content: [{ required: true, message: '请输入项目内容', trigger: 'blur' }],
+    },
     isFullScreen: false,
     showProjectList: false,
     showProject: '图片视图',
     loading: false,
     busy: false,
+    isAddProjectVisible: false,
+    isEditVisible: false,
+    currEditProject: {
+      id: '',
+      title: '',
+      content: '',
+    },
   }),
   //   beforeMount() {
   //     this.fetchData((res) => {
@@ -748,6 +879,9 @@ export default {
     isHeaderFixed() {
       return this.$store.state.isHeaderFixed
     },
+  },
+  created() {
+    this.getProject()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -778,6 +912,16 @@ export default {
   },
 
   methods: {
+    percentCalc(done, all) {
+      const tmp = done / all
+      return tmp * 100
+    },
+    async getProject() {
+      const { data: res } = await getProjectList()
+      // console.log('project', res)
+      this.projectList = res.projectlist
+      return true
+    },
     async logOut() {
       const CAN_LOGOUT = await this.$store.dispatch('user/logout')
 
@@ -793,7 +937,6 @@ export default {
       } else if (isValidUrl(name)) {
         window.open(name, '_blank', 'noopener')
       } else {
-        console.log(name)
         this.$router.push({ name })
       }
     },
@@ -803,7 +946,55 @@ export default {
         screenfull.toggle()
       }
     },
-    newProject() {},
+    editProject(options) {
+      if (options === 'add') {
+        // console.log(e)
+        this.$refs.addFormRef.validate(async (valid, field) => {
+        // 有未校验通过的字段
+          if (!valid) {
+            return this.$message.error('存在错误字段，无法提交')
+          }
+          this.newProject.founder = this.info.id
+          this.newProject.createTime = Date.parse(new Date()) / 1000
+          const res = await newProject(this.newProject)
+          console.log('project', res)
+          // 创建项目失败
+          if (res.meta.status !== 200) {
+            return this.$message.error('创建项目失败')
+          }
+          this.$message.success('创建项目成功！')
+          // 隐藏 dialog对话框
+          this.$refs.addFormRef.resetFields()
+          this.isAddProjectVisible = false
+          // 重新获取列表数据
+          this.getProject()
+          return true
+        })
+      } else {
+        this.$refs.addFormRef.validate(async (valid, field) => {
+        // 有未校验通过的字段
+          if (!valid) {
+            return this.$message.error('存在错误字段，无法提交')
+          }
+          const res = await updateProject(this.currEditProject)
+          // 更新项目失败
+          if (res.meta.status !== 200) {
+            return this.$message.error('编辑项目失败')
+          }
+          this.$message.success('编辑项目成功！')
+          // 隐藏 dialog对话框
+          this.$refs.addFormRef.resetFields()
+          this.isEditVisible = false
+          // 重新获取列表数据
+          this.getProject()
+          return true
+        })
+      }
+    },
+    closeProjectModal() {
+      this.$refs.addFormRef.resetFields()
+      this.isAddProjectVisible = false
+    },
     changeProjectList(changeToList) {
       if (!changeToList) {
         this.showProject = '图片视图'
@@ -812,6 +1003,34 @@ export default {
         this.showProject = '列表视图'
         this.showProjectList = changeToList
       }
+    },
+    openEditModal(id, title, content) {
+      this.isEditVisible = true
+      this.currEditProject.id = id
+      this.currEditProject.title = title
+      this.currEditProject.content = content
+    },
+    openDeleteModal(title) {
+      const that = this
+      this.$confirm({
+        title: (
+              <p>
+                此操作将删除<span class="warning">「{title}」</span>项目
+              </p>
+        ),
+        content: '您确定要删除该项目吗？',
+        async onOk() {
+          const res = await deleteProject({ title })
+          // 更新项目失败
+          if (res.meta.status !== 200) {
+            return that.$message.error('删除项目失败')
+          }
+          that.$message.success('删除项目成功！')
+          // 重新获取列表数据
+          that.getProject()
+          return true
+        },
+      })
     },
     // fetchData(callback) {
     //   reqwest({
@@ -944,7 +1163,7 @@ export default {
 }
 .team {
   @apply flex overflow-y-hidden;
-  padding-top:25px;
+  padding-top: 25px;
   height: 142px;
   width: 100%;
   display: inline-block;
@@ -978,5 +1197,14 @@ export default {
     opacity: 1;
     transform: translateY(-20px);
   }
+}
+.project-list-item{
+          transition: $transition;
+    &:hover {
+        cursor:pointer;
+      background: rgba(247, 250, 252, 1);
+      box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+      transform: translateY(-3px);
+    }
 }
 </style>

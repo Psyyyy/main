@@ -250,7 +250,7 @@
         </a-card>
       </div>
 
-      <task-detail :pop-visible="showTask" @close="showTask = false" />
+      <task :pop-visible="showTask" @close="showTask = false" />
       <filter-modal />
     </div>
   </div>
@@ -259,7 +259,7 @@
 <script>
 import { Empty } from 'ant-design-vue'
 // import STable from '../../components/Table'
-import TaskDetail from './Task.vue'
+import Task from './Task.vue'
 import FilterModal from '../kanban/components/FilterModal.vue'
 // import { getOrgTree } from '@/api/modular/system/orgManage'
 // import { getUserPage, sysUserDelete, sysUserChangeStatus, sysUserResetPwd } from '@/api/modular/system/userManage'
@@ -267,7 +267,7 @@ import FilterModal from '../kanban/components/FilterModal.vue'
 
 export default {
   name: 'TaskList',
-  components: { TaskDetail, FilterModal },
+  components: { Task, FilterModal },
   data() {
     return {
       columns: [
@@ -380,6 +380,17 @@ export default {
               member: 'jack',
               start: '2021.1.1',
               end: '2021.3.1',
+              children: [{
+                id: '13',
+                task:
+                '三级菜单',
+                rank: '1',
+                stage: '迭代1',
+                state: '实现中',
+                member: 'lily',
+                start: '2021.1.1',
+                end: '2021.3.1',
+              }],
             },
             {
               id: '12',

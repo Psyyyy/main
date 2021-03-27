@@ -2,7 +2,7 @@
   <div>
     <a-modal
       width="70%"
-      class="task-detail-modal"
+      class="bug-detail-modal"
       :dialog-style="{ top: '30px' }"
       :closable="false"
       :visible="changeVisible"
@@ -10,16 +10,16 @@
       :footer="null"
       @cancel="detailClose"
     >
-      <task-detail @close="detailClose"></task-detail>
+      <bug-detail @close="detailClose"></bug-detail>
     </a-modal>
   </div>
 </template>
 <script>
-import TaskDetail from './TaskDetail.vue'
+import BugDetail from './BugDetail.vue'
 
 export default {
   components: {
-    TaskDetail,
+    BugDetail,
   },
   props: {
     popVisible: {
@@ -37,7 +37,6 @@ export default {
   data() {
     return {
       visible: false,
-      ModalText: 'Content of the modal',
       confirmLoading: false,
     }
   },
@@ -71,7 +70,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.task-detail-modal {
+.bug-detail-modal {
   /*display: flex;*/
   /*justify-content: center;*/
   /*flex: 1;*/

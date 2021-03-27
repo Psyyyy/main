@@ -21,7 +21,7 @@
                     type="appstore"
                     class="mr-2"
                   /> -->
-                   <h3 class="section-card__title">  {{ currStage }}</h3>
+                  <h3 class="section-card__title">{{ currStage }}</h3>
 
                   <feather
                     class="ml-1 text-gray-500"
@@ -37,7 +37,6 @@
                       :key="id"
                       @click="changeStageTo(id, name)"
                     >
-
                       {{ name }}
                     </a-menu-item>
                   </a-menu>
@@ -191,22 +190,38 @@
 
     <filter-modal />
     <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
-    <a-modal :rules="stageRules" :visible="isAddStageVisible" title="创建迭代" @ok="addStage" @cancel="closeAddStage">
-     <div> <a-form-model class="pl-2" layout="horizontal" :model="newStage"  :label-col="labelCol"
-    :wrapper-col="wrapperCol">
-        <a-form-model-item label="迭代名称" type="name">
-          <a-input v-model="newStage.name" />
-        </a-form-model-item>
-        <a-form-model-item label="起止时间">
-          <a-range-picker width="200px" v-model="newStage.start" type="date" />
-        </a-form-model-item>
-        <a-form-model-item label="迭代目标">
-          <a-input v-model="newStage.target" type="textarea" />
-        </a-form-model-item>
-      </a-form-model></div>
+    <a-modal
+      :rules="stageRules"
+      :visible="isAddStageVisible"
+      title="创建迭代"
+      @ok="addStage"
+      @cancel="closeAddStage"
+    >
+      <div>
+        <a-form-model
+          class="pl-2"
+          layout="horizontal"
+          :model="newStage"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
+          <a-form-model-item label="迭代名称" type="name">
+            <a-input v-model="newStage.name" />
+          </a-form-model-item>
+          <a-form-model-item label="起止时间">
+            <a-range-picker
+              width="200px"
+              v-model="newStage.start"
+              type="date"
+            />
+          </a-form-model-item>
+          <a-form-model-item label="迭代目标">
+            <a-input v-model="newStage.target" type="textarea" />
+          </a-form-model-item>
+        </a-form-model>
+      </div>
     </a-modal>
   </div>
-
 </template>
 
 <script>
@@ -445,10 +460,9 @@ export default {
       end: undefined,
     },
     isAddStageVisible: false,
-    stageRules: { // 暂时没用到
-      name: [
-        { required: true, message: '请输入名称', trigger: 'blur' },
-      ],
+    stageRules: {
+      // 暂时没用到
+      name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       date: [{ required: true, message: '请选择日期', trigger: 'change' }],
     },
   }),
