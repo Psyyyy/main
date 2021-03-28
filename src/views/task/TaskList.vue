@@ -374,7 +374,7 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
-      data: [],
+      // data: [],
       expandRows: [],
       isExpandAll: false,
       showTask: false,
@@ -397,21 +397,33 @@ export default {
   },
 
   computed: {
+    data() {
+      return this.$store.state.project.projectList
+    },
     currProjectID() {
       return this.$store.state.project.currProjectId
+    },
+    isFilterModalOpened() {
+      return this.$store.state.filter.isFilterModalOpened
     },
   },
   watch: {
     currProjectID() {
       this.getTask()
     },
+    // isFilterModalOpened() {
+    //   if (this.$store.state.filter.isFilterModalOpened === false) {
+    //     this.getTask()
+    //   }
+    // },
 
   },
   methods: {
     async getTask() {
       const pid = this.currProjectID
       const { data: res } = await getTaskList(pid)
-      this.data = res
+      this.$store.commit('project/SET_PROJECT_LIST', res)
+      // this.data = res
       return true
     },
     async deleteTask(id) {

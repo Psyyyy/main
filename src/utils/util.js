@@ -27,6 +27,8 @@ export function isFunction(value) {
 export function isValidUrl(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
+
+// 日期格式转换
 Vue.filter('dateFormat', (originVal) => {
   const dt = new Date(originVal * 1000)
 
@@ -43,3 +45,11 @@ Vue.filter('dateFormat', (originVal) => {
 
   return DateStr
 })
+
+// 时间戳
+export function getTimestamp(dateStr) {
+  const newstr = dateStr.replace(/-/g, '/')
+  const date = new Date(newstr)
+  const time_str = date.getTime().toString()
+  return time_str.substr(0, 10)
+}

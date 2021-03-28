@@ -4,7 +4,7 @@
       :visible="isFilterModalOpened"
       title="筛选"
       @cancel="closeFilter"
-      @ok="handleOk"
+      @ok="onSubmit"
     >
       <!-- 底部按钮 -->
       <template slot="footer">
@@ -14,7 +14,7 @@
         <a-button
           key="submit"
           type="primary"
-          @click="handleOk"
+          @click="onSubmit"
         >
           筛选
         </a-button>
@@ -29,7 +29,6 @@
       >
         <!-- 标题筛选（输入框） -->
         <a-form-model-item
-          v-if="currFilterType === 'stage'"
           ref="name"
           label="标题"
           prop="name"
@@ -38,12 +37,11 @@
         </a-form-model-item>
         <!-- 负责人筛选（输入框） -->
         <a-form-model-item
-          v-if="currFilterType === 'stage'"
           ref="name"
           label="负责人"
           prop="name"
         >
-          <a-input placeholder="请输入负责人" v-model="form.name" />
+          <a-input placeholder="请输入负责人" v-model="form.member" />
         </a-form-model-item>
         <!-- 迭代筛选（下拉框） -->
         <a-form-model-item
@@ -63,21 +61,29 @@
         </a-form-model-item>
         <!-- 时间筛选 -->
         <a-form-model-item label="起止日期" prop="date">
-          <!-- <a-date-picker
-            v-model="form.date1"
-            show-time
+          <a-date-picker
+            v-model="form.start"
+            :format="dateFormat"
             type="date"
-            placeholder="Pick a date"
+            placeholder="开始日期"
+
             style="width: 100%;"
-          /> -->
-          <a-range-picker class="w-full" />
+          />
+                    <a-date-picker
+            v-model="form.end"
+             :format="dateFormat"
+            type="date"
+
+            placeholder="截止日期"
+            style="width: 100%;"
+          />
         </a-form-model-item>
         <!-- 状态筛选（多选） -->
         <a-form-item label="状态">
-          <a-select mode="multiple" placeholder="请选择状态">
+          <a-select v-model="form.state" mode="multiple" placeholder="请选择状态">
             <a-select-option
-              v-for="(item, index) in stateFilter"
-              :key="index"
+              v-for="(item) in stateFilter"
+              :key="item"
               :value="item"
             >
               {{ item }}
@@ -86,15 +92,15 @@
         </a-form-item>
         <!-- 优先级筛选（多选） -->
         <a-form-item label="优先级">
-          <a-select mode="multiple" placeholder="请选择优先级">
-            <a-select-option value="3">
-              高
-            </a-select-option>
+          <a-select v-model="form.rank"  mode="multiple" placeholder="请选择优先级">
             <a-select-option value="2">
-              中
+              普通
             </a-select-option>
             <a-select-option value="1">
-              低
+              紧急
+            </a-select-option>
+            <a-select-option value="0">
+              非常紧急
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -124,6 +130,10 @@
 </template>
 <script>
 import _clonedeep from 'lodash.clonedeep'
+import { getTimestamp } from '@/utils/util'
+import {
+  filterTask,
+} from '@/api/task'
 
 export default {
   name: 'FilterModal',
@@ -176,13 +186,17 @@ export default {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 },
     other: '',
+    dateFormat: 'YYYY/MM/DD',
     form: {
       member: '',
       stage: '',
       rank: [],
       state: [],
       name: '',
+      start: '',
+      end: '',
     },
+    formatForm: {},
   }),
   watch: {
     '$store.state.filter.currEditFilter': {
@@ -201,17 +215,30 @@ export default {
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', false)
     },
     // 表单部分
-    onSubmit() {
-      // this.$refs.ruleForm.validate((valid) => {
-      //   if (valid) {
-      //     console.log('submit!')
-      //   } else {
-      //     console.log('error submit!!')
-      //     return false
-      //   }
-      //   return true
-      // })
+    async onSubmit() {
+      this.formatForm = _clonedeep(this.form)// 这里要用深拷贝，要不然只是复制了指针而已
+      if (this.formatForm.start && this.formatForm.end) {
+        if ((this.formatForm.start - this.formatForm.end) > 0) {
+          this.$message.warning('截止时间早于开始时间！')
+          return false
+        }
+      }
+      if (this.formatForm.start) {
+        this.formatForm.start = getTimestamp((this.formatForm.start).format('YYYY-MM-DD h:m:s'))
+      }
+      if (this.formatForm.end) {
+        this.formatForm.end = getTimestamp((this.formatForm.end).format('YYYY-MM-DD h:m:s'))
+      }
+
+      const { data: res } = await filterTask(this.formatForm)
+      console.log('filter', res)
+      this.$store.commit('project/SET_PROJECT_LIST', res)
+      this.$message.success('列表已更新！')
+      this.closeFilter()
+      this.resetForm()
+      return true
     },
+    // console.log(getTimestamp(this.form.end.format('YYYY-MM-DD h:m:s')))
     resetForm() {
       this.$refs.ruleForm.resetFields()
     },

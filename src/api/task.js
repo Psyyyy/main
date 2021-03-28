@@ -7,7 +7,7 @@ import request from '@/plugins/axios'
 export function getTaskList(data) {
   console.log('这里是接口', data)
   return request({
-    url: `/task/${data}`,
+    url: `/task/list/${data}`,
     method: 'get',
   })
 }
@@ -29,5 +29,13 @@ export function deleteTask(data) {
   return request({
     url: `/task/delete/${data}`,
     method: 'put',
+  })
+}
+
+export function filterTask(data) {
+  return request({
+    url: '/task/filter',
+    method: 'get',
+    params: data,
   })
 }

@@ -70,6 +70,9 @@ const state = {
 }
 
 const mutations = {
+  SET_PROJECT_LIST(state, projectlist) {
+    state.projectList = projectlist
+  },
   SET_PROJECT_DRAWER_STATUS(state, status) {
     if (!status) {
       state.currEditTodo = {}

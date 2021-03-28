@@ -2,6 +2,7 @@ import Vue from 'vue'
 import errorHandler from '@/utils/error-handler'
 import vuescroll from 'vuescroll'
 import axios from 'axios'
+import moment from 'moment'
 import App from './App.vue'
 import router from './router/router'
 import store from './store/store'
@@ -20,6 +21,7 @@ window.addEventListener('unhandledrejection', (e) => {
   e.preventDefault()
 })
 Vue.use(vuescroll)
+Vue.use(moment)
 Vue.prototype.$vuescrollConfig = {
   vuescroll: {
     mode: 'native',
