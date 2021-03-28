@@ -417,11 +417,11 @@ export default {
     async deleteTask(id) {
       try {
         const res = await deleteTask(id)
-        console
-      } catch (error) {
-        this.$message.info(error)
+        this.$message.success(res.meta.msg)
+        this.getTask()
+      } catch (err) {
+        // console.log(err)
       }
-
       return true
     },
     async logOut() {

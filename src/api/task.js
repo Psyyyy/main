@@ -28,6 +28,6 @@ export function getTaskList(data) {
 export function deleteTask(data) {
   return request({
     url: `/task/delete/${data}`,
-    method: 'delete',
+    method: 'put',
   })
 }
