@@ -30,8 +30,8 @@
         </div>
         <template #overlay>
           <a-menu>
-            <a-menu-item v-for="{ id,title } in project" :key="id" @click="changeProjectTo(id,title)">
-              {{title}}
+            <a-menu-item v-for="{ pro_id,pro_title } in projectList" :key="pro_title" @click="changeProjectTo(pro_id,pro_title)">
+              {{pro_title}}
             </a-menu-item>
           </a-menu>
         </template>
@@ -92,6 +92,9 @@
 <script>
 import screenfull from 'screenfull'
 import { isValidUrl } from '@/utils/util'
+import {
+  getProjectList,
+} from '@/api/project'
 import HeaderSearch from './app-header/HeaderSearch.vue'
 import HeaderNotice from './app-header/HeaderNotice.vue'
 
@@ -123,74 +126,12 @@ export default {
         click: 'logOut',
       },
     ],
-    project: [
-      {
-        id: '1',
-        title: '白日依山尽，黄河入海流。',
-        tag: '前端',
-        tagColor: 'success',
-        percent: 60,
-        avatar: 'A',
-        done: false,
-      },
-      {
-        id: '2',
-        title: '故人西辞黄鹤楼，烟花三月下扬州。',
-        tag: '后端',
-        tagColor: 'danger',
-        percent: 60,
-        avatar: 'B',
-        done: false,
-      },
-      {
-        id: '3',
-        title: '两岸猿声啼不住，轻舟已过万重山。',
-        tag: 'UI/UX',
-        tagColor: 'primary',
-        percent: 80,
-        avatar: 'C',
-        done: true,
-      },
-      {
-        id: '4',
-        title: '红颜未老恩先断，斜倚薰笼坐到明。',
-        tag: '界面设计',
-        tagColor: 'info',
-        percent: 60,
-        avatar: 'D',
-        done: false,
-      },
-      {
-        id: '5',
-        title: '嫦娥应悔偷灵药，碧海青天夜夜心。',
-        tag: 'JAVASCRIPT',
-        tagColor: 'warning',
-        percent: 20,
-        avatar: 'E',
-        done: false,
-      },
-      {
-        id: '6',
-        title: '嫦娥应悔偷灵药，碧海青天夜夜心。',
-        tag: 'JAVASCRIPT',
-        tagColor: 'warning',
-        percent: 30,
-        avatar: 'E',
-        done: false,
-      },
-      {
-        id: '7',
-        title: '嫦娥应悔偷灵药，碧海青天夜夜心。',
-        tag: 'JAVASCRIPT',
-        tagColor: 'warning',
-        percent: 20,
-        avatar: 'E',
-        done: false,
-      },
-    ],
+    projectList: [],
     isFullScreen: false,
   }),
-
+  created() {
+    this.getProject()
+  },
   computed: {
     info() {
       return this.$store.state.user.info
@@ -209,6 +150,12 @@ export default {
   },
 
   methods: {
+    async getProject() {
+      const { data: res } = await getProjectList()
+      // console.log('project', res)
+      this.projectList = res.projectlist
+      return true
+    },
     async logOut() {
       const CAN_LOGOUT = await this.$store.dispatch('user/logout')
       if (CAN_LOGOUT) {
@@ -240,7 +187,7 @@ export default {
       this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
       this.$store.commit('project/SET_CURR_PROJECT_ID', id)
       window.localStorage.setItem('currProject', name)
-
+      window.localStorage.setItem('currProjectID', id)
       // console.log(this.$store.state.project.currProject)
       // 这里需要向后台提交id拿项目数据，拿回来后重新渲染当前界面
       // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目

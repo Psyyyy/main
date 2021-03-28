@@ -1059,12 +1059,10 @@ export default {
       //   })
     },
     enterProject(id, name) {
-      console.log(id)
-      console.log(name)
-
       this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
       this.$store.commit('project/SET_CURR_PROJECT_ID', id)
       window.localStorage.setItem('currProject', name)
+      window.localStorage.setItem('currProjectID', id)
       this.$router.push('Ecommerce')
     },
     enterFolder() {

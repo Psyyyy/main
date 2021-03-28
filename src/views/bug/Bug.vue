@@ -431,6 +431,42 @@ export default {
               tester: 'Anne',
               start: '2021.1.1',
               end: '2021.3.1',
+              children: [
+                {
+                  id: '1123',
+                  bug: '故人西辞黄鹤楼，烟花三月下扬州',
+                  rank: '3',
+                  stage: '迭代1',
+                  state: '规划中',
+                  member: 'jack',
+                  tester: 'Anne',
+                  start: '2021.1.1',
+                  end: '2021.3.1',
+                },
+                {
+                  id: '132',
+                  bug: '开发功能',
+                  rank: '2',
+                  stage: '迭代1',
+                  state: '规划中',
+                  member: 'amy',
+                  tester: 'cindy',
+                  start: '2021.1.1',
+                  end: '2021.3.1',
+                },
+                {
+                  id: '133333',
+                  bug:
+                '故人西辞黄鹤楼，烟花三月下扬州,故人西辞黄鹤楼，烟花三月下扬州',
+                  rank: '1',
+                  stage: '迭代1',
+                  state: '实现中',
+                  member: 'lily',
+                  tester: 'Bob',
+                  start: '2021.1.1',
+                  end: '2021.3.1',
+                },
+              ],
             },
             {
               id: '12',
@@ -458,7 +494,7 @@ export default {
           ],
         },
         {
-          id: '2',
+          id: '22',
           bug: '故人西辞黄鹤楼，烟花三月下扬州',
           rank: '1',
           stage: '迭代1',
@@ -470,7 +506,7 @@ export default {
           children: [],
         },
         {
-          id: '3',
+          id: '133',
           bug: '故人西辞黄鹤楼，烟花三月下扬州',
           rank: '1',
           stage: '迭代1',
@@ -503,7 +539,7 @@ export default {
               end: '2021.3.1',
             },
             {
-              id: '33',
+              id: '313',
               bug: '故人西辞黄鹤楼，烟花三月下扬州',
               rank: '2',
               stage: '迭代1',
@@ -543,7 +579,9 @@ export default {
       nouseData: '',
     }
   },
-  created() {},
+  created() {
+    console.log(this.data)
+  },
   methods: {
     // 占位函数
     nouse() {
@@ -649,12 +687,12 @@ export default {
             </div>
           )
         }
-
         return (
           <div
             class="expand-icon"
             onClick={() => {
               this.expandRows.push(`${id}`)
+              console.log(this.expandRows)
             }}
           >
             +

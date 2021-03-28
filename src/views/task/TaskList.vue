@@ -53,8 +53,8 @@
           <a-table
             ref="table"
             size="middle"
-            :scroll="{ y: 500 }"
-            :row-key="record => record.id"
+            :scroll="{ y: 490 }"
+            :row-key="record => (record.id+'')"
             :pagination="false"
             :default-expand-all-rows="false"
             :columns="columns"
@@ -85,7 +85,7 @@
             >
               <a-input
                 v-ant-ref="c => (searchInput = c)"
-                :placeholder="`查找${column.title}`"
+                :placeholder="`查找${column.t_title}`"
                 :value="selectedKeys[0]"
                 style="width: 188px; margin-bottom: 8px; display: block;"
                 @change="
@@ -176,20 +176,20 @@
             >
             <!-- 优先级 -->
             <span slot="rank" slot-scope="rank">
-              <div style="text-align:center" v-if="rank !== ''">
+              <div v-if="rank !== ''">
                 <a-tag
                   :color="
-                    rank === '3' ? '#ff5b5c' : rank === '2' ? '#fdac41' : '#28c175'
+                    rank === 2 ? '#ff5b5c' : rank === 1 ? '#fdac41' : '#28c175'
                   "
                 >
-                  {{ rank === "3" ? "非常紧急" : rank === "2" ? "紧急" : "普通" }}
+                  {{ rank === 2 ? "非常紧急" : rank === 1 ? "紧急" : "普通" }}
                 </a-tag>
               </div>
             </span>
 
             <!-- 状态 -->
                         <span slot="state" slot-scope="state">
-              <div style="text-align:center" v-if="state !== ''">
+              <div class="pr-2" v-if="state !== ''">
                 <a-tag
                   :color="
                     state === '规划中' ? 'green' : state === '实现中' ? 'blue' : '#c6c8ce'
@@ -228,16 +228,23 @@
           /> -->
               </template>
             </template>
+            <!-- 日期 -->
+            <span style="text-align:center" slot="time" slot-scope="time">
+              <template>
+                {{time|dateFormat}}
+              </template>
+            </span>
             <!-- 操作 -->
-            <span style="text-align:center" slot="action" slot-scope="">
+            <span style="text-align:center" slot="action" slot-scope="record">
               <template>
                 <!-- <a-divider type="vertical" /> -->
-                <a-popconfirm placement="topRight" title="删除本菜单与下级？">
+                <a-popconfirm placement="topRight" title="删除本菜单与下级？"  @confirm="deleteTask(record.id)">
                   <a-icon
                     class="cursor-pointer"
                     type="delete"
                     theme="twoTone"
                     two-tone-color="#ea2e47"
+
                   />
                   <!-- <a-button type="danger" icon="delete" size="small" /> -->
                 </a-popconfirm>
@@ -258,6 +265,9 @@
 
 <script>
 import { Empty } from 'ant-design-vue'
+import {
+  getTaskList, deleteTask,
+} from '@/api/task'
 // import STable from '../../components/Table'
 import Task from './Task.vue'
 import FilterModal from '../kanban/components/FilterModal.vue'
@@ -272,8 +282,8 @@ export default {
     return {
       columns: [
         {
-          dataIndex: 'task',
-          key: 'task',
+          dataIndex: 't_title',
+          key: 't_title',
           ellipsis: true,
           width: '400px',
           slots: { title: 'all' },
@@ -303,35 +313,37 @@ export default {
         },
         {
           title: '优先级',
-          dataIndex: 'rank',
-          key: 'rank',
+          dataIndex: 't_rank',
+          key: 't_rank',
           width: '100px',
           defaultSortOrder: 'descend',
-          sorter: (a, b) => a.rank - b.rank,
+          sorter: (a, b) => a.t_rank - b.t_rank,
           scopedSlots: { customRender: 'rank' },
         },
         {
           title: '迭代',
-          key: 'stage',
-          width: '100px',
-          dataIndex: 'stage',
+          key: 's_title',
+          width: '80px',
+          dataIndex: 's_title',
         },
         {
           title: '状态',
-          dataIndex: 'state',
-          key: 'state',
+          dataIndex: 't_state',
+          width: '80px',
+          key: 't_state',
           scopedSlots: { customRender: 'state' },
         },
         {
           title: '处理人',
-          dataIndex: 'member',
-          key: 'member',
+          dataIndex: 't_header_name',
+          key: 't_header_name',
+
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
             customRender: 'member',
           },
-          onFilter: (value, record) => record.member.children.member
+          onFilter: (value, record) => record.member.children.t_header_name
             .toString()
             .toLowerCase()
             .includes(value.toLowerCase()),
@@ -345,140 +357,24 @@ export default {
         },
         {
           title: '预计开始',
-          dataIndex: 'start',
-          key: 'start',
+          dataIndex: 'start_time',
+          key: 'start_time',
+          scopedSlots: { customRender: 'time' },
         },
         {
           title: '预计结束',
-          dataIndex: 'end',
-          key: 'end',
+          dataIndex: 'end_time',
+          key: 'end_time',
+          scopedSlots: { customRender: 'time' },
         },
         {
           title: '操作',
           key: 'action',
-
+          width: '50px',
           scopedSlots: { customRender: 'action' },
         },
       ],
-      data: [
-        {
-          id: '1',
-          task: '开发功能',
-          rank: '3',
-          stage: '迭代1',
-          state: '实现中',
-          member: 'judy',
-          start: '2021.1.1',
-          end: '2021.3.1',
-          children: [
-            {
-              id: '11',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '3',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'jack',
-              start: '2021.1.1',
-              end: '2021.3.1',
-              children: [{
-                id: '13',
-                task:
-                '三级菜单',
-                rank: '1',
-                stage: '迭代1',
-                state: '实现中',
-                member: 'lily',
-                start: '2021.1.1',
-                end: '2021.3.1',
-              }],
-            },
-            {
-              id: '12',
-              task: '开发功能',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '13',
-              task:
-                '故人西辞黄鹤楼，烟花三月下扬州,故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '1',
-              stage: '迭代1',
-              state: '实现中',
-              member: 'lily',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-          ],
-        },
-        {
-          id: '2',
-          task: '故人西辞黄鹤楼，烟花三月下扬州',
-          rank: '1',
-          stage: '迭代1',
-          state: '规划中',
-          member: 'amy',
-          start: '2021.1.1',
-          end: '2021.3.1',
-          children: [],
-        },
-        {
-          id: '3',
-          task: '故人西辞黄鹤楼，烟花三月下扬州',
-          rank: '1',
-          stage: '迭代1',
-          state: '已完成',
-          member: 'monica',
-          start: '2021.1.1',
-          end: '2021.3.1',
-          children: [
-            {
-              id: '31',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '2',
-              stage: '迭代1',
-              state: '实现中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '32',
-              task: '开发功能',
-              rank: '3',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'joey',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '33',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-            {
-              id: '34',
-              task: '故人西辞黄鹤楼，烟花三月下扬州',
-              rank: '2',
-              stage: '迭代1',
-              state: '规划中',
-              member: 'amy',
-              start: '2021.1.1',
-              end: '2021.3.1',
-            },
-          ],
-        },
-      ],
+      data: [],
       expandRows: [],
       isExpandAll: false,
       showTask: false,
@@ -496,8 +392,46 @@ export default {
       nouseData: '',
     }
   },
-  created() {},
+  created() {
+    this.getTask()
+  },
+
+  computed: {
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
+  },
+  watch: {
+    currProjectID() {
+      this.getTask()
+    },
+
+  },
   methods: {
+    async getTask() {
+      const pid = this.currProjectID
+      const { data: res } = await getTaskList(pid)
+      this.data = res
+      return true
+    },
+    async deleteTask(id) {
+      try {
+        const res = await deleteTask(id)
+        console
+      } catch (error) {
+        this.$message.info(error)
+      }
+
+      return true
+    },
+    async logOut() {
+      const CAN_LOGOUT = await this.$store.dispatch('user/logout')
+
+      if (CAN_LOGOUT) {
+        this.$message.success('成功退出')
+        this.$router.replace({ name: 'Login' })
+      }
+    },
     // 占位函数
     nouse() {
       console.log('占位')
@@ -570,7 +504,6 @@ export default {
         //   expandRowKeys.push(`${key}`)
         // }
       }
-
       this.expandRows = expandRowKeys
     },
     closeAllRow() {
@@ -584,7 +517,6 @@ export default {
         && props.record.children.length > 0
       ) {
         const { id } = props.record
-
         if (props.expanded) {
           // 点击的按钮是[-]，则进行收缩操作
           return (
@@ -594,7 +526,7 @@ export default {
                 // _.pull(this.expandRows, `${id}`)
                 // this.expandRows.pop()
                 for (let i = 0; i < this.expandRows.length; i += 1) {
-                  if (id === this.expandRows[i]) this.expandRows.splice(i, 1)
+                  if (`${id}` === this.expandRows[i]) this.expandRows.splice(i, 1)
                 }
               }}
             >
@@ -602,7 +534,6 @@ export default {
             </div>
           )
         }
-
         return (
           <div
             class="expand-icon"
@@ -649,11 +580,6 @@ export default {
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'task')
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', true)
     },
-  },
-  computed: {
-    // currFilterType() {
-    //   return this.$store.state.filter.currFilterType
-    // },
   },
 }
 </script>

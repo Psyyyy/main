@@ -65,7 +65,7 @@ const state = {
     },
   ],
   currProject: window.localStorage.getItem('currProject') ? window.localStorage.getItem('currProject') : '',
-  currProjectId: '',
+  currProjectId: window.localStorage.getItem('currProjectID') ? window.localStorage.getItem('currProjectID') : '',
   currEditProject: {},
 }
 
