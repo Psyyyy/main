@@ -8,14 +8,8 @@
     >
       <!-- 底部按钮 -->
       <template slot="footer">
-        <a-button key="back" >
-          重置
-        </a-button>
-        <a-button
-          key="submit"
-          type="primary"
-          @click="onSubmit"
-        >
+        <a-button key="back"> 重置 </a-button>
+        <a-button key="submit" type="primary" @click="onSubmit">
           筛选
         </a-button>
       </template>
@@ -23,33 +17,48 @@
       <a-form-model
         ref="ruleForm"
         :model="form"
-
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <!-- 标题筛选（输入框） -->
-        <a-form-model-item
+        <!-- 标题筛选（输入框）这个放弃，直接搜索吧 -->
+        <!-- <a-form-model-item
           ref="name"
           label="标题"
           prop="name"
         >
           <a-input placeholder="请输入标题" v-model="form.name" />
-        </a-form-model-item>
-        <!-- 负责人筛选（输入框） -->
+        </a-form-model-item> -->
+        <!-- 负责人筛选（下拉框） -->
         <a-form-model-item
-          ref="name"
+          v-if="currFilterType !== 'stage'"
           label="负责人"
-          prop="name"
         >
-          <a-input placeholder="请输入负责人" v-model="form.member" />
+          <a-select
+            v-model="form.member"
+            mode="multiple"
+            placeholder="点击选择负责人"
+          >
+            <a-select-option
+              v-for="item in memberList"
+              :key="item.uid"
+              :value="item.name"
+            >
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
         </a-form-model-item>
+
+        <!-- 负责人筛选（输入框） -->
+        <!-- <a-form-model-item ref="name" label="负责人" prop="name">
+          <a-input placeholder="请输入负责人" v-model="form.member" />
+        </a-form-model-item> -->
         <!-- 迭代筛选（下拉框） -->
         <a-form-model-item
           v-if="currFilterType !== 'stage'"
           label="迭代"
           prop="stage"
         >
-          <a-select v-model="form.stage">
+          <a-select v-model="form.stage"  mode="multiple" placeholder="点击选择迭代">
             <a-select-option
               v-for="item in stageList"
               :key="item.id"
@@ -66,23 +75,25 @@
             :format="dateFormat"
             type="date"
             placeholder="开始日期"
-
-            style="width: 100%;"
+            style="width: 100%"
           />
-                    <a-date-picker
+          <a-date-picker
             v-model="form.end"
-             :format="dateFormat"
+            :format="dateFormat"
             type="date"
-
             placeholder="截止日期"
-            style="width: 100%;"
+            style="width: 100%"
           />
         </a-form-model-item>
         <!-- 状态筛选（多选） -->
         <a-form-item label="状态">
-          <a-select v-model="form.state" mode="multiple" placeholder="请选择状态">
+          <a-select
+            v-model="form.state"
+            mode="multiple"
+            placeholder="点击选择状态"
+          >
             <a-select-option
-              v-for="(item) in stateFilter"
+              v-for="item in stateFilter"
               :key="item"
               :value="item"
             >
@@ -92,16 +103,14 @@
         </a-form-item>
         <!-- 优先级筛选（多选） -->
         <a-form-item label="优先级">
-          <a-select v-model="form.rank"  mode="multiple" placeholder="请选择优先级">
-            <a-select-option value="2">
-              普通
-            </a-select-option>
-            <a-select-option value="1">
-              紧急
-            </a-select-option>
-            <a-select-option value="0">
-              非常紧急
-            </a-select-option>
+          <a-select
+            v-model="form.rank"
+            mode="multiple"
+            placeholder="点击选择优先级"
+          >
+            <a-select-option value="2"> 普通 </a-select-option>
+            <a-select-option value="1"> 紧急 </a-select-option>
+            <a-select-option value="0"> 非常紧急 </a-select-option>
           </a-select>
         </a-form-item>
         <!-- 单选 -->
@@ -131,9 +140,7 @@
 <script>
 import _clonedeep from 'lodash.clonedeep'
 import { getTimestamp } from '@/utils/util'
-import {
-  filterTask,
-} from '@/api/task'
+import { filterTask } from '@/api/task'
 
 export default {
   name: 'FilterModal',
@@ -179,6 +186,9 @@ export default {
     stateFilter() {
       return this.$store.getters['filter/stateFilter']
     },
+    memberList() {
+      return this.$store.state.project.currProjectMemberList
+    },
   },
   data: () => ({
     currFilter: {},
@@ -188,8 +198,8 @@ export default {
     other: '',
     dateFormat: 'YYYY/MM/DD',
     form: {
-      member: '',
-      stage: '',
+      member: [],
+      stage: [],
       rank: [],
       state: [],
       name: '',
@@ -207,6 +217,10 @@ export default {
     },
   },
 
+  created() {
+    console.log(this.memberList)
+  },
+
   methods: {
     closeFilter() {
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', false)
@@ -216,18 +230,22 @@ export default {
     },
     // 表单部分
     async onSubmit() {
-      this.formatForm = _clonedeep(this.form)// 这里要用深拷贝，要不然只是复制了指针而已
+      this.formatForm = _clonedeep(this.form) // 这里要用深拷贝，要不然只是复制了指针而已
       if (this.formatForm.start && this.formatForm.end) {
-        if ((this.formatForm.start - this.formatForm.end) > 0) {
+        if (this.formatForm.start - this.formatForm.end > 0) {
           this.$message.warning('截止时间早于开始时间！')
           return false
         }
       }
       if (this.formatForm.start) {
-        this.formatForm.start = getTimestamp((this.formatForm.start).format('YYYY-MM-DD h:m:s'))
+        this.formatForm.start = getTimestamp(
+          this.formatForm.start.format('YYYY-MM-DD h:m:s'),
+        )
       }
       if (this.formatForm.end) {
-        this.formatForm.end = getTimestamp((this.formatForm.end).format('YYYY-MM-DD h:m:s'))
+        this.formatForm.end = getTimestamp(
+          this.formatForm.end.format('YYYY-MM-DD h:m:s'),
+        )
       }
 
       const { data: res } = await filterTask(this.formatForm)
@@ -236,6 +254,15 @@ export default {
       this.$message.success('列表已更新！')
       this.closeFilter()
       this.resetForm()
+      this.form = {
+        member: [],
+        stage: [],
+        rank: [],
+        state: [],
+        name: '',
+        start: '',
+        end: '',
+      }
       return true
     },
     // console.log(getTimestamp(this.form.end.format('YYYY-MM-DD h:m:s')))

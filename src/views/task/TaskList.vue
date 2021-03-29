@@ -20,8 +20,15 @@
             class="ml-1 mr-4 flex"
             @click="onOpenFilter()"
           >
-            <feather class="mr-1 mt-1" size="18" type="search" />
+            <feather class="mr-1" size="18" type="search" />
             筛选</a-button
+          >
+           <a-button
+            class="ml-1 mr-4 flex"
+            @click="resetTable()"
+          >
+            <feather class="mr-1 " size="18" type="refresh-cw" />
+            重置</a-button
           >
         </div>
         <div class="mr-4">
@@ -269,6 +276,7 @@ import {
   getTaskList, deleteTask,
 } from '@/api/task'
 // import STable from '../../components/Table'
+import { getMemberList } from '@/api/member'
 import Task from './Task.vue'
 import FilterModal from '../kanban/components/FilterModal.vue'
 // import { getOrgTree } from '@/api/modular/system/orgManage'
@@ -394,6 +402,7 @@ export default {
   },
   created() {
     this.getTask()
+    this.getMemberList()
   },
 
   computed: {
@@ -419,6 +428,12 @@ export default {
 
   },
   methods: {
+    async getMemberList() {
+      const id = this.currProjectID
+      const { data: res } = await getMemberList(id)
+      console.log('appheader', res)
+      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
+    },
     async getTask() {
       const pid = this.currProjectID
       const { data: res } = await getTaskList(pid)
@@ -591,6 +606,9 @@ export default {
     onOpenFilter() {
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'task')
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', true)
+    },
+    resetTable() {
+      this.getTask()
     },
   },
 }

@@ -95,6 +95,7 @@ import { isValidUrl } from '@/utils/util'
 import {
   getProjectList,
 } from '@/api/project'
+import { getMemberList } from '@/api/member'
 import HeaderSearch from './app-header/HeaderSearch.vue'
 import HeaderNotice from './app-header/HeaderNotice.vue'
 
@@ -183,11 +184,15 @@ export default {
         screenfull.toggle()
       }
     },
-    changeProjectTo(id, name) {
+    async changeProjectTo(id, name) {
+      const { data: res } = await getMemberList(id)
+      console.log('appheader', res)
       this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
       this.$store.commit('project/SET_CURR_PROJECT_ID', id)
+      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
       window.localStorage.setItem('currProject', name)
       window.localStorage.setItem('currProjectID', id)
+
       // console.log(this.$store.state.project.currProject)
       // 这里需要向后台提交id拿项目数据，拿回来后重新渲染当前界面
       // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目

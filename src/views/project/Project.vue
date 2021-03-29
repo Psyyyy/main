@@ -628,6 +628,7 @@ import _debounce from 'lodash.debounce'
 import {
   getProjectList, newProject, updateProject, deleteProject,
 } from '@/api/project'
+import { getMemberList } from '@/api/member'
 import screenfull from 'screenfull'
 import { isValidUrl } from '@/utils/util'
 import infiniteScroll from 'vue-infinite-scroll'
@@ -1058,9 +1059,11 @@ export default {
       //     this.loading = false
       //   })
     },
-    enterProject(id, name) {
+    async enterProject(id, name) {
+      const { data: res } = await getMemberList(id)
       this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
       this.$store.commit('project/SET_CURR_PROJECT_ID', id)
+      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
       window.localStorage.setItem('currProject', name)
       window.localStorage.setItem('currProjectID', id)
       this.$router.push('Ecommerce')

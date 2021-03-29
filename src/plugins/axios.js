@@ -23,6 +23,7 @@ service.interceptors.request.use(
     const token = getToken()
     if (token) {
       config.headers.Authorization = `${token}`
+      config.userInfo = 'test'
     }
     return config
   },

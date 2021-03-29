@@ -67,6 +67,7 @@ const state = {
   currProject: window.localStorage.getItem('currProject') ? window.localStorage.getItem('currProject') : '',
   currProjectId: window.localStorage.getItem('currProjectID') ? window.localStorage.getItem('currProjectID') : '',
   currEditProject: {},
+  currProjectMemberList: [],
 }
 
 const mutations = {
@@ -87,6 +88,9 @@ const mutations = {
   },
   SET_CURR_EDIT_PROJECT(state, todoItem) {
     state.currEditProject = todoItem
+  },
+  SET_CURR_PROJECT_MEMBER_LIST(state, list) {
+    state.currProjectMemberList = list
   },
 }
 const actions = {
