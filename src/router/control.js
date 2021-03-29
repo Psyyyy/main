@@ -17,10 +17,10 @@ router.beforeEach(async (to, from, next) => {
   setPageTitle(to.meta?.title)
 
   if (getToken()) {
-    console.log('拿到了token')
+    // console.log('拿到了token')
     if (to.name === 'Login') {
       // 如果已经有了 token 再访问登录页的话，将会被重定向到首页
-      next('/')
+      next('/project')
     } else {
       const isAuthorized = isArray(store.state.user.permissions)
 
@@ -28,13 +28,16 @@ router.beforeEach(async (to, from, next) => {
         next()// 无参数，默认to地址
       } else { // 有token但没有权限
         try {
+          console.log('try')
           resetRouter()
           const { permissions } = await store.dispatch('user/getUserInfo')
           const accessedRoutes = await store.dispatch('auth/generateRoutes', permissions)
           // 动态添加路由
           router.addRoutes(accessedRoutes)
+          console.log('router', to)
           next({ ...to, replace: true })
         } catch (e) {
+          console.log('catch')
           console.log(e)
           NProgress.done()
           removeToken()

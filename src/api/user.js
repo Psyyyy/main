@@ -15,7 +15,6 @@ export function register(data) {
 }
 
 export function login(data) {
-  console.log('login:', data)
   return request({
     url: '/login',
     method: 'post',
@@ -31,11 +30,10 @@ export function logout(data) {
   })
 }
 
-export function getUserInfo(params) {
+export function getUserInfo(id) {
   return request({
-    url: '/user/info',
+    url: `/user/${id}`,
     method: 'get',
-    params,
   })
 }
 

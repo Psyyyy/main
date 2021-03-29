@@ -111,7 +111,7 @@ export default {
   mounted() {
     // MOCK: 模拟登录，页面加载时自动填写账号
     this.form.setFieldsValue({
-      username: 'admin',
+      username: 'amy',
       password: '123456',
     })
   },
@@ -130,17 +130,16 @@ export default {
           this.loading = true
           // console.log('Login:', values)
           try {
-            const CAN_LOGIN = await this.$store.dispatch('user/login', values)
-            if (CAN_LOGIN) {
+            this.$store.dispatch('user/login', values).then(() => {
               this.$message.success('登录成功')
               const { redirectPath } = this.$store.state
               if (redirectPath) {
                 // 通过记录重定向路径，前往授权前想要访问的页面
                 this.$router.replace(redirectPath)
               } else {
-                this.$router.replace('/project')
+                this.$router.replace('/project').catch(() => {})
               }
-            }
+            }).catch(() => {})
           } finally {
             this.loading = false
           }

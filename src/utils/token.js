@@ -4,7 +4,7 @@ export function setToken(value) {
   if (typeof value !== 'string') {
     throw new Error('参数应为 string')
   }
-  console.log('token', value)
+  // console.log('token', value)
   window.sessionStorage.setItem('token', value)
   // Vue.ls.set('token', value)
 }

@@ -11,6 +11,9 @@ const mutations = {
   SET_USER_INFO(state, info) {
     state.info = info
   },
+  SET_USER_ID(state, id) {
+    state.id = id
+  },
   SET_USER_PERMISSIONS(state, permissions) {
     state.permissions = permissions
   },
@@ -22,7 +25,7 @@ const actions = {
       const { data: result } = await login({ username, password })
       // console.log('store', result.token)
       setToken(result.token)
-
+      window.sessionStorage.setItem('currUserID', result.info.id)
       return true
     } catch {
       return false
@@ -42,16 +45,8 @@ const actions = {
   },
 
   async getUserInfo({ commit }) {
-    // const { data } = await getUserInfo()
-    const data = {
-      info: {
-        id: '1',
-        nickname: '皮埃斯歪',
-        role: '管理员',
-        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-      },
-      permissions: ['admin'],
-    }
+    const uid = window.sessionStorage.getItem('currUserID')
+    const { data } = await getUserInfo(uid)
     commit('SET_USER_INFO', data.info)
     // commit('SET_USER_PERMISSIONS', data.permissions)
     commit('SET_USER_PERMISSIONS', data.permissions)
