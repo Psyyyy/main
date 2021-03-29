@@ -183,7 +183,7 @@ export default {
   data: () => ({
     currFilter: {},
     // 表单部分
-    labelCol: { span: 4 },
+    labelCol: { span: 6 },
     wrapperCol: { span: 14 },
     other: '',
     dateFormat: 'YYYY/MM/DD',

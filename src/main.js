@@ -16,10 +16,10 @@ import './directives' // 自定义指令
 Vue.config.errorHandler = errorHandler
 Vue.config.productionTip = false
 
-window.addEventListener('unhandledrejection', (e) => {
-  console.warn('未处理的 promise rejection:/\n', e.reason)
-  e.preventDefault()
-})
+// window.addEventListener('unhandledrejection', (e) => {
+//   console.warn('未处理的 promise rejection:/\n', e)
+//   e.preventDefault()
+// })
 Vue.use(vuescroll)
 Vue.use(moment)
 Vue.prototype.$vuescrollConfig = {

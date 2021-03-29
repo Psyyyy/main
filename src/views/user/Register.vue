@@ -26,11 +26,6 @@
           </template>
         </a-input>
       </a-form-item>
-      <a-form-item style="margin: -15px 0 5px 0;">
-        <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">
-          <span>我已阅读<span class="primary">《隐私保护协议》</span></span>
-        </a-checkbox>
-      </a-form-item>
       <a-form-item>
         <a-button
           class="w-full"
@@ -47,6 +42,8 @@
 </template>
 
 <script>
+import { register } from '@/api/user'
+
 export default {
   name: 'Register',
 
@@ -56,7 +53,7 @@ export default {
         icon: 'user',
         placeholder: '注册账号',
         decorator: [
-          'account',
+          'username',
           { rules: [{ required: true, message: '请输入账号' }] },
         ],
       },
@@ -92,6 +89,22 @@ export default {
           },
         ],
       },
+      {
+        icon: 'phone',
+        placeholder: '手机号码',
+        decorator: [
+          'mobile',
+          { rules: [{ required: true, message: '请输入手机号' }] },
+        ],
+      },
+      {
+        icon: 'box',
+        placeholder: '邮箱',
+        decorator: [
+          'email',
+          { rules: [{ required: true, message: '请输入邮箱' }] },
+        ],
+      },
     ]
     return {
       formItems,
@@ -108,14 +121,18 @@ export default {
         if (!error) {
           this.loading = true
           try {
-            const CAN_LOGIN = await this.$store.dispatch('user/login', values)
-            if (CAN_LOGIN) {
-              this.$router.replace('/')
+            const res = await register(values)
+            if (res.meta.status !== 201) {
+              return this.$message.error(`注册失败：${res.meta.msg}`)
             }
+            console.log('register', res)
+            this.$message.success('注册成功，请登录')
+            this.$router.push('Login')
           } finally {
             this.loading = false
           }
         }
+        return true
       })
     },
   },

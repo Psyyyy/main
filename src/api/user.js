@@ -3,7 +3,16 @@
  */
 
 import request from '@/plugins/axios'
+import axios from './registerAxios'
 // import request from './request'
+
+export function register(data) {
+  return axios({
+    url: '/register',
+    method: 'post',
+    data,
+  })
+}
 
 export function login(data) {
   console.log('login:', data)
