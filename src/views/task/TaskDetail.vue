@@ -899,6 +899,7 @@
       :visible="isAddMemberVisible"
       title="添加成员"
       @cancel="isAddMemberVisible = false"
+      @ok="confirmAddMember"
     >
       <div class="ml-4">
         <a-tabs
@@ -913,12 +914,13 @@
                 option-filter-prop="value"
                 style="width: 95%"
                 :filter-option="filterOption"
+                @change="addMember"
 
               >
                 <a-select-option
                   v-for="(item, index) in memberList"
                   :key="index"
-                  :value="item.name"
+                  :value="item.uid"
 
                 >
 
@@ -1080,6 +1082,7 @@ export default {
 
       // 成员
       isAddMemberVisible: false,
+
     }
   },
   computed: {
@@ -1095,6 +1098,7 @@ export default {
     stateFilter() {
       return this.$store.getters['filter/stateFilter']
     },
+
     ...mapState({
       // userInfo: (state) => state.userInfo,
       // uploader: (state) => state.common.uploader,
@@ -1318,6 +1322,32 @@ export default {
         source: 'task',
         content: '',
       }
+      return true
+    },
+
+    addMember(value) {
+      this.form.t_member_ids.push(this.task.detail.t_member_ids)
+      console.log('member', this.form.t_member_ids)
+      this.form.t_member_ids.push(value)
+    },
+
+    // 成员
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[1].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      )
+    },
+    async confirmAddMember() {
+      this.form.id = this.task.detail.id
+      // 然后直接更新
+      console.log('更新form', this.form)
+      const res = await updateTask(this.form)
+      this.resetForm()
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('添加成员失败')
+      }
+      this.$message.success('添加成员成功！')
       return true
     },
 
