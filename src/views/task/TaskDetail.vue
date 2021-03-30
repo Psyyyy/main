@@ -788,7 +788,7 @@
                       style="font-size: 24px;"
                     />
                   </a-tooltip>
-                  <div slot="overlay">
+                  <!-- <div slot="overlay">
                     <project-member-menu
                       v-if="visibleProjectMemberMenu"
                       :task-code="code"
@@ -798,7 +798,7 @@
                           (visibleProjectMemberMenu = false)
                       "
                     ></project-member-menu>
-                  </div>
+                  </div> -->
                 </a-dropdown>
               </div>
             </div>

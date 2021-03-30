@@ -250,10 +250,9 @@ export default {
 
       const { data: res } = await filterTask(this.formatForm)
       // console.log('filter', res)
-      this.$store.commit('project/SET_PROJECT_LIST', res)
+      this.$store.commit('task/SET_TASK_LIST', res)
       this.$message.success('列表已更新！')
       this.closeFilter()
-      this.resetForm()
       this.form = {
         member: [],
         stage: [],
@@ -268,6 +267,15 @@ export default {
     // console.log(getTimestamp(this.form.end.format('YYYY-MM-DD h:m:s')))
     resetForm() {
       this.$refs.ruleForm.resetFields()
+      this.form = {
+        member: [],
+        stage: [],
+        rank: [],
+        state: [],
+        name: '',
+        start: '',
+        end: '',
+      }
     },
   },
 }
