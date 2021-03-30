@@ -135,7 +135,7 @@
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
                 class="task-pointer"
-                @click="showTask = true"
+                @click="showDetail(record.id)"
               >
                 <template
                   v-for="(fragment, i) in text
@@ -155,7 +155,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer" @click="showTask = true">{{
+                <span class="task-pointer" @click="showDetail(record.id)">{{
                   text
                 }}</span>
                 <!-- <editable-cell
@@ -264,7 +264,7 @@
         </a-card>
       </div>
 
-      <task :pop-visible="showTask" @close="showTask = false" />
+      <task :pop-visible="showTask" detail="detailTaskId" @close="showTask = false" />
       <filter-modal />
     </div>
   </div>
@@ -398,6 +398,7 @@ export default {
       treeLoading: false,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       nouseData: '',
+      detailTaskId: '',
     }
   },
   created() {
@@ -407,7 +408,7 @@ export default {
 
   computed: {
     data() {
-      return this.$store.state.project.projectList
+      return this.$store.state.task.taskList
     },
     currProjectID() {
       return this.$store.state.project.currProjectId
@@ -431,13 +432,13 @@ export default {
     async getMemberList() {
       const id = this.currProjectID
       const { data: res } = await getMemberList(id)
-      console.log('appheader', res)
+      console.log('memberlist', res)
       this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
     async getTask() {
       const pid = this.currProjectID
       const { data: res } = await getTaskList(pid)
-      this.$store.commit('project/SET_PROJECT_LIST', res)
+      this.$store.commit('task/SET_TASK_LIST', res)
       // this.data = res
       return true
     },
@@ -609,6 +610,12 @@ export default {
     },
     resetTable() {
       this.getTask()
+    },
+    showDetail(id) {
+      console.log('detail id', id)
+      this.showTask = true
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      // this.detailTaskId = id
     },
   },
 }

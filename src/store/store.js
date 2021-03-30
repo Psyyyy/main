@@ -15,6 +15,7 @@ import stage from './modules/stage'
 import filter from './modules/filter'
 import file from './modules/file'
 import team from './modules/team'
+import task from './modules/task'
 
 Vue.use(Vuex)
 
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     filter,
     file,
     team,
+    task,
   },
 
   state,

@@ -5,7 +5,6 @@
 import request from '@/plugins/axios'
 // import request from './request'
 export function getMemberList(pid) {
-  console.log('laile')
   return request({
     url: `/user/members/${pid}`,
     method: 'get',

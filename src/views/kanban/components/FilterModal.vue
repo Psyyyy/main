@@ -218,7 +218,7 @@ export default {
   },
 
   created() {
-    console.log(this.memberList)
+    // console.log(this.memberList)
   },
 
   methods: {

@@ -41,14 +41,14 @@ Vue.filter('dateFormat', (originVal) => {
   // const ss = (`${dt.getMilliseconds()}`).padStart(2, '0')
 
   // const DateStr = `${y}-${m}-${d} ${hh}:${mm}:${ss}`
-  const DateStr = `${y}-${m}-${d}`
+  const DateStr = `${y}/${m}/${d}`
 
   return DateStr
 })
 
 // 时间戳
 export function getTimestamp(dateStr) {
-  const newstr = dateStr.replace(/-/g, '/')
+  const newstr = dateStr.replace(/\//g, '/')
   const date = new Date(newstr)
   const time_str = date.getTime().toString()
   return time_str.substr(0, 10)
