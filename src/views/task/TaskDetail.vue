@@ -819,95 +819,92 @@
             </div>
             <!-- 项目动态 -->
             <div class="log-wrap">
-                  <a-tabs default-active-key="1">
-      <a-tab-pane key="1" tab="动态">
-       <vue-scroll >
-                <div class="log-list muted">
-                  <div
-                    :class="{
-                      'log-comment': false,
-                      'list-item': true
-                    }"
-                    v-for="log in dialogList"
-                    :key="log.d_id"
-                  >
-                    <template>
-                      <a-avatar
-                        class="log-item"
-                        icon="user"
-                        size="small"
-                        :src="log.avatar"
-                      />
-                      <div class="log-item log-txt">
-                        <div class="log-name">
-                          {{ log.name }}
-                        </div>
-                        <div v-if="log.d_action" class="log-content">
-                          {{ log.d_action
-                          }}<span class="log-target">{{ log.d_target }}</span>
-                        </div>
+              <a-tabs default-active-key="1">
+                <a-tab-pane key="1" tab="动态">
+                  <vue-scroll>
+                    <div class="log-list muted">
+                      <div
+                        :class="{
+                          'log-comment': false,
+                          'list-item': true
+                        }"
+                        v-for="log in dialogList"
+                        :key="log.d_id"
+                      >
+                        <template>
+                          <a-avatar
+                            class="log-item"
+                            icon="user"
+                            size="small"
+                            :src="log.avatar"
+                          />
+                          <div class="log-item log-txt">
+                            <div class="log-name">
+                              {{ log.name }}
+                            </div>
+                            <div v-if="log.d_action" class="log-content">
+                              {{ log.d_action
+                              }}<span class="log-target">{{
+                                log.d_target
+                              }}</span>
+                            </div>
+                          </div>
+                        </template>
+                        <span class="log-time">{{
+                          log.d_create_time | dateFormat
+                        }}</span>
                       </div>
-                    </template>
-                    <span class="log-time">{{
-                      log.d_create_time | dateFormat
-                    }}</span>
-                  </div>
-                </div>
-              </vue-scroll>
-
-      </a-tab-pane>
-      <a-tab-pane key="2" tab="评论" force-render  @click="getComment">
-
-        <vue-scroll :v-if="showComment">
-                <div class="log-list muted" >
-                  <div
-                  :v-if="commentList.length"
-                    :class="{
-                      'log-comment': false,
-                      'list-item': true
-                    }"
-                    v-for="comment in commentList"
-                    :key="comment.com_id"
-                  >
-                    <template>
-                      <a-avatar
-                        class="log-item"
-                        icon="user"
-                        size="small"
-                        :src="comment.avatar"
-                      />
-                      <div class="log-item log-txt">
-                        <div class="log-name">
-                          {{ comment.name }}
-                        </div>
-                        <div v-if="comment.com_content" class="log-content">
-                          {{ comment.com_content
-                          }}
-                        </div>
+                    </div>
+                  </vue-scroll>
+                </a-tab-pane>
+                <a-tab-pane key="2" tab="评论" force-render @click="getComment">
+                  <vue-scroll :v-if="showComment">
+                    <div class="log-list muted">
+                      <div
+                        :v-if="commentList.length"
+                        :class="{
+                          'log-comment': false,
+                          'list-item': true
+                        }"
+                        v-for="comment in commentList"
+                        :key="comment.com_id"
+                      >
+                        <template>
+                          <a-avatar
+                            class="log-item"
+                            icon="user"
+                            size="small"
+                            :src="comment.avatar"
+                          />
+                          <div class="log-item log-txt">
+                            <div class="log-name">
+                              {{ comment.name }}
+                            </div>
+                            <div v-if="comment.com_content" class="log-content">
+                              {{ comment.com_content }}
+                            </div>
+                          </div>
+                        </template>
+                        <span class="log-time">{{
+                          comment.c_create_time | dateFormat
+                        }}</span>
                       </div>
-                    </template>
-                    <span class="log-time">{{
-                      comment.c_create_time | dateFormat
-                    }}</span>
-                  </div>
-                </div>
-              </vue-scroll>
-
-      </a-tab-pane>
-
-    </a-tabs>
+                    </div>
+                  </vue-scroll>
+                </a-tab-pane>
+              </a-tabs>
             </div>
             <div class="footer" id="footer">
               <a-textarea
                 @focus="commenting = true"
                 @blur="commenting = false"
                 ref="commentText"
-                v-model="comment"
+                v-model="commentForm.content"
                 :rows="1"
-                placeholder="支持@提及任务成员，Ctrl+Enter发表评论"
+                placeholder="发表评论"
                 style="margin-right: 24px;"
               />
-              <a-button class="middle-btn" type="primary">评论</a-button>
+              <a-button class="middle-btn" type="primary" @click="newComment">评论</a-button>
             </div>
           </div>
         </div>
@@ -1036,6 +1033,12 @@ export default {
         start_time: '',
         end_time: '',
         is_done: '',
+      },
+      commentForm: {
+        uid: window.sessionStorage.getItem('currUserID'),
+        sid: '',
+        source: 'task',
+        content: '',
       },
       showTaskDesc: false,
 
@@ -1270,6 +1273,22 @@ export default {
       // this.dialogList = res
       this.$store.commit('task/SET_TASK_COMMENT', res)
       this.showComment = true
+      return true
+    },
+
+    async newComment() {
+      this.commentForm.sid = this.task.detail.id
+      const { data: res } = await newComment(this.commentForm)
+      // this.dialogList = res
+      // this.$store.commit('task/SET_TASK_COMMENT', res)
+      // this.showComment = true
+      this.getComment()
+      this.commentForm = {
+        uid: window.sessionStorage.getItem('currUserID'),
+        sid: '',
+        source: 'task',
+        content: '',
+      }
       return true
     },
 
@@ -1770,8 +1789,6 @@ export default {
         .log-wrap {
           border-top: 1px solid #e5e5e5;
           border-bottom: 1px solid #e5e5e5;
-          padding-bottom: 60px;
-          height: 400px;
 
           .header {
             width: 100%;
@@ -1780,6 +1797,8 @@ export default {
           .log-list {
             /*font-size: 12px;*/
             padding: 0 20px 0 20px;
+                   padding-bottom: 10px;
+          height: 340px;
             overflow-y: scroll;
 
             .show-more {
