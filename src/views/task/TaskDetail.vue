@@ -4,9 +4,11 @@
       <div class="task-header" :class="{ disabled: task.detail.is_del }">
         <span class="head-title" v-if="!task.detail.is_del">
           <!-- 存在父任务，索引 -->
-          <span v-if="task.detail.t_level!==0&&task.parent">
+          <span v-if="task.detail.t_level !== 0 && task.parent">
             <span class="muted">属于任务：</span>
-             <a class="text-default" @click="backToFather()">{{task.detail.t_level===1?grandName:fatherName}}</a>
+            <a class="text-default" @click="backToFather()">{{
+              task.detail.t_level === 1 ? grandName : fatherName
+            }}</a>
           </span>
           <!-- 不存在父任务，显示项目名和任务名 -->
           <span v-else class="text-base"
@@ -482,61 +484,64 @@
                       </div>
                     </div>
                   </div>
-                  <div v-show="task.detail.t_level!==2" key="1">
-                  <!-- 子任务 -->
-                  <div class="component-mount">
-                    <div class="field">
-                      <div class="field-left">
-                        <a-icon type="bars" />
-                        <span class="field-name">子任务 </span>
+                  <div v-show="task.detail.t_level !== 2" key="1">
+                    <!-- 子任务 -->
+                    <div class="component-mount">
+                      <div class="field">
+                        <div class="field-left">
+                          <a-icon type="bars" />
+                          <span class="field-name">子任务 </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                   <!-- 子任务 -->
-                  <div class="component-mount">
-                    <div class="field">
-                      <div class="block-field width-block">
-                        <div class="task-child">
-                          <div class="task-list" v-show="task.children.length">
-                            <div v-for="done in [0, 1]" :key="done">
-                              <div
-                                v-for="childTask in task.children"
-                                :key="childTask.id"
-                              >
+                    <!-- 子任务 -->
+                    <div class="component-mount">
+                      <div class="field">
+                        <div class="block-field width-block">
+                          <div class="task-child">
+                            <div
+                              class="task-list"
+                              v-show="task.children.length"
+                            >
+                              <div v-for="done in [0, 1]" :key="done">
                                 <div
-                                  class="list-item task"
-                                  v-if="childTask.is_done == done"
-                                  @click="toChildren(childTask.id)"
+                                  v-for="childTask in task.children"
+                                  :key="childTask.id"
                                 >
-                                  <a-tooltip placement="top">
-                                    <template slot="title">
-                                      <span
-                                        v-if="task.detail.is_done"
-                                        style="font-size: 12px;"
-                                        >父任务已完成，无法重做子任务</span
-                                      >
-                                    </template>
-                                    <div class="check-box-wrapper task-item">
-                                      <a-icon
-                                        class="check-box"
-                                        :class="{
-                                          disabled:
-                                            task.detail.is_del ||
-                                            task.detail.is_done
-                                        }"
-                                        :type="
-                                          childTask.is_done
-                                            ? 'check-square'
-                                            : 'border'
-                                        "
-                                        :style="{
-                                          fontSize: '16px',
-                                          color: '#c7c7c7'
-                                        }"
-                                      />
-                                    </div>
-                                  </a-tooltip>
-                                  <a-tooltip :mouse-enter-delay="0.5">
+                                  <div
+                                    class="list-item task"
+                                    v-if="childTask.is_done == done"
+                                    @click="toChildren(childTask.id)"
+                                  >
+                                    <a-tooltip placement="top">
+                                      <template slot="title">
+                                        <span
+                                          v-if="task.detail.is_done"
+                                          style="font-size: 12px;"
+                                          >父任务已完成，无法重做子任务</span
+                                        >
+                                      </template>
+                                      <div class="check-box-wrapper task-item">
+                                        <a-icon
+                                          class="check-box"
+                                          :class="{
+                                            disabled:
+                                              task.detail.is_del ||
+                                              task.detail.is_done
+                                          }"
+                                          :type="
+                                            childTask.is_done
+                                              ? 'check-square'
+                                              : 'border'
+                                          "
+                                          :style="{
+                                            fontSize: '16px',
+                                            color: '#c7c7c7'
+                                          }"
+                                        />
+                                      </div>
+                                    </a-tooltip>
+                                    <a-tooltip :mouse-enter-delay="0.5">
                                       <template slot="title">
                                         <span v-if="childTask.t_header_name">{{
                                           childTask.t_header_name
@@ -551,22 +556,22 @@
                                         icon="user"
                                       ></a-avatar>
                                     </a-tooltip>
-                                  <div class="task-item task-title">
-                                    <div
-                                      class="title-text"
-                                      :class="{ done: childTask.is_done }"
-                                    >
-                                      {{ childTask.t_title }}
+                                    <div class="task-item task-title">
+                                      <div
+                                        class="title-text"
+                                        :class="{ done: childTask.is_done }"
+                                      >
+                                        {{ childTask.t_title }}
+                                      </div>
                                     </div>
+                                    <a class="muted">
+                                      <a-icon class="task-item" type="right" />
+                                    </a>
                                   </div>
-                                  <a class="muted">
-                                    <a-icon class="task-item" type="right" />
-                                  </a>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <!-- <div class="task-list" v-show="showChildTask">
+                            <!-- <div class="task-list" v-show="showChildTask">
                             <div class="add-task">
                               <div class="list-item task">
                                 <span class="task-item check-box"></span>
@@ -628,34 +633,41 @@
                               </div>
                             </div>
                           </div> -->
-                          <a-tooltip placement="top">
-                            <template slot="title">
-                              <span
-                                v-if="task.detail.is_done"
-                                style="font-size: 12px;"
-                                >父任务已完成，无法添加新的子任务</span
+                            <a-tooltip placement="top">
+                              <template slot="title">
+                                <span
+                                  v-if="task.detail.is_done"
+                                  style="font-size: 12px;"
+                                  >父任务已完成，无法添加新的子任务</span
+                                >
+                              </template>
+                              <a
+                                class="add-handler"
+                                :class="{ disabled: task.detail.is_done }"
+                                v-show="!showChildTask"
+                                @click="
+                                  () => {
+                                    if (
+                                      task.detail.is_del ||
+                                      task.detail.is_done
+                                    )
+                                      return false;
+                                    showChildTask = true;
+                                  }
+                                "
                               >
-                            </template>
-                            <a
-                              class="add-handler"
-                              :class="{ disabled: task.detail.is_done }"
-                              v-show="!showChildTask"
-                              @click="
-                                () => {
-                                  if (task.detail.is_del || task.detail.is_done)
-                                    return false;
-                                  showChildTask = true;
-                                }
-                              "
-                            >
-                              <a-icon type="plus" style="margin-right: 6px;" />
-                              添加子任务
-                            </a>
-                          </a-tooltip>
+                                <a-icon
+                                  type="plus"
+                                  style="margin-right: 6px;"
+                                />
+                                添加子任务
+                              </a>
+                            </a-tooltip>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div></div>
+                  </div>
                   <!-- 关联文件 -->
                   <div class="component-mount">
                     <div class="field">
@@ -666,7 +678,7 @@
                       <div class="field-right width-block"></div>
                     </div>
                   </div>
-                   <!-- 关联文件 -->
+                  <!-- 关联文件 -->
                   <div class="component-mount">
                     <div class="field">
                       <div class="block-field width-block">
@@ -679,8 +691,11 @@
                       </div>
                     </div>
                   </div>
-                   <!-- 关联文件 -->
-                  <div class="component-mount" v-show="taskSourceList.length > 0">
+                  <!-- 关联文件 -->
+                  <div
+                    class="component-mount"
+                    v-show="taskSourceList.length > 0"
+                  >
                     <div class="field">
                       <div class="block-field width-block">
                         <div class="file-list">
@@ -804,12 +819,9 @@
             </div>
             <!-- 项目动态 -->
             <div class="log-wrap">
-              <div class="header">
-                 <a class="text-default">
-                    项目动态
-                  </a>
-              </div>
-              <vue-scroll>
+                  <a-tabs default-active-key="1">
+      <a-tab-pane key="1" tab="动态">
+       <vue-scroll >
                 <div class="log-list muted">
                   <div
                     :class="{
@@ -820,37 +832,81 @@
                     :key="log.d_id"
                   >
                     <template>
-                                           <a-avatar
-                                           class="log-item"
-                    icon="user"
-                    size="small"
-                    :src="log.avatar"
-                  />
+                      <a-avatar
+                        class="log-item"
+                        icon="user"
+                        size="small"
+                        :src="log.avatar"
+                      />
                       <div class="log-item log-txt">
                         <div class="log-name">
                           {{ log.name }}
                         </div>
-                        <div
-                          v-if="log.d_action"
-                          class="log-content"
-                        >{{log.d_action}}<span class="log-target">{{log.d_target}}</span></div>
+                        <div v-if="log.d_action" class="log-content">
+                          {{ log.d_action
+                          }}<span class="log-target">{{ log.d_target }}</span>
+                        </div>
                       </div>
                     </template>
-     <span class="log-time">{{ log.d_create_time|dateFormat}}</span>
+                    <span class="log-time">{{
+                      log.d_create_time | dateFormat
+                    }}</span>
                   </div>
                 </div>
               </vue-scroll>
+
+      </a-tab-pane>
+      <a-tab-pane key="2" tab="评论" force-render  @click="getComment">
+
+        <vue-scroll :v-if="showComment">
+                <div class="log-list muted" >
+                  <div
+                  :v-if="commentList.length"
+                    :class="{
+                      'log-comment': false,
+                      'list-item': true
+                    }"
+                    v-for="comment in commentList"
+                    :key="comment.com_id"
+                  >
+                    <template>
+                      <a-avatar
+                        class="log-item"
+                        icon="user"
+                        size="small"
+                        :src="comment.avatar"
+                      />
+                      <div class="log-item log-txt">
+                        <div class="log-name">
+                          {{ comment.name }}
+                        </div>
+                        <div v-if="comment.com_content" class="log-content">
+                          {{ comment.com_content
+                          }}
+                        </div>
+                      </div>
+                    </template>
+                    <span class="log-time">{{
+                      comment.c_create_time | dateFormat
+                    }}</span>
+                  </div>
+                </div>
+              </vue-scroll>
+
+      </a-tab-pane>
+
+    </a-tabs>
             </div>
             <div class="footer" id="footer">
-                <a-textarea
-                  @focus="commenting = true"
-                  @blur="commenting = false"
-                  ref="commentText"
-                  v-model="comment"
-                  :rows="1"
-                  placeholder="支持@提及任务成员，Ctrl+Enter发表评论"
-                  style="margin-right: 24px;"
-                />
+              <a-textarea
+                @focus="commenting = true"
+                @blur="commenting = false"
+                ref="commentText"
+                v-model="comment"
+                :rows="1"
+                placeholder="支持@提及任务成员，Ctrl+Enter发表评论"
+                style="margin-right: 24px;"
+              />
               <a-button class="middle-btn" type="primary">评论</a-button>
             </div>
           </div>
@@ -875,7 +931,6 @@ import _clonedeep from 'lodash.clonedeep'
 import editor from '../../components/editor.vue'
 
 export default {
-
   name: 'task-detail',
   props: ['detail'],
   data() {
@@ -961,6 +1016,7 @@ export default {
 
       /* 评论 */
       comment: '',
+      showComment: false,
       commenting: false,
 
       // 显示评论提及
@@ -1000,6 +1056,9 @@ export default {
     },
     dialogList() {
       return this.$store.state.task.taskDialog
+    },
+    commentList() {
+      return this.$store.state.task.taskComment
     },
     stateFilter() {
       return this.$store.getters['filter/stateFilter']
@@ -1105,6 +1164,9 @@ export default {
   methods: {
     init() {
       console.log('curr', this.currEditTask)
+      this.getTaskDetail()
+      this.getDialog()
+      this.getComment()
     },
     toChildren(id) {
       if (this.task.detail.t_level === 0) {
@@ -1116,8 +1178,7 @@ export default {
         this.fatherName = this.task.detail.t_title
       }
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
-      this.getTaskDetail()
-      this.getDialog()
+      this.init()
     },
     backToFather() {
       if (this.task.detail.t_level === 1) {
@@ -1126,8 +1187,7 @@ export default {
       if (this.task.detail.t_level === 2) {
         this.$store.commit('task/SET_CURR_EDIT_TASK', this.fatherTask)
       }
-      this.getTaskDetail()
-      this.getDialog()
+      this.init()
     },
     resetForm() {
       this.form = {
@@ -1188,7 +1248,6 @@ export default {
       console.log('detail data', res.parent)
       return true
     },
-
     async getDialog() {
       const obj = {
         pid: this.currProjectID,
@@ -1201,6 +1260,19 @@ export default {
       console.log('detail data', res.parent)
       return true
     },
+
+    async getComment() {
+      const params = {
+        source: 'task',
+        sid: this.task.detail.id,
+      }
+      const { data: res } = await getComment(params)
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_COMMENT', res)
+      this.showComment = true
+      return true
+    },
+
     doTask(action) {
       // const app = this
       const actionKey = action.key
@@ -1699,7 +1771,7 @@ export default {
           border-top: 1px solid #e5e5e5;
           border-bottom: 1px solid #e5e5e5;
           padding-bottom: 60px;
-          height:400px;
+          height: 400px;
 
           .header {
             width: 100%;
@@ -1708,7 +1780,7 @@ export default {
           .log-list {
             /*font-size: 12px;*/
             padding: 0 20px 0 20px;
-            overflow-y:scroll;
+            overflow-y: scroll;
 
             .show-more {
               display: block;
@@ -1743,16 +1815,16 @@ export default {
               .log-txt {
                 flex: 1 1;
               }
-              .log-name{
-                font-size:16px;
-                color:#bdc0c9;
+              .log-name {
+                font-size: 16px;
+                color: #bdc0c9;
               }
-                           .log-time{
-                color:#bdc0c9;
-                font-size:14px;
+              .log-time {
+                color: #bdc0c9;
+                font-size: 14px;
               }
-              .log-target{
-                color:#f4ba5d;
+              .log-target {
+                color: #f4ba5d;
               }
             }
           }

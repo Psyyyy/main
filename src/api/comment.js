@@ -6,8 +6,9 @@ import request from '@/plugins/axios'
 // import request from './request'
 export function getComment(data) {
   return request({
-    url: `/commtent/${data}`,
+    url: '/comment',
     method: 'get',
+    params: data,
   })
 }
 

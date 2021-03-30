@@ -3,6 +3,7 @@ const state = {
   currEditTask: '',
   taskDetail: {},
   taskDialog: {},
+  taskComment: {},
 }
 
 const mutations = {
@@ -17,6 +18,9 @@ const mutations = {
   },
   SET_TASK_DIALOG(state, data) {
     state.taskDialog = data
+  },
+  SET_TASK_COMMENT(state, data) {
+    state.taskComment = data
   },
 }
 
