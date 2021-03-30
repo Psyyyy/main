@@ -10,6 +10,13 @@ export function getTaskList(data) {
     method: 'get',
   })
 }
+
+export function getTaskDetail(pid, tid) {
+  return request({
+    url: `/task/list/${pid}/detail/${tid}`,
+    method: 'get',
+  })
+}
 // export function newProject(data) {
 //   return request({
 //     url: '/project/new',

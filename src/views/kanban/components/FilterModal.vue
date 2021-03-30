@@ -8,7 +8,7 @@
     >
       <!-- 底部按钮 -->
       <template slot="footer">
-        <a-button key="back"> 重置 </a-button>
+        <a-button key="back"  @click="resetForm"> 重置 </a-button>
         <a-button key="submit" type="primary" @click="onSubmit">
           筛选
         </a-button>
@@ -21,13 +21,13 @@
         :wrapper-col="wrapperCol"
       >
         <!-- 标题筛选（输入框）这个放弃，直接搜索吧 -->
-        <!-- <a-form-model-item
+        <a-form-model-item
           ref="name"
           label="标题"
           prop="name"
         >
           <a-input placeholder="请输入标题" v-model="form.name" />
-        </a-form-model-item> -->
+        </a-form-model-item>
         <!-- 负责人筛选（下拉框） -->
         <a-form-model-item
           v-if="currFilterType !== 'stage'"
@@ -249,7 +249,7 @@ export default {
       }
 
       const { data: res } = await filterTask(this.formatForm)
-      console.log('filter', res)
+      // console.log('filter', res)
       this.$store.commit('project/SET_PROJECT_LIST', res)
       this.$message.success('列表已更新！')
       this.closeFilter()

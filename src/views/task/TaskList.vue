@@ -28,7 +28,7 @@
             @click="resetTable()"
           >
             <feather class="mr-1 " size="18" type="refresh-cw" />
-            重置</a-button
+            重置表格</a-button
           >
         </div>
         <div class="mr-4">
