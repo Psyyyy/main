@@ -274,7 +274,9 @@
 import { Empty } from 'ant-design-vue'
 import {
   getTaskList, deleteTask,
+  getTaskDetail,
 } from '@/api/task'
+import { getDialog } from '@/api/dialog'
 // import STable from '../../components/Table'
 import { getMemberList } from '@/api/member'
 import Task from './Task.vue'
@@ -399,6 +401,9 @@ export default {
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       nouseData: '',
       detailTaskId: '',
+
+      dialogList: {},
+      detail: {},
     }
   },
   created() {
@@ -611,10 +616,32 @@ export default {
     resetTable() {
       this.getTask()
     },
-    showDetail(id) {
+    async getTaskDetail(id) {
+      console.log('test', this.detail)
+      const pid = this.currProjectID
+
+      const { data: res } = await getTaskDetail(pid, id)
+      this.$store.commit('task/SET_TASK_DETAIL', res)
+      console.log('detail data', res.parent)
+      return true
+    },
+    async getDialog(id) {
+      const obj = {
+        pid: this.currProjectID,
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getDialog(obj)
+      this.$store.commit('task/SET_TASK_DIALOG', res)
+      return true
+    },
+    async showDetail(id) {
       console.log('detail id', id)
-      this.showTask = true
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      await this.getTaskDetail(id)
+      await this.getDialog(id)
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      this.showTask = true
       // this.detailTaskId = id
     },
   },

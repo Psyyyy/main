@@ -4,14 +4,9 @@
       <div class="task-header" :class="{ disabled: task.detail.is_del }">
         <span class="head-title" v-if="!task.detail.is_del">
           <!-- 存在父任务，索引 -->
-          <span v-if="task.parent.length > 0">
+          <span v-if="task.detail.t_level!==0&&task.parent">
             <span class="muted">属于任务：</span>
-            <a-breadcrumb separator=">" class="breadcrumb text-default">
-              <a-breadcrumb-item v-for="parent in task.parent" :key="parent.id">
-                <!-- <a class="text-default" @click="init(parent.code)">{{parent.name}}</a> -->
-                <a class="text-default">{{ parent.t_title }}</a>
-              </a-breadcrumb-item>
-            </a-breadcrumb>
+             <a class="text-default" @click="backToFather()">{{task.detail.t_level===1?grandName:fatherName}}</a>
           </span>
           <!-- 不存在父任务，显示项目名和任务名 -->
           <span v-else class="text-base"
@@ -487,6 +482,7 @@
                       </div>
                     </div>
                   </div>
+                  <div v-show="task.detail.t_level!==2" key="1">
                   <!-- 子任务 -->
                   <div class="component-mount">
                     <div class="field">
@@ -497,7 +493,7 @@
                     </div>
                   </div>
                    <!-- 子任务 -->
-                  <div class="component-mount" :v-if="task.detail.level<1">
+                  <div class="component-mount">
                     <div class="field">
                       <div class="block-field width-block">
                         <div class="task-child">
@@ -510,6 +506,7 @@
                                 <div
                                   class="list-item task"
                                   v-if="childTask.is_done == done"
+                                  @click="toChildren(childTask.id)"
                                 >
                                   <a-tooltip placement="top">
                                     <template slot="title">
@@ -539,15 +536,7 @@
                                       />
                                     </div>
                                   </a-tooltip>
-                                  <a-dropdown
-                                    :trigger="['click']"
-                                    v-model="
-                                      childTask.visibleChildTaskMemberMenu
-                                    "
-                                    :disabled="!!task.detail.is_del"
-                                    placement="bottomCenter"
-                                  >
-                                    <a-tooltip :mouse-enter-delay="0.5">
+                                  <a-tooltip :mouse-enter-delay="0.5">
                                       <template slot="title">
                                         <span v-if="childTask.t_header_name">{{
                                           childTask.t_header_name
@@ -562,7 +551,6 @@
                                         icon="user"
                                       ></a-avatar>
                                     </a-tooltip>
-                                  </a-dropdown>
                                   <div class="task-item task-title">
                                     <div
                                       class="title-text"
@@ -667,7 +655,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div></div>
                   <!-- 关联文件 -->
                   <div class="component-mount">
                     <div class="field">
@@ -883,28 +871,19 @@ import $ from 'jquery'
 import { getTaskDetail, updateTask } from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
+import _clonedeep from 'lodash.clonedeep'
 import editor from '../../components/editor.vue'
 
 export default {
+
   name: 'task-detail',
-  props: {
-    detail: {
-      type: [String, Number],
-    },
-    width: {
-      type: [String, Number],
-      default() {
-        return '1200'
-      },
-    },
-  },
+  props: ['detail'],
   data() {
     return {
       // moment,
       loading: false,
       code: this.taskCode,
       projectCodeCurrent: '',
-      task: {},
       // 颜色是看板的
       taskStatusList: [
         { id: 0, name: '未开始', color: 'rgba(0, 0, 0, 0.65)' },
@@ -1005,10 +984,23 @@ export default {
       showTaskDesc: false,
 
       // 项目动态
-      dialogList: [],
+      // dialogList: [],
+      // task: {},
+
+      // 返回上一个项目
+      fatherTask: '',
+      fatherName: '',
+      grandTask: '',
+      grandName: '',
     }
   },
   computed: {
+    task() {
+      return this.$store.state.task.taskDetail
+    },
+    dialogList() {
+      return this.$store.state.task.taskDialog
+    },
     stateFilter() {
       return this.$store.getters['filter/stateFilter']
     },
@@ -1062,10 +1054,10 @@ export default {
     //   //     this.init();
     //   // }
     // },
-    currEditTask() {
-      this.getTaskDetail()
-      this.getDialog()
-    },
+    // currEditTask() {
+    //   this.getTaskDetail()
+    //   this.getDialog()
+    // },
     showInviteMember(val) {
       if (!val) {
         this.getTaskMembers()
@@ -1100,9 +1092,7 @@ export default {
     },
   },
   created() {
-    // this.init()
-    this.getTaskDetail()
-    this.getDialog()
+    this.init()
   },
   mounted() {
     // this.$nextTick(() => {
@@ -1113,6 +1103,32 @@ export default {
     // })()
   },
   methods: {
+    init() {
+      console.log('curr', this.currEditTask)
+    },
+    toChildren(id) {
+      if (this.task.detail.t_level === 0) {
+        this.grandTask = this.task.detail.id
+        this.grandName = this.task.detail.t_title
+      }
+      if (this.task.detail.t_level === 1) {
+        this.fatherTask = this.task.detail.id
+        this.fatherName = this.task.detail.t_title
+      }
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      this.getTaskDetail()
+      this.getDialog()
+    },
+    backToFather() {
+      if (this.task.detail.t_level === 1) {
+        this.$store.commit('task/SET_CURR_EDIT_TASK', this.grandTask)
+      }
+      if (this.task.detail.t_level === 2) {
+        this.$store.commit('task/SET_CURR_EDIT_TASK', this.fatherTask)
+      }
+      this.getTaskDetail()
+      this.getDialog()
+    },
     resetForm() {
       this.form = {
         id: '',
@@ -1160,9 +1176,6 @@ export default {
       this.$message.success('更新成功！')
       return true
     },
-    // init() {
-    //   console.log(this.task)
-    // },
     async getTaskDetail() {
       console.log('test', this.detail)
       const pid = this.currProjectID
@@ -1170,10 +1183,12 @@ export default {
       console.log('pid', pid)
       console.log('tid', tid)
       const { data: res } = await getTaskDetail(pid, tid)
-      this.task = res
+      // this.task = res
+      this.$store.commit('task/SET_TASK_DETAIL', res)
       console.log('detail data', res.parent)
       return true
     },
+
     async getDialog() {
       const obj = {
         pid: this.currProjectID,
@@ -1181,7 +1196,8 @@ export default {
         sid: this.currEditTask,
       }
       const { data: res } = await getDialog(obj)
-      this.dialogList = res
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_DIALOG', res)
       console.log('detail data', res.parent)
       return true
     },
