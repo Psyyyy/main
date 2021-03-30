@@ -770,11 +770,11 @@
           <div class="content-right">
             <!-- 参与者 -->
             <div class="header">
-              <div class="title">参与者 · {{ memberList.length }}</div>
+              <div class="title">参与者 · {{ task.taskMemberList.length }}</div>
               <div class="member-list">
                 <a-tooltip
                   :mouse-enter-delay="0.5"
-                  v-for="member in memberList"
+                  v-for="member in task.taskMemberList"
                   :key="member.uid"
                 >
                   <template slot="title">
@@ -787,11 +787,6 @@
                     :src="member.avatar"
                   />
                 </a-tooltip>
-                <a-dropdown
-                  :trigger="['click']"
-                  placement="bottomCenter"
-                  v-model="visibleProjectMemberMenu"
-                >
                   <a-tooltip :mouse-enter-delay="0.5">
                     <template slot="title">
                       <span>点击添加参与者</span>
@@ -801,20 +796,9 @@
                       type="plus-circle"
                       theme="twoTone"
                       style="font-size: 24px;"
+                      @click="isAddMemberVisible=true"
                     />
                   </a-tooltip>
-                  <!-- <div slot="overlay">
-                    <project-member-menu
-                      v-if="visibleProjectMemberMenu"
-                      :task-code="code"
-                      :project-code="projectCodeCurrent"
-                      @inviteProjectMember="
-                        (showInviteMember = true),
-                          (visibleProjectMemberMenu = false)
-                      "
-                    ></project-member-menu>
-                  </div> -->
-                </a-dropdown>
               </div>
             </div>
             <!-- 项目动态 -->
@@ -910,11 +894,53 @@
         </div>
       </div>
     </a-spin>
-    <invite-project-member
-      v-model="showInviteMember"
-      :project-code="projectCodeCurrent"
-      v-if="showInviteMember"
-    ></invite-project-member>
+        <a-modal
+      :width="360"
+      :visible="isAddMemberVisible"
+      title="添加成员"
+      @cancel="isAddMemberVisible = false"
+    >
+      <div class="ml-4">
+        <a-tabs
+
+          default-active-key="1"
+        >
+          <a-tab-pane key="1" tab="通过账号邀请">
+            <div>
+              <a-select
+                show-search
+                placeholder="输入成员姓名关键字"
+                option-filter-prop="value"
+                style="width: 95%"
+                :filter-option="filterOption"
+
+              >
+                <a-select-option
+                  v-for="(item, index) in memberList"
+                  :key="index"
+                  :value="item.name"
+
+                >
+
+                    <a-avatar
+                      class="ml-1 mb-2 "
+                      :size="20"
+                      slot="avatar"
+                      src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                    />
+
+                        {{ item.name }}
+
+                </a-select-option>
+              </a-select>
+            </div>
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="通过邮箱邀请" force-render>
+            通过邮箱邀请
+          </a-tab-pane>
+        </a-tabs>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -1051,6 +1077,9 @@ export default {
       fatherName: '',
       grandTask: '',
       grandName: '',
+
+      // 成员
+      isAddMemberVisible: false,
     }
   },
   computed: {
