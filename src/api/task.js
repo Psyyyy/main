@@ -47,7 +47,6 @@ export function deleteTask(data) {
 }
 
 export function filterTask(data) {
-  console.log('task.js', data)
   return request({
     url: '/task/filter',
     method: 'get',

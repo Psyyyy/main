@@ -621,12 +621,10 @@ export default {
       this.getTask()
     },
     async getTaskDetail(id) {
-      console.log('test', this.detail)
       const pid = this.currProjectID
 
       const { data: res } = await getTaskDetail(pid, id)
       this.$store.commit('task/SET_TASK_DETAIL', res)
-      console.log('detail data', res.parent)
       return true
     },
     async getDialog(id) {
@@ -640,7 +638,6 @@ export default {
       return true
     },
     async showDetail(id) {
-      console.log('detail id', id)
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       await this.getTaskDetail(id)
       await this.getDialog(id)

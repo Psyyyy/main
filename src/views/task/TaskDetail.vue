@@ -904,8 +904,6 @@
     >
       <div class="ml-4">
         <a-tabs
-
-          default-active-key="1"
         >
           <a-tab-pane key="1" tab="通过账号邀请">
             <div>
@@ -1175,8 +1173,8 @@ export default {
     uploader: {
       handler(newVal) {
         // 监听是否有上传文件行为
-        console.log(newVal)
-        console.log(newVal.fileList)
+        // console.log(newVal)
+        // console.log(newVal.fileList)
         const files = newVal.fileList
         const index = files.findIndex(
           (item) => item.projectName === this.task.projectName,
@@ -1202,7 +1200,6 @@ export default {
   },
   methods: {
     init() {
-      console.log('curr', this.currEditTask)
       this.getTaskDetail()
       this.getDialog()
       this.getComment()
@@ -1232,15 +1229,12 @@ export default {
 
     // 拉取任务信息
     async getTaskDetail() {
-      console.log('test', this.detail)
       const pid = this.currProjectID
       const tid = this.currEditTask
-      console.log('pid', pid)
-      console.log('tid', tid)
       const { data: res } = await getTaskDetail(pid, tid)
       // this.task = res
       this.$store.commit('task/SET_TASK_DETAIL', res)
-      console.log('detail data', res.parent)
+      console.log('当前任务信息', res)
       return true
     },
     async getDialog() {
@@ -1252,7 +1246,7 @@ export default {
       const { data: res } = await getDialog(obj)
       // this.dialogList = res
       this.$store.commit('task/SET_TASK_DIALOG', res)
-      console.log('detail data', res.parent)
+      console.log('当前dialog信息', res)
       return true
     },
 
@@ -1295,7 +1289,6 @@ export default {
           const pid = this.currProjectID
           const tid = this.currEditTask
           const haveUndone = await getUndoneChild(pid, tid)
-          console.log('have', haveUndone.length)
           if (haveUndone.data.length) {
             this.$info({
               title: (
@@ -1380,7 +1373,6 @@ export default {
       return true
     },
     addMember(value) {
-      console.log('member', this.form.t_member_ids)
       this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
       this.form.t_member_ids = this.form.t_member_ids.split(',')
       let same = 0
@@ -1393,7 +1385,6 @@ export default {
       if (!same) {
         this.form.t_member_ids.push(value)
       }
-      console.log('member', this.form.t_member_ids[1])
     },
 
     // 成员
@@ -1405,7 +1396,7 @@ export default {
     async confirmAddMember() {
       this.form.id = this.task.detail.id
       // 然后直接更新
-      console.log('更新form', this.form)
+      console.log('要发送的member信息', this.form.t_member_ids)
       const res = await updateTask(this.form)
       this.isAddMemberVisible = false
       this.resetForm()
@@ -1423,7 +1414,7 @@ export default {
       _.pull(temp, `${id}`)
       // ["2","3"]字符串转换成数字[2,3]
       this.form.t_member_ids = temp.map(Number)
-      console.log(this.form.t_member_ids)
+      console.log('要发送的member信息', this.form.t_member_ids)
       // 发送
       this.form.id = this.task.detail.id
       const res = await updateTask(this.form)
@@ -1492,7 +1483,6 @@ export default {
       })
     },
     doName({ target }) {
-      console.log('e', target.value)
       this.showEditName = false
       this.editTaskItem('title', target.value)
       return true
