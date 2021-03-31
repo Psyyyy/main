@@ -68,7 +68,6 @@
                   @blur="doName"
                   auto-focus
                   :default-value="task.detail.t_title"
-
                   size="large"
                   v-if="showEditName"
                 />
@@ -76,11 +75,20 @@
                   <template slot="title">
                     <span>点击即可编辑</span>
                   </template>
-                  <div class="title-text" v-show="!showEditName"  @click="showEditName=true">
+                  <div
+                    class="title-text"
+                    v-show="!showEditName"
+                    @click="showEditName = true"
+                  >
                     {{ task.detail.t_title }}
                   </div>
                 </a-tooltip>
-                <div v-else class="title-text" v-show="!showEditName"  @click="showEditName=true">
+                <div
+                  v-else
+                  class="title-text"
+                  v-show="!showEditName"
+                  @click="showEditName = true"
+                >
                   {{ task.detail.t_title }}
                 </div>
               </div>
@@ -102,7 +110,7 @@
                           :disabled="!!task.detail.is_del"
                           :class="{ disabled: false }"
                         >
-                        <!-- 显示完成状态 -->
+                          <!-- 显示完成状态 -->
                           <span>
                             <!--<a-icon type="check-square"/>-->
                             <a-tag v-if="task.detail.is_done" color="green"
@@ -157,15 +165,7 @@
                           :disabled="!!task.detail.is_del"
                           :class="{ disabled: false }"
                         >
-                          <a-tag
-                            :color="
-                              task.detail.t_state === '规划中'
-                                ? 'green'
-                                : task.detail.t_state === '实现中'
-                                ? 'blue'
-                                : '#c6c8ce'
-                            "
-                          >
+                          <a-tag :color="stateColor(task.detail.t_state)">
                             {{ task.detail.t_state }}
                           </a-tag>
 
@@ -175,8 +175,9 @@
                             :selectable="false"
                           >
                             <a-menu-item
-                              :key="index"
-                              v-for="(status, index) in taskStatus"
+                              :key="status"
+                              v-for="status in taskStatus"
+                              @click="editTaskItem('state', status)"
                             >
                               <div class="menu-item-content">
                                 <span color="green">{{ status }}</span>
@@ -202,61 +203,41 @@
                       <div class="field-right">
                         <a-dropdown
                           :trigger="['click']"
-                          v-model="visibleTaskMemberMenu"
                           :disabled="!!task.detail.is_del"
                           placement="bottomCenter"
+
                         >
                           <a-tooltip
                             :mouse-enter-delay="0.5"
                             v-if="!task.detail.is_del"
                           >
                             <template slot="title">
-                              <span>点击设置执行者</span>
+                              <span>点击修改执行者</span>
                             </template>
                             <div class="field-flex">
                               <template v-if="task.detail.t_header_name">
-                                <a-avatar
-                                  src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                                  icon="user"
-                                  size="small"
-                                />
-                                <a class="muted name">{{
-                                  task.detail.t_header_name
-                                }}</a>
-                              </template>
-                              <template v-if="!task.detail.t_header_name">
-                                <a-avatar icon="user" size="small" />
-                                <a class="muted name">待认领</a>
+
+                                <a class="muted name">{{task.detail.t_header_name}}</a>
                               </template>
                             </div>
                           </a-tooltip>
-                          <div class="field-flex" v-else>
-                            <template v-if="task.detail.t_header_name">
-                              <a-avatar
-                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                                icon="user"
-                                size="small"
-                              />
-                              <a class="muted name">{{
-                                task.detail.t_header_name
-                              }}</a>
-                            </template>
-                            <template v-if="!task.detail.t_header_name">
-                              <a-avatar icon="user" size="small" />
-                              <a class="muted name">待认领</a>
-                            </template>
-                          </div>
-                          <div slot="overlay">
-                            <task-member-menu
-                              v-if="visibleTaskMemberMenu"
-                              :project-code="projectCodeCurrent"
-                              :task-code="code"
-                              @inviteProjectMember="
-                                (showInviteMember = true),
-                                  (visibleTaskMemberMenu = false)
-                              "
-                            ></task-member-menu>
-                          </div>
+                          <a-menu slot="overlay">
+                            <a-menu-item
+                            style="width:80px"
+                              v-for="member in memberList"
+                              :key="member.uid"
+                               @click="editTaskItem('header',member)"
+                            >
+                              <div class="field-flex">
+                                <template>
+
+                                  <a class="muted name">{{
+                                    member.name
+                                  }}</a>
+                                </template>
+                              </div>
+                            </a-menu-item>
+                          </a-menu>
                         </a-dropdown>
                       </div>
                     </div>
@@ -511,10 +492,10 @@
                                 >
                                   <div
                                     class="list-item task"
-                                    v-if="childTask.is_done==done"
+                                    v-if="childTask.is_done == done"
                                     @click="toChildren(childTask.id)"
                                   >
-                                  <!-- 完成按钮 -->
+                                    <!-- 完成按钮 -->
                                     <a-tooltip placement="top">
                                       <template slot="title">
                                         <span
@@ -720,7 +701,11 @@
                   :key="member.uid"
                 >
                   <template slot="title">
-                    <span>点击将参与者<span style=" color: #f4ba5d;">「{{ member.name }}」</span>移出需求 </span>
+                    <span
+                      >点击将参与者<span style=" color: #f4ba5d;"
+                        >「{{ member.name }}」</span
+                      >移出需求
+                    </span>
                   </template>
                   <a-avatar
                     class="member-item"
@@ -730,18 +715,18 @@
                     @click="removeMember(member.uid)"
                   />
                 </a-tooltip>
-                  <a-tooltip :mouse-enter-delay="0.5">
-                    <template slot="title">
-                      <span>点击添加参与者</span>
-                    </template>
-                    <a-icon
-                      class="member-item invite"
-                      type="plus-circle"
-                      theme="twoTone"
-                      style="font-size: 24px;"
-                      @click="isAddMemberVisible=true"
-                    />
-                  </a-tooltip>
+                <a-tooltip :mouse-enter-delay="0.5">
+                  <template slot="title">
+                    <span>点击添加参与者</span>
+                  </template>
+                  <a-icon
+                    class="member-item invite"
+                    type="plus-circle"
+                    theme="twoTone"
+                    style="font-size: 24px;"
+                    @click="isAddMemberVisible = true"
+                  />
+                </a-tooltip>
               </div>
             </div>
             <!-- 项目动态 -->
@@ -831,13 +816,15 @@
                 placeholder="发表评论"
                 style="margin-right: 24px;"
               />
-              <a-button class="middle-btn" type="primary" @click="newComment">评论</a-button>
+              <a-button class="middle-btn" type="primary" @click="newComment"
+                >评论</a-button
+              >
             </div>
           </div>
         </div>
       </div>
     </a-spin>
-        <a-modal
+    <a-modal
       :width="360"
       :visible="isAddMemberVisible"
       title="添加成员"
@@ -845,8 +832,7 @@
       @ok="confirmAddMember"
     >
       <div class="ml-4">
-        <a-tabs
-        >
+        <a-tabs>
           <a-tab-pane key="1" tab="通过账号邀请">
             <div>
               <a-select
@@ -856,24 +842,20 @@
                 style="width: 95%"
                 :filter-option="filterOption"
                 @change="addMember"
-
               >
                 <a-select-option
                   v-for="(item, index) in memberList"
                   :key="index"
                   :value="item.uid"
-
                 >
+                  <a-avatar
+                    class="ml-1 mb-2 "
+                    :size="20"
+                    slot="avatar"
+                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                  />
 
-                    <a-avatar
-                      class="ml-1 mb-2 "
-                      :size="20"
-                      slot="avatar"
-                      src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    />
-
-                        {{ item.name }}
-
+                  {{ item.name }}
                 </a-select-option>
               </a-select>
             </div>
@@ -991,8 +973,16 @@ export default {
       showMentions: false,
       mentionsList: [],
 
-      taskStatus: ['规划中', '实现中', '已实现', '已拒绝'],
-      bugStatus: ['新', '处理中', '已解决', '已验收', '已拒绝', '已关闭'],
+      taskStatus: [
+        '规划中',
+        '实现中',
+        '已实现',
+        '测试中',
+        '已测试',
+        '已验收',
+        '已关闭',
+      ],
+      bugStatus: ['新', '处理中', '已解决', '已关闭'],
       form: {
         t_title: '',
         t_content: '',
@@ -1025,7 +1015,6 @@ export default {
 
       // 成员
       isAddMemberVisible: false,
-
     }
   },
   computed: {
@@ -1166,7 +1155,10 @@ export default {
       // if (this.task.detail.t_level === 2) {
       //   this.$store.commit('task/SET_CURR_EDIT_TASK', this.fatherTask)
       // }
-      this.$store.commit('task/SET_CURR_FATHER_TASK', this.$store.state.task.currFatherTask)
+      this.$store.commit(
+        'task/SET_CURR_FATHER_TASK',
+        this.$store.state.task.currFatherTask,
+      )
       this.init()
     },
 
@@ -1193,7 +1185,6 @@ export default {
       console.log('当前dialog信息', res)
       return true
     },
-
     async getComment() {
       const params = {
         source: 'task',
@@ -1224,6 +1215,40 @@ export default {
     },
 
     // 更新操作
+    async editTaskItem(item, content) {
+      if (item === 'title') {
+        this.form.t_title = content
+      } else if (item === 'content') {
+        this.form.t_content = content
+      } else if (item === 'state') {
+        this.form.t_state = content
+      } else if (item === 'rank') {
+        this.form.t_rank = content
+      } else if (item === 'header') {
+        this.form.t_header_id = content.uid
+        this.form.t_header_name = content.name
+      } else if (item === 'member') {
+        this.form.t_member = content
+        // } else if (item === 'start') { // 通过vmodel绑定
+        //   this.form.start_time = content
+        // } else if (item === 'end') { // 通过vmodel绑定
+        //   this.form.end_time = content
+      } else if (item === 'done') {
+        this.form.is_done = content
+      }
+      this.form.id = this.task.detail.id
+      // 然后直接更新
+      console.log('editTask的更新信息', this.form)
+      const res = await updateTask(this.form)
+      this.resetForm()
+      // 更新项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功！')
+      this.getTaskDetail()
+      return true
+    },
     async selectFinish({ key }) {
       switch (key) {
         case 'done': {
@@ -1236,9 +1261,10 @@ export default {
           if (haveUndone.data.length) {
             this.$info({
               title: (
-              <p>
-                <span class="warning">「{this.task.detail.t_title}」</span>仍存在尚未完成的子任务
-              </p>
+                <p>
+                  <span class="warning">「{this.task.detail.t_title}」</span>
+                  仍存在尚未完成的子任务
+                </p>
               ),
               content: '请先将子任务完成再完成父任务',
               onOk: () => {},
@@ -1252,7 +1278,8 @@ export default {
           this.$confirm({
             title: (
               <p>
-                将<span class="warning">「{this.task.detail.t_title}」</span>任务设为未完成状态
+                将<span class="warning">「{this.task.detail.t_title}」</span>
+                任务设为未完成状态
               </p>
             ),
             content: '您确定要取消完成该任务吗？',
@@ -1283,39 +1310,7 @@ export default {
       }
     },
 
-    async editTaskItem(item, content) {
-      if (item === 'title') {
-        this.form.t_title = content
-      } else if (item === 'content') {
-        this.form.t_content = content
-      } else if (item === 'state') {
-        this.form.t_state = content
-      } else if (item === 'rank') {
-        this.form.t_rank = content
-      } else if (item === 'header') {
-        this.form.t_header_id = content.id
-        this.form.t_header_name = content.name
-      } else if (item === 'member') {
-        this.form.t_member = content
-        // } else if (item === 'start') { // 通过vmodel绑定
-        //   this.form.start_time = content
-        // } else if (item === 'end') { // 通过vmodel绑定
-        //   this.form.end_time = content
-      } else if (item === 'done') {
-        this.form.is_done = content
-      }
-      this.form.id = this.task.detail.id
-      // 然后直接更新
-      const res = await updateTask(this.form)
-      this.resetForm()
-      // 更新项目失败
-      if (res.meta.status !== 200) {
-        return this.$message.error('更新失败')
-      }
-      this.$message.success('更新成功！')
-      this.getTaskDetail()
-      return true
-    },
+    // 成员
     addMember(value) {
       this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
       this.form.t_member_ids = this.form.t_member_ids.split(',')
@@ -1329,13 +1324,6 @@ export default {
       if (!same) {
         this.form.t_member_ids.push(value)
       }
-    },
-
-    // 成员
-    filterOption(input, option) {
-      return (
-        option.componentOptions.children[1].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      )
     },
     async confirmAddMember() {
       this.form.id = this.task.detail.id
@@ -1373,6 +1361,15 @@ export default {
       return true
     },
 
+    // 其他
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[1].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      )
+    },
+    // 暂时不用
     doTask(action) {
       // const app = this
       const actionKey = action.key
@@ -1486,6 +1483,26 @@ export default {
           return '#ff5b5c'
         default:
           return '#28c175'
+      }
+    },
+    stateColor(state) {
+      switch (state) {
+        case '规划中':
+          return 'pink'
+        case '实现中':
+          return 'blue'
+        case '已实现':
+          return 'cyan'
+        case '测试中':
+          return 'orange'
+        case '已测试':
+          return 'purple'
+        case '已验收':
+          return 'green'
+        case '已关闭':
+          return '#626262'
+        default:
+          return '#626262'
       }
     },
   },
@@ -1866,8 +1883,8 @@ export default {
           .log-list {
             /*font-size: 12px;*/
             padding: 0 20px 0 20px;
-                   padding-bottom: 10px;
-          height: 340px;
+            padding-bottom: 10px;
+            height: 340px;
             overflow-y: scroll;
 
             .show-more {

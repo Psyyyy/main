@@ -198,9 +198,7 @@
                         <span slot="state" slot-scope="state">
               <div class="pr-2" v-if="state !== ''">
                 <a-tag
-                  :color="
-                    state === '规划中' ? 'green' : state === '实现中' ? 'blue' : '#c6c8ce'
-                  "
+                  :color="stateColor(state)"
                 >
                   {{ state }}
                 </a-tag>
@@ -612,6 +610,26 @@ export default {
       // if (index % 2 === 1) className = 'dark-row'
       // return className
       return record.id === this.clickRowId ? 'clickRowColor' : ''
+    },
+    stateColor(state) {
+      switch (state) {
+        case '规划中':
+          return 'pink'
+        case '实现中':
+          return 'blue'
+        case '已实现':
+          return 'cyan'
+        case '测试中':
+          return 'orange'
+        case '已测试':
+          return 'purple'
+        case '已验收':
+          return 'green'
+        case '已关闭':
+          return '#626262'
+        default:
+          return '#626262'
+      }
     },
     onOpenFilter() {
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'task')
