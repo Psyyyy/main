@@ -264,7 +264,7 @@
         </a-card>
       </div>
 
-      <task :pop-visible="showTask" detail="detailTaskId" @close="showTask = false" />
+      <task :pop-visible="showTask" detail="detailTaskId" @close="closeDetail" />
       <filter-modal />
     </div>
   </div>
@@ -434,6 +434,10 @@ export default {
 
   },
   methods: {
+    async closeDetail() {
+      this.showTask = false
+      this.getTask()
+    },
     async getMemberList() {
       const id = this.currProjectID
       const { data: res } = await getMemberList(id)

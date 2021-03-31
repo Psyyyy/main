@@ -17,6 +17,14 @@ export function getTaskDetail(pid, tid) {
     method: 'get',
   })
 }
+
+export function getUndoneChild(pid, tid) {
+  return request({
+    url: `/task/list/${pid}/father/${tid}`,
+    method: 'get',
+  })
+}
+
 export function newTask(data) {
   return request({
     url: '/task/new',

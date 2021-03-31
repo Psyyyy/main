@@ -39,10 +39,6 @@
               </a-tooltip>
               <a-menu @click="doTask" class="field-right-menu" slot="overlay">
                 <!-- 方法未实现，待做 -->
-                <a-menu-item key="move">
-                  <a-icon type="snippets" />
-                  <span>移动任务 *</span>
-                </a-menu-item>
                 <a-menu-item key="delete">
                   <a-icon type="delete"></a-icon>
                   <span>删除任务</span>
@@ -71,19 +67,20 @@
                   ref="inputTitle"
                   @blur="doName"
                   auto-focus
-                  v-model="task.name"
+                  :default-value="task.detail.t_title"
+
                   size="large"
-                  v-show="showEditName"
+                  v-if="showEditName"
                 />
                 <a-tooltip :mouse-enter-delay="0.5" v-if="!task.detail.is_del">
                   <template slot="title">
                     <span>点击即可编辑</span>
                   </template>
-                  <div class="title-text" v-show="!showEditName">
+                  <div class="title-text" v-show="!showEditName"  @click="showEditName=true">
                     {{ task.detail.t_title }}
                   </div>
                 </a-tooltip>
-                <div v-else class="title-text" v-show="!showEditName">
+                <div v-else class="title-text" v-show="!showEditName"  @click="showEditName=true">
                   {{ task.detail.t_title }}
                 </div>
               </div>
@@ -105,6 +102,7 @@
                           :disabled="!!task.detail.is_del"
                           :class="{ disabled: false }"
                         >
+                        <!-- 显示完成状态 -->
                           <span>
                             <!--<a-icon type="check-square"/>-->
                             <a-tag v-if="task.detail.is_done" color="green"
@@ -114,10 +112,12 @@
                               >未完成</a-tag
                             >
                           </span>
+                          <!-- 选择完成状态 -->
                           <a-menu
                             class="field-right-menu"
                             slot="overlay"
                             :selectable="false"
+                            @click="selectFinish"
                           >
                             <a-menu-item key="done">
                               <div class="menu-item-content">
@@ -950,11 +950,12 @@
 <script>
 import { mapState } from 'vuex'
 import $ from 'jquery'
-import { getTaskDetail, updateTask } from '@/api/task'
+import { getTaskDetail, updateTask, getUndoneChild } from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
 import _ from 'lodash'
 import _clonedeep from 'lodash.clonedeep'
+import { Keyboard } from '@icon-park/vue'
 import editor from '../../components/editor.vue'
 
 export default {
@@ -1206,6 +1207,7 @@ export default {
       this.getDialog()
       this.getComment()
     },
+    // 父子跳转
     toChildren(id) {
       if (this.task.detail.t_level === 0) {
         this.grandTask = this.task.detail.id
@@ -1227,53 +1229,8 @@ export default {
       }
       this.init()
     },
-    resetForm() {
-      this.form = {
-        id: '',
-        t_title: '',
-        t_content: '',
-        t_state: '',
-        t_rank: '',
-        t_header_id: '',
-        t_header_name: '',
-        t_member_ids: [],
-        start_time: '',
-        end_time: '',
-        is_done: '',
-      }
-    },
-    async editTaskItem(item, content) {
-      if (item === 'title') {
-        this.form.t_title = content
-      } else if (item === 'content') {
-        this.form.t_content = content
-      } else if (item === 'state') {
-        this.form.t_state = content
-      } else if (item === 'rank') {
-        this.form.t_rank = content
-      } else if (item === 'header') {
-        this.form.t_header_id = content.id
-        this.form.t_header_name = content.name
-      } else if (item === 'member') {
-        this.form.t_member = content
-        // } else if (item === 'start') { // 通过vmodel绑定
-        //   this.form.start_time = content
-        // } else if (item === 'end') { // 通过vmodel绑定
-        //   this.form.end_time = content
-      } else if (item === 'done') {
-        this.form.is_done = content
-      }
-      this.form.id = this.task.detail.id
-      // 然后直接更新
-      const res = await updateTask(this.form)
-      this.resetForm()
-      // 创建项目失败
-      if (res.meta.status !== 200) {
-        return this.$message.error('更新失败')
-      }
-      this.$message.success('更新成功！')
-      return true
-    },
+
+    // 拉取任务信息
     async getTaskDetail() {
       console.log('test', this.detail)
       const pid = this.currProjectID
@@ -1311,6 +1268,7 @@ export default {
       return true
     },
 
+    // 新增操作
     async newComment() {
       this.commentForm.sid = this.task.detail.id
       const { data: res } = await newComment(this.commentForm)
@@ -1327,6 +1285,100 @@ export default {
       return true
     },
 
+    // 更新操作
+    async selectFinish({ key }) {
+      switch (key) {
+        case 'done': {
+          if (this.task.detail.t_level === 2) {
+            this.editTaskItem('done', 1)
+          }
+          const pid = this.currProjectID
+          const tid = this.currEditTask
+          const haveUndone = await getUndoneChild(pid, tid)
+          console.log('have', haveUndone.length)
+          if (haveUndone.data.length) {
+            this.$info({
+              title: (
+              <p>
+                <span class="warning">「{this.task.detail.t_title}」</span>仍存在尚未完成的子任务
+              </p>
+              ),
+              content: '请先将子任务完成再完成父任务',
+              onOk: () => {},
+            })
+          } else {
+            this.editTaskItem('done', 1)
+          }
+          break
+        }
+        case 'undone':
+          this.$confirm({
+            title: (
+              <p>
+                将<span class="warning">「{this.task.detail.t_title}」</span>任务设为未完成状态
+              </p>
+            ),
+            content: '您确定要取消完成该任务吗？',
+            onOk: () => {
+              this.editTaskItem('done', 0)
+            },
+          })
+          break
+
+        default:
+          return true
+      }
+      return true
+    },
+    resetForm() {
+      this.form = {
+        id: '',
+        t_title: '',
+        t_content: '',
+        t_state: '',
+        t_rank: '',
+        t_header_id: '',
+        t_header_name: '',
+        t_member_ids: [],
+        start_time: '',
+        end_time: '',
+        is_done: '',
+      }
+    },
+
+    async editTaskItem(item, content) {
+      if (item === 'title') {
+        this.form.t_title = content
+      } else if (item === 'content') {
+        this.form.t_content = content
+      } else if (item === 'state') {
+        this.form.t_state = content
+      } else if (item === 'rank') {
+        this.form.t_rank = content
+      } else if (item === 'header') {
+        this.form.t_header_id = content.id
+        this.form.t_header_name = content.name
+      } else if (item === 'member') {
+        this.form.t_member = content
+        // } else if (item === 'start') { // 通过vmodel绑定
+        //   this.form.start_time = content
+        // } else if (item === 'end') { // 通过vmodel绑定
+        //   this.form.end_time = content
+      } else if (item === 'done') {
+        this.form.is_done = content
+      }
+      this.form.id = this.task.detail.id
+      // 然后直接更新
+      const res = await updateTask(this.form)
+      this.resetForm()
+      // 更新项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功！')
+      this.getTaskDetail()
+      return true
+    },
     addMember(value) {
       console.log('member', this.form.t_member_ids)
       this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
@@ -1400,14 +1452,6 @@ export default {
             content: '您确定要删除该任务吗？',
             onOk: () => {
               console.log('已删除')
-              // MOCK: 模拟删除一个看板
-              //   this.kbList.some((el, i, self) => {
-              //     if (el.title === boardTitle) {
-              //       self.splice(i, 1)
-              //       return true
-              //     }
-              //     return false
-              //   })
             },
           })
           break
@@ -1447,14 +1491,10 @@ export default {
         this.$refs.inputTitle.focus()
       })
     },
-    doName() {
+    doName({ target }) {
+      console.log('e', target.value)
       this.showEditName = false
-      if (!this.task.name.trim() || this.task.name === this.taskName) {
-        // trim清楚空格
-        this.task.name = this.taskName
-        return false
-      }
-      this.editTask({ name: this.task.name })
+      this.editTaskItem('title', target.value)
       return true
     },
     // editTask(data) {
