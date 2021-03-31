@@ -6,9 +6,7 @@
           <!-- 存在父任务，索引 -->
           <span v-if="task.detail.t_level !== 0 && task.parent">
             <span class="muted">属于任务：</span>
-            <a class="text-default" @click="backToFather">{{
-              fatherName
-            }}</a>
+            <a class="text-default" @click="backToFather">{{ fatherName }}</a>
           </span>
           <!-- 不存在父任务，显示项目名和任务名 -->
           <span v-else class="text-base"
@@ -205,7 +203,6 @@
                           :trigger="['click']"
                           :disabled="!!task.detail.is_del"
                           placement="bottomCenter"
-
                         >
                           <a-tooltip
                             :mouse-enter-delay="0.5"
@@ -216,24 +213,22 @@
                             </template>
                             <div class="field-flex">
                               <template v-if="task.detail.t_header_name">
-
-                                <a class="muted name">{{task.detail.t_header_name}}</a>
+                                <a class="muted name">{{
+                                  task.detail.t_header_name
+                                }}</a>
                               </template>
                             </div>
                           </a-tooltip>
                           <a-menu slot="overlay">
                             <a-menu-item
-                            style="width:80px"
+                              style="width:80px"
                               v-for="member in memberList"
                               :key="member.uid"
-                               @click="editTaskItem('header',member)"
+                              @click="editTaskItem('header', member)"
                             >
                               <div class="field-flex">
                                 <template>
-
-                                  <a class="muted name">{{
-                                    member.name
-                                  }}</a>
+                                  <a class="muted name">{{ member.name }}</a>
                                 </template>
                               </div>
                             </a-menu-item>
@@ -288,10 +283,9 @@
                               <a-date-picker
                                 v-model="form.start_time"
                                 size="small"
-                               :format="dateFormat"
+                                :format="dateFormat"
                                 type="date"
-                                                              @change="formatDate"
-
+                                @change="formatDate"
                                 :open="showBeginTime"
                               >
                                 <template slot="renderExtraFooter">
@@ -338,15 +332,14 @@
                             </a>
                           </div>
                           <div slot="overlay">
-                           <a-date-picker
-                                v-model="form.end_time"
-                                size="small"
-                               :format="dateFormat"
-                                type="date"
-                                                              @change="formatDate"
-
-                                :open="showEndTime"
-                              >
+                            <a-date-picker
+                              v-model="form.end_time"
+                              size="small"
+                              :format="dateFormat"
+                              type="date"
+                              @change="formatDate"
+                              :open="showEndTime"
+                            >
                               <template slot="renderExtraFooter">
                                 <a style="position: absolute;" size="small"
                                   >清除</a
@@ -495,7 +488,6 @@
                                   <div
                                     class="list-item task"
                                     v-if="childTask.is_done == done"
-                                    @click="toChildren(childTask.id)"
                                   >
                                     <!-- 完成按钮 -->
                                     <a-tooltip placement="top">
@@ -508,11 +500,19 @@
                                       </template>
                                       <div class="check-box-wrapper task-item">
                                         <a-icon
+                                          @click="childTask.is_done
+                                          ?''
+                                           : finishChild(
+                                              childTask.t_level,
+                                              childTask.id,
+                                              childTask.t_title
+                                            )
+                                          "
                                           class="check-box"
                                           :class="{
                                             disabled:
-                                              task.detail.is_del ||
-                                              task.detail.is_done
+                                              childTask.is_del ||
+                                              childTask.is_done
                                           }"
                                           :type="
                                             childTask.is_done
@@ -543,7 +543,7 @@
                                       ></a-avatar>
                                     </a-tooltip>
                                     <!-- 任务标题 -->
-                                    <div class="task-item task-title">
+                                    <div class="task-item task-title" @click="toChildren(childTask.id)">
                                       <div
                                         class="title-text"
                                         :class="{ done: childTask.is_done }"
@@ -875,7 +875,9 @@
 import { mapState } from 'vuex'
 import $ from 'jquery'
 import { getTimestamp } from '@/utils/util'
-import { getTaskDetail, updateTask, getUndoneChild } from '@/api/task'
+import {
+  getTaskDetail, updateTask, getUndoneChild, deleteTask,
+} from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
 import _ from 'lodash'
@@ -1173,6 +1175,16 @@ export default {
       console.log('当前任务信息', res)
       return true
     },
+    async deleteTask(id) {
+      try {
+        const res = await deleteTask(id)
+        this.$message.success(res.meta.msg)
+        this.getTask()
+      } catch (err) {
+        // console.log(err)
+      }
+      return true
+    },
     async getDialog() {
       const obj = {
         pid: this.currProjectID,
@@ -1245,28 +1257,79 @@ export default {
       this.getTaskDetail()
       return true
     },
+    async editChildDone(id) {
+      const childForm = {
+        id,
+        t_title: '',
+        t_content: '',
+        t_state: '',
+        t_rank: '',
+        t_header_id: '',
+        t_header_name: '',
+        t_member_ids: [],
+        start_time: '',
+        end_time: '',
+        is_done: 1,
+      }
+      // 然后直接更新
+      console.log('deta的更新信息', childForm)
+      const res = await updateTask(childForm)
+      this.resetForm()
+      // 更新项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功！')
+      this.getTaskDetail()
+      return true
+    },
+
+    async finishChild(level, id, title) {
+      if (level === 2) {
+        this.editChildDone(id)
+      } else {
+        const pid = this.currProjectID
+        const haveUndone = await getUndoneChild(pid, id)
+        if (haveUndone.data.length) {
+          this.$info({
+            title: (
+                 <p>
+                    <span class="warning">「{title}」</span>
+                    仍存在尚未完成的子任务
+                 </p>
+            ),
+            content: '请先将其子任务完成再完成父任务',
+            onOk: () => {},
+          })
+        } else {
+          this.editChildDone(id)
+        }
+      }
+    },
+
     async selectFinish({ key }) {
       switch (key) {
         case 'done': {
           if (this.task.detail.t_level === 2) {
             this.editTaskItem('done', 1)
-          }
-          const pid = this.currProjectID
-          const tid = this.currEditTask
-          const haveUndone = await getUndoneChild(pid, tid)
-          if (haveUndone.data.length) {
-            this.$info({
-              title: (
-                <p>
-                  <span class="warning">「{this.task.detail.t_title}」</span>
-                  仍存在尚未完成的子任务
-                </p>
-              ),
-              content: '请先将子任务完成再完成父任务',
-              onOk: () => {},
-            })
           } else {
-            this.editTaskItem('done', 1)
+            const pid = this.currProjectID
+            const tid = this.currEditTask
+            const haveUndone = await getUndoneChild(pid, tid)
+            if (haveUndone.data.length) {
+              this.$info({
+                title: (
+                 <p>
+                    <span class="warning">「{this.task.detail.t_title}」</span>
+                    仍存在尚未完成的子任务
+                 </p>
+                ),
+                content: '请先将子任务完成再完成父任务',
+                onOk: () => {},
+              })
+            } else {
+              this.editTaskItem('done', 1)
+            }
           }
           break
         }
@@ -1413,7 +1476,7 @@ export default {
           this.$confirm({
             title: (
               <p>
-                此操作将删除<span class="warning">「xxx」</span>任务
+                此操作将删除<span class="warning">「{this.task.detail.t_title}」</span>任务
               </p>
             ),
             content: '您确定要删除该任务吗？',
@@ -1422,12 +1485,6 @@ export default {
             },
           })
           break
-        case 'star':
-          console.log('已订阅')
-          // this.task.stared ? this.task.stared = 0 : this.task.stared = 1
-          //   star(app.code, this.task.stared)
-          return true
-
         default:
           return true
       }
