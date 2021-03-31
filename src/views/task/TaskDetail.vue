@@ -288,10 +288,10 @@
                               <a-date-picker
                                 v-model="form.start_time"
                                 size="small"
-                                format="YY-MM-DD HH:mm:ss"
-                                show-time
-                                allow-clear
-                                :show-today="false"
+                               :format="dateFormat"
+                                type="date"
+                                                              @change="formatDate"
+
                                 :open="showBeginTime"
                               >
                                 <template slot="renderExtraFooter">
@@ -338,15 +338,15 @@
                             </a>
                           </div>
                           <div slot="overlay">
-                            <a-date-picker
-                              v-model="form.end_time"
-                              size="small"
-                              format="YY-MM-DD HH:mm:ss"
-                              show-time
-                              allow-clear
-                              :show-today="false"
-                              :open="showEndTime"
-                            >
+                           <a-date-picker
+                                v-model="form.end_time"
+                                size="small"
+                               :format="dateFormat"
+                                type="date"
+                                                              @change="formatDate"
+
+                                :open="showEndTime"
+                              >
                               <template slot="renderExtraFooter">
                                 <a style="position: absolute;" size="small"
                                   >清除</a
@@ -872,6 +872,7 @@
 <script>
 import { mapState } from 'vuex'
 import $ from 'jquery'
+import { getTimestamp } from '@/utils/util'
 import { getTaskDetail, updateTask, getUndoneChild } from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
@@ -1015,6 +1016,11 @@ export default {
 
       // 成员
       isAddMemberVisible: false,
+
+      // 日期
+      dateFormat: 'YYYY/MM/DD',
+      startFormat: '',
+      endFormat: '',
     }
   },
   computed: {
@@ -1229,10 +1235,6 @@ export default {
         this.form.t_header_name = content.name
       } else if (item === 'member') {
         this.form.t_member = content
-        // } else if (item === 'start') { // 通过vmodel绑定
-        //   this.form.start_time = content
-        // } else if (item === 'end') { // 通过vmodel绑定
-        //   this.form.end_time = content
       } else if (item === 'done') {
         this.form.is_done = content
       }
@@ -1308,6 +1310,45 @@ export default {
         end_time: '',
         is_done: '',
       }
+    },
+    async formatDate() {
+      if (this.form.start_time) {
+        const start = _clonedeep(this.form.start_time)
+        this.startFormat = getTimestamp(
+          start.format('YYYY-MM-DD h:m:s'),
+        )
+      }
+      if (this.form.end_time) {
+        const end = _clonedeep(this.form.end_time)
+        this.endFormat = getTimestamp(
+          end.format('YYYY-MM-DD h:m:s'),
+        )
+      }
+
+      const dateForm = {
+        id: this.task.detail.id,
+        t_title: '',
+        t_content: '',
+        t_state: '',
+        t_rank: '',
+        t_header_id: '',
+        t_header_name: '',
+        t_member_ids: [],
+        start_time: this.startFormat,
+        end_time: this.endFormat,
+        is_done: '',
+      }
+      // 然后直接更新
+      console.log('deta的更新信息', dateForm)
+      const res = await updateTask(dateForm)
+      this.resetForm()
+      // 更新项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功！')
+      this.getTaskDetail()
+      return true
     },
 
     // 成员
