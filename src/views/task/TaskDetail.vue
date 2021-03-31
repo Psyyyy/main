@@ -108,7 +108,7 @@
                             <a-tag v-if="task.detail.is_done" color="green"
                               >已完成</a-tag
                             >
-                            <a-tag v-show="!task.detail.is_done" color="grey"
+                            <a-tag v-if="!task.detail.is_done" color="grey"
                               >未完成</a-tag
                             >
                           </span>
@@ -499,6 +499,7 @@
                       <div class="field">
                         <div class="block-field width-block">
                           <div class="task-child">
+                            <!-- 子任务栏 -->
                             <div
                               class="task-list"
                               v-show="task.children.length"
@@ -510,9 +511,10 @@
                                 >
                                   <div
                                     class="list-item task"
-                                    v-if="childTask.is_done == done"
+                                    v-if="childTask.is_done==done"
                                     @click="toChildren(childTask.id)"
                                   >
+                                  <!-- 完成按钮 -->
                                     <a-tooltip placement="top">
                                       <template slot="title">
                                         <span
@@ -541,6 +543,7 @@
                                         />
                                       </div>
                                     </a-tooltip>
+                                    <!-- 负责人头像 -->
                                     <a-tooltip :mouse-enter-delay="0.5">
                                       <template slot="title">
                                         <span v-if="childTask.t_header_name">{{
@@ -556,6 +559,7 @@
                                         icon="user"
                                       ></a-avatar>
                                     </a-tooltip>
+                                    <!-- 任务标题 -->
                                     <div class="task-item task-title">
                                       <div
                                         class="title-text"
@@ -571,74 +575,12 @@
                                 </div>
                               </div>
                             </div>
-                            <!-- <div class="task-list" v-show="showChildTask">
-                            <div class="add-task">
-                              <div class="list-item task">
-                                <span class="task-item check-box"></span>
-
-                                <a-dropdown
-                                  :trigger="['click']"
-                                  v-model="visibleChildTaskMemberMenu"
-                                  :disabled="!!task.detail.is_del"
-                                  placement="bottomCenter"
-                                >
-                                  <a-tooltip :mouse-enter-delay="0.5">
-                                    <template slot="title">
-                                      <span v-if="childTask.t_header_name">{{
-                                        childTask.t_header_name
-                                      }}</span>
-                                      <span v-else>待认领</span>
-                                    </template>
-                                    <div class="field-flex">
-                                      <template>
-                                        <a-avatar
-                                          class="task-item"
-                                          icon="user"
-                                          size="small"
-                                        />
-                                      </template>
-                                    </div>
-                                  </a-tooltip>
-                                  <div slot="overlay">
-                                    <task-member-menu
-                                      v-if="visibleChildTaskMemberMenu"
-                                      :project-code="projectCodeCurrent"
-                                      :task-code="childTask.t_header_name ? task.detail.id : ''"
-                                      :is-commit="false"
-                                      @close="updateChildExecutor"
-                                      @inviteProjectMember="
-                                        (showInviteChildTaskMember = true),
-                                          (visibleChildTaskMemberMenu = false)
-                                      "
-                                    ></task-member-menu>
-                                  </div>
-                                </a-dropdown>
-                                <div class="task-item task-input">
-                                  <a-input v-model="childTaskName" />
-                                </div>
-                              </div>
-                              <div class="action-btn text-right">
-                                <a-button
-                                  class="mr-2"
-                                  @click="showChildTask = false"
-                                >
-                                  取消
-                                </a-button>
-                                <a-button
-                                  type="primary"
-                                  html-type="submit"
-                                  class="middle-btn"
-                                  >保存
-                                </a-button>
-                              </div>
-                            </div>
-                          </div> -->
                             <a-tooltip placement="top">
                               <template slot="title">
                                 <span
                                   v-if="task.detail.is_done"
                                   style="font-size: 12px;"
-                                  >父任务已完成，无法添加新的子任务</span
+                                  >当前任务已完成，无法添加新的子任务</span
                                 >
                               </template>
                               <a
@@ -1218,12 +1160,13 @@ export default {
       this.init()
     },
     backToFather() {
-      if (this.task.detail.t_level === 1) {
-        this.$store.commit('task/SET_CURR_EDIT_TASK', this.grandTask)
-      }
-      if (this.task.detail.t_level === 2) {
-        this.$store.commit('task/SET_CURR_EDIT_TASK', this.fatherTask)
-      }
+      // if (this.task.detail.t_level === 1) {
+      //   this.$store.commit('task/SET_CURR_EDIT_TASK', this.grandTask)
+      // }
+      // if (this.task.detail.t_level === 2) {
+      //   this.$store.commit('task/SET_CURR_EDIT_TASK', this.fatherTask)
+      // }
+      this.$store.commit('task/SET_CURR_FATHER_TASK', this.$store.state.task.currFatherTask)
       this.init()
     },
 
@@ -1234,6 +1177,7 @@ export default {
       const { data: res } = await getTaskDetail(pid, tid)
       // this.task = res
       this.$store.commit('task/SET_TASK_DETAIL', res)
+      this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent.id)
       console.log('当前任务信息', res)
       return true
     },
@@ -1777,7 +1721,8 @@ export default {
                         line-height: 14px;
 
                         &.done {
-                          color: #d81818;
+                          color: #b7b8bb;
+                          text-decoration: line-through;
                         }
                       }
 

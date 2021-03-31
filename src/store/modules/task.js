@@ -4,6 +4,7 @@ const state = {
   taskDetail: {},
   taskDialog: {},
   taskComment: {},
+  currFatherTask: {},
 }
 
 const mutations = {
@@ -12,6 +13,9 @@ const mutations = {
   },
   SET_CURR_EDIT_TASK(state, id) {
     state.currEditTask = id
+  },
+  SET_CURR_FATHER_TASK(state, id) {
+    state.currFatherTask = id
   },
   SET_TASK_DETAIL(state, data) {
     state.taskDetail = data

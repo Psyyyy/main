@@ -625,6 +625,7 @@ export default {
 
       const { data: res } = await getTaskDetail(pid, id)
       this.$store.commit('task/SET_TASK_DETAIL', res)
+      this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent.id)
       return true
     },
     async getDialog(id) {
@@ -641,7 +642,6 @@ export default {
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       await this.getTaskDetail(id)
       await this.getDialog(id)
-      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       this.showTask = true
       // this.detailTaskId = id
     },
