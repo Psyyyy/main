@@ -643,7 +643,9 @@ export default {
 
       const { data: res } = await getTaskDetail(pid, id)
       this.$store.commit('task/SET_TASK_DETAIL', res)
-      this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent.id)
+      if (res.detail.t_level !== 0) {
+        this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
+      }
       return true
     },
     async getDialog(id) {

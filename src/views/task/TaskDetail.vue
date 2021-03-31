@@ -6,8 +6,8 @@
           <!-- 存在父任务，索引 -->
           <span v-if="task.detail.t_level !== 0 && task.parent">
             <span class="muted">属于任务：</span>
-            <a class="text-default" @click="backToFather()">{{
-              task.detail.t_level === 1 ? grandName : fatherName
+            <a class="text-default" @click="backToFather">{{
+              fatherName
             }}</a>
           </span>
           <!-- 不存在父任务，显示项目名和任务名 -->
@@ -383,6 +383,7 @@
                           <a-textarea
                             :default-value="task.detail.t_content"
                             :rows="4"
+                            v-model="newContent"
                           />
                           <div class="action-btn float-right mt-2 ">
                             <a-button
@@ -396,6 +397,7 @@
                               type="primary"
                               html-type="submit"
                               class="middle-btn"
+                              @click="doContent"
                               >保存
                             </a-button>
                           </div>
@@ -1008,11 +1010,11 @@ export default {
       // dialogList: [],
       // task: {},
 
-      // 返回上一个项目
-      fatherTask: '',
-      fatherName: '',
-      grandTask: '',
-      grandName: '',
+      // // 返回上一个项目
+      // fatherTask: '',
+      // fatherName: '',
+      // grandTask: '',
+      // grandName: '',
 
       // 成员
       isAddMemberVisible: false,
@@ -1021,6 +1023,9 @@ export default {
       dateFormat: 'YYYY/MM/DD',
       startFormat: '',
       endFormat: '',
+
+      // 备注
+      newContent: '',
     }
   },
   computed: {
@@ -1079,6 +1084,9 @@ export default {
     },
     currEditTask() {
       return this.$store.state.task.currEditTask
+    },
+    fatherName() {
+      return this.$store.state.task.currFatherTaskName
     },
   },
   watch: {
@@ -1143,28 +1151,11 @@ export default {
     },
     // 父子跳转
     toChildren(id) {
-      if (this.task.detail.t_level === 0) {
-        this.grandTask = this.task.detail.id
-        this.grandName = this.task.detail.t_title
-      }
-      if (this.task.detail.t_level === 1) {
-        this.fatherTask = this.task.detail.id
-        this.fatherName = this.task.detail.t_title
-      }
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       this.init()
     },
     backToFather() {
-      // if (this.task.detail.t_level === 1) {
-      //   this.$store.commit('task/SET_CURR_EDIT_TASK', this.grandTask)
-      // }
-      // if (this.task.detail.t_level === 2) {
-      //   this.$store.commit('task/SET_CURR_EDIT_TASK', this.fatherTask)
-      // }
-      this.$store.commit(
-        'task/SET_CURR_FATHER_TASK',
-        this.$store.state.task.currFatherTask,
-      )
+      this.$store.commit('task/SET_CURR_EDIT_TASK', this.$store.state.task.currFatherTask)
       this.init()
     },
 
@@ -1175,7 +1166,10 @@ export default {
       const { data: res } = await getTaskDetail(pid, tid)
       // this.task = res
       this.$store.commit('task/SET_TASK_DETAIL', res)
-      this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent.id)
+      if (res.detail.t_level !== 0) {
+        this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
+      }
+      this.newContent = res.detail.t_content
       console.log('当前任务信息', res)
       return true
     },
@@ -1224,12 +1218,12 @@ export default {
     async editTaskItem(item, content) {
       if (item === 'title') {
         this.form.t_title = content
-      } else if (item === 'content') {
-        this.form.t_content = content
       } else if (item === 'state') {
         this.form.t_state = content
       } else if (item === 'rank') {
         this.form.t_rank = content
+      } else if (item === 'content') {
+        this.form.t_content = content
       } else if (item === 'header') {
         this.form.t_header_id = content.uid
         this.form.t_header_name = content.name
@@ -1454,7 +1448,7 @@ export default {
     // },
     // 更新数据库 修改优先级
     doPri(item) {
-      // this.editTask({ pri: item.key })
+      this.editTaskItem('rank', item.key)
     },
 
     // 任务标题
@@ -1467,6 +1461,12 @@ export default {
     doName({ target }) {
       this.showEditName = false
       this.editTaskItem('title', target.value)
+      return true
+    },
+    doContent() {
+      console.log('content', this.newContent)
+      this.editTaskItem('content', this.newContent)
+      this.showTaskDesc = false
       return true
     },
     // editTask(data) {
