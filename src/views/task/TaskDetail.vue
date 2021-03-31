@@ -778,13 +778,14 @@
                   :key="member.uid"
                 >
                   <template slot="title">
-                    <span>{{ member.name }} </span>
+                    <span>点击将参与者<span style=" color: #f4ba5d;">「{{ member.name }}」</span>移出需求 </span>
                   </template>
                   <a-avatar
                     class="member-item"
                     icon="user"
                     size="small"
                     :src="member.avatar"
+                    @click="removeMember(member.uid)"
                   />
                 </a-tooltip>
                   <a-tooltip :mouse-enter-delay="0.5">
@@ -952,6 +953,7 @@ import $ from 'jquery'
 import { getTaskDetail, updateTask } from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
+import _ from 'lodash'
 import _clonedeep from 'lodash.clonedeep'
 import editor from '../../components/editor.vue'
 
@@ -1326,9 +1328,20 @@ export default {
     },
 
     addMember(value) {
-      this.form.t_member_ids.push(this.task.detail.t_member_ids)
       console.log('member', this.form.t_member_ids)
-      this.form.t_member_ids.push(value)
+      this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
+      this.form.t_member_ids = this.form.t_member_ids.split(',')
+      let same = 0
+      for (let i = 0; i < this.form.t_member_ids.length; i += 1) {
+        this.form.t_member_ids[i] = parseInt(this.form.t_member_ids[i], 0)
+        if (this.form.t_member_ids[i] === value) {
+          same = 1
+        }
+      }
+      if (!same) {
+        this.form.t_member_ids.push(value)
+      }
+      console.log('member', this.form.t_member_ids[1])
     },
 
     // 成员
@@ -1342,12 +1355,34 @@ export default {
       // 然后直接更新
       console.log('更新form', this.form)
       const res = await updateTask(this.form)
+      this.isAddMemberVisible = false
       this.resetForm()
       // 创建项目失败
       if (res.meta.status !== 200) {
         return this.$message.error('添加成员失败')
       }
       this.$message.success('添加成员成功！')
+      this.getTaskDetail()
+      return true
+    },
+    async removeMember(id) {
+      let temp = _clonedeep(this.task.detail.t_member_ids)
+      temp = temp.split(',')
+      _.pull(temp, `${id}`)
+      // ["2","3"]字符串转换成数字[2,3]
+      this.form.t_member_ids = temp.map(Number)
+      console.log(this.form.t_member_ids)
+      // 发送
+      this.form.id = this.task.detail.id
+      const res = await updateTask(this.form)
+      this.isAddMemberVisible = false
+      this.resetForm()
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('移出成员失败')
+      }
+      this.$message.success('移出成员成功！')
+      this.getTaskDetail()
       return true
     },
 
