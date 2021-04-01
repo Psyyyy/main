@@ -94,6 +94,10 @@ export default {
   watch: {
     $route: {
       handler({ name, meta }) {
+        console.log('bar', name)
+        if (name === 'Task') {
+          this.$store.commit('task/SET_LIST_TYPE', 'task')
+        }
         if (meta?.openKey) {
           this.openKeys = [meta.openKey]
         }

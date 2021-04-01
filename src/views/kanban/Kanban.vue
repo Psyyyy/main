@@ -529,6 +529,7 @@ export default {
       console.log(name)
       this.$store.commit('stage/SET_CURR_STAGE_NAME', name)
       this.$store.commit('stage/SET_CURR_STAGE_ID', id)
+      window.localStorage.setItem('currStageId', id)
       window.localStorage.setItem('currStage', name)
       window.localStorage.setItem('currStageId', id)
 
@@ -574,6 +575,7 @@ export default {
         this.isTaskShow = false
       }
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
+      this.$store.commit('task/SET_LIST_TYPE', 'stage')
       this.currShow = type
       this.isKbShow = false
     },

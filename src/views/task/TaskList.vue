@@ -4,7 +4,7 @@
     <div>
 
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
-         <h3 class="section-card__title">需求管理</h3>
+         <h3 class="section-card__title">{{currListType==='stage'?'迭代任务':'需求管理'}}</h3>
         <div class="flex ml-auto">
 <a-button
             class="ml-1 w-30 flex "
@@ -154,9 +154,12 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer" @click="showDetail(record.id)">{{
-                  text
-                }}</span>
+                <span class="task-pointer" @click="showDetail(record.id)">
+                  <a-tag v-if="currListType==='stage'" :color="record.t_type===1?'blue':'red'">
+       {{record.t_type===1?'需求':'缺陷'}}
+      </a-tag>
+                  {{text}}
+                  </span>
                 <!-- <editable-cell
             :text="text"
             @change="onCellChange(record.key, 'name', $event)"
@@ -195,13 +198,14 @@
 
             <!-- 状态 -->
                         <span slot="state" slot-scope="state">
-              <div class="pr-2" v-if="state !== ''">
+              <div class="pr-2" v-if="state">
                 <a-tag
                   :color="stateColor(state)"
                 >
                   {{ state }}
                 </a-tag>
               </div>
+              <div v-else>-</div>
             </span>
             <!-- 负责人 -->
             <template slot="member" slot-scope="text, record, index, column">
@@ -234,13 +238,19 @@
             </template>
             <!-- 日期 -->
             <span style="text-align:center" slot="start" slot-scope="start">
-              <template>
+              <template v-if="start">
                 {{start|dateFormat}}
+              </template>
+              <template v-else>
+               -
               </template>
             </span>
             <span style="text-align:center" slot="end" slot-scope="end">
-              <template>
+              <template v-if="end">
                 {{end|dateFormat}}
+              </template>
+              <template v-else>
+               -
               </template>
             </span>
             <!-- 操作 -->
@@ -425,6 +435,9 @@ export default {
     },
     isAddModalOpened() {
       return this.$store.state.add.isAddModalOpened
+    },
+    currListType() {
+      return this.$store.state.task.currListType
     },
   },
   watch: {
@@ -724,8 +737,8 @@ button {
 .todo-app {
   @apply relative w-full flex bg-white rounded-lg overflow-hidden;
   margin-top: -30px;
-  height: 640px;
-  min-height: 640px;
+  height: 600px;
+  min-height: 600px;
 }
 .table-page-search-wrapper {
   .ant-form-inline {

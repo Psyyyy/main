@@ -7,11 +7,15 @@ const state = {
   taskComment: {},
   currFatherTask: '',
   currFatherTaskName: '',
+  currListType: 'task', // 'task':需求/缺陷，stage：迭代
 }
 
 const mutations = {
   SET_TASK_LIST(state, tasklist) {
     state.taskList = tasklist
+  },
+  SET_LIST_TYPE(state, type) {
+    state.currListType = type
   },
   SET_CURR_EDIT_TASK(state, id) {
     state.currEditTask = id

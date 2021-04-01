@@ -22,6 +22,7 @@ const state = {
 const mutations = {
   SET_CURR_STAGE_ID(state, stageId) {
     state.currStageId = stageId
+    window.localStorage.setItem('currStageId', stageId)
   },
   SET_CURR_STAGE_NAME(state, stageName) {
     state.currStage = stageName
