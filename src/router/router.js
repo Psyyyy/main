@@ -148,7 +148,7 @@ export const asyncRoutes = [
       {
         path: '/bug',
         name: 'Bug',
-        component: () => import('@/views/bug/Bug.vue'),
+        component: () => import('@/views/task/TaskList.vue'),
         meta: { permission: ['normal', 'admin'], title: '缺陷管理', icon: 'alert-circle' },
       },
     ],

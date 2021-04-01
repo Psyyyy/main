@@ -45,7 +45,22 @@ Vue.filter('dateFormat', (originVal) => {
 
   return DateStr
 })
+export function dateformat(value) {
+  const dt = new Date(value * 1000)
 
+  const y = dt.getFullYear()
+  const m = (`${dt.getMonth() + 1}`).padStart(2, '0')
+  const d = (`${dt.getDate()}`).padStart(2, '0')
+
+  // const hh = (`${dt.getHours()}`).padStart(2, '0')
+  // const mm = (`${dt.getMinutes()}`).padStart(2, '0')
+  // const ss = (`${dt.getMilliseconds()}`).padStart(2, '0')
+
+  // const DateStr = `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+  const DateStr = `${y}/${m}/${d}`
+
+  return DateStr
+}
 // 时间戳
 export function getTimestamp(dateStr) {
   const newstr = dateStr.replace(/\//g, '/')

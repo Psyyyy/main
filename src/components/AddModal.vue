@@ -87,7 +87,7 @@
           />
         </a-form-model-item>
         <!-- 状态添加（多选） -->
-        <a-form-item label="状态">
+        <a-form-item label="状态" v-if="currListType==='task'">
           <a-select
             v-model="form.t_state"
             placeholder="点击选择状态"
@@ -282,7 +282,8 @@ export default {
       }
       if (this.currListType === 'bug') { // 数据库默认是1 task
         this.formatForm.t_type = 0
-      }
+        this.formatForm.t_state = '新'
+      } else this.formatForm.t_type = 1
       // this.formatForm.t_stage_id = this.currStageId
       console.log('currTask', this.currEditTask)
       console.log('pid', this.formatForm.t_pid)

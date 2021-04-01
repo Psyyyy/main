@@ -1649,6 +1649,13 @@ export default {
           return 'green'
         case '已关闭':
           return '#626262'
+          // 缺陷
+        case '新':
+          return 'orange'
+        case '处理中':
+          return 'blue'
+        case '已解决':
+          return 'green'
         default:
           return '#626262'
       }

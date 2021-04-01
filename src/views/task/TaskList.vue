@@ -10,11 +10,10 @@
             class="ml-1 w-30 flex "
             type="primary"
             @click="onOpenAdd()"
-            v-if="currListType==='task'"
 
           >
             <feather class="mr-1 mt-1" size="20" type="plus" />
-            新增需求
+            新增{{currListType==='task'?'需求':'缺陷'}}
           </a-button>
           <a-button
             class="ml-1 mr-4 flex"
@@ -288,7 +287,7 @@
 import { Empty } from 'ant-design-vue'
 import {
   getTaskList, deleteTask,
-  getTaskDetail,
+  getTaskDetail, getStageTaskList,
 } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
@@ -451,6 +450,9 @@ export default {
     isAddModalOpened() {
       this.getTask()
     },
+    currListType() {
+      this.getTask()
+    },
     // isFilterModalOpened() {
     //   if (this.$store.state.filter.isFilterModalOpened === false) {
     //     this.getTask()
@@ -470,10 +472,17 @@ export default {
     },
     async getTask() {
       const pid = this.currProjectID
-      const type = 1// type:1-需求，2-bug，迭代就是12
-      const { data: res } = await getTaskList(pid, type)
-      this.$store.commit('task/SET_TASK_LIST', res)
-      console.log('list', res)
+      if (this.currListType === 'stage') {
+        const { data: res } = await getStageTaskList(pid)
+        this.$store.commit('task/SET_TASK_LIST', res)
+        console.log('list', res)
+      } else {
+        const type = this.currListType === 'task' ? 1 : 0// type:1-需求，2-bug，迭代就是12
+        const { data: res } = await getTaskList(pid, type)
+        this.$store.commit('task/SET_TASK_LIST', res)
+        console.log('list', res)
+      }
+
       // this.data = res
       return true
     },
@@ -645,7 +654,7 @@ export default {
 
         // 缺陷
         case '新':
-          return 'red'
+          return 'orange'
         case '处理中':
           return 'blue'
         case '已解决':

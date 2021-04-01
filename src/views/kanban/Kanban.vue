@@ -13,7 +13,8 @@
             </div>
             <!-- 迭代阶段切换 -->
             <div class="wl">
-              <a-dropdown :trigger="['click']" class="w-32 mr-6">
+
+              <a-dropdown :trigger="['click']" class=" mr-26">
                 <div class=" text-2xl ml-1 flex items-center cursor-pointer ">
                   <!-- <a-icon
                     style="color:#98adf9"
@@ -21,7 +22,9 @@
                     type="appstore"
                     class="mr-2"
                   /> -->
-                  <h3 class="section-card__title">{{ currStage }}</h3>
+                  <h3 class="section-card__title">
+                    {{stage.s_title}}
+                  </h3>
 
                   <feather
                     class="ml-1 text-gray-500"
@@ -29,48 +32,64 @@
                     type="chevron-down"
                   />
                 </div>
+
                 <template #overlay>
-                  <a-menu class="-ml-1 w-32">
+                  <a-menu class="-ml-1">
                     <a-menu-item
                       style="font-size:15px"
-                      v-for="{ id, name } in stageList"
-                      :key="id"
-                      @click="changeStageTo(id, name)"
+                      v-for="{ s_id, s_title } in stageList"
+                      :key="s_id"
+                      @click="changeStageTo(s_id, s_title)"
                     >
-                      {{ name }}
+                      {{s_title}}
                     </a-menu-item>
                   </a-menu>
                 </template>
               </a-dropdown>
             </div>
+
             <div class="wl">
+              <feather
+                class="text-xl ml-2 text-gray-500"
+                size="18"
+                type="bookmark"
+                style="cursor:pointer;color:#98adf9"
+                @click="target"
+              />
               <div
                 class=" flex-no-wrap inline-block "
-                style="color:#bdc0c9;white-space:nowrap;width:30px;margin-left:-60px;margin-top:7px"
+                style="color:#bdc0c9;white-space:nowrap;width:30px;margin-top:7px"
               >
-                2021.1.1~2021.3.1
-                <a-icon
-                  style="ccursor:pointer;color:#98adf9"
-                  class="text-xl ml-1"
-                  type="tag"
-                  @click="target"
-                />
+                {{stage.s_start_time|dateFormat}}~{{stage.s_end_time|dateFormat}}
               </div>
             </div>
           </div>
         </div>
         <div class="wr">
-          <div class="wr mt-1 mr-4">
+           <div class="wr ml-2 mt-1">
+            <a-dropdown>
+      <a-menu slot="overlay" placement="bottomRight" @click="handleStage">
+        <a-menu-item key="edit" > 编辑迭代 </a-menu-item>
+        <a-menu-item key="delete" > 删除迭代 </a-menu-item>
+      </a-menu>
+      <a-button style="margin-left: 8px"> 更多 <a-icon type="down" /> </a-button>
+    </a-dropdown>
+           </div>
+          <div class="wr mt-1 mr-2">
+
             <a-button type="primary" class="mr-4" @click="onOpenFilter('task')"
               >筛选</a-button
             >
-            <a-radio-group default-value="task">
-              <a-radio-button value="task" @click="showKbBoard"
-                >看板视图</a-radio-button
+            <a-radio-group default-value="kanban">
+              <a-radio-button value="kanban" @click="showKbBoard"
+                >看板</a-radio-button
               >
-              <a-radio-button value="bug" @click="showListBoard"
-                >列表视图</a-radio-button
+              <a-radio-button value="list" @click="showListBoard"
+                >列表</a-radio-button
               >
+              <a-radio-button value="board">仪表盘</a-radio-button>
+              <a-radio-button value="member">成员</a-radio-button>
+              <a-radio-button value="progress">进度图</a-radio-button>
             </a-radio-group>
           </div>
           <!-- <h3 class="title-card__title text-xl"> <a-button @click="backToEntry">迭代</a-button></h3> -->
@@ -86,7 +105,7 @@
           class="inline mb-4"
           size="large"
           type="primary"
-            @click="onOpenAdd()"
+          @click="onOpenAdd()"
           >创建{{ isTaskShow ? "需求" : "缺陷" }}</a-button
         >
         <div class="ml-4 inline">
@@ -189,35 +208,87 @@
     </div>
 
     <filter-modal />
-          <add-modal />
+    <add-modal />
     <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
+    <!-- 创建项目 -->
     <a-modal
-      :rules="stageRules"
       :visible="isAddStageVisible"
       title="创建迭代"
-      @ok="addStage"
+      @ok="editStage('add')"
       @cancel="closeAddStage"
+    >
+      <div>
+        <a-form-model
+          ref="addFormRef"
+          class="pl-2"
+          layout="horizontal"
+          :model="newStage"
+          :rules="rules"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
+          <a-form-model-item label="迭代名称" type="name" prop="s_title">
+            <a-input v-model="newStage.s_title" />
+          </a-form-model-item>
+                 <a-form-model-item label="开始日期" prop="s_start_time">
+          <a-date-picker
+            v-model="newStage.s_start_time"
+            :format="'YYYY/MM/DD'"
+            type="date"
+            placeholder="开始日期"
+            style="width: 100%"
+          />
+        </a-form-model-item>
+       <a-form-model-item label="截止日期" prop="s_end_time">
+         <a-date-picker
+            v-model="newStage.s_end_time"
+            :format="'YYYY/MM/DD'"
+            type="date"
+            placeholder="截止日期"
+            style="width: 100%"
+          /></a-form-model-item>
+          <a-form-model-item label="迭代目标">
+            <a-input v-model="newStage.s_target" type="textarea" />
+          </a-form-model-item>
+        </a-form-model>
+      </div>
+    </a-modal>
+     <!-- 编辑项目 -->
+     <a-modal
+      :visible="isEditStageVisible"
+      title="编辑迭代"
+      @ok="editStage('edit')"
+      @cancel="isEditStageVisible=false"
     >
       <div>
         <a-form-model
           class="pl-2"
           layout="horizontal"
-          :model="newStage"
+          :model="currEditStage"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-          <a-form-model-item label="迭代名称" type="name">
-            <a-input v-model="newStage.name" />
+          <a-form-model-item ref="name" label="迭代名称" type="name" >
+            <a-input v-model="currEditStage.s_title" />
           </a-form-model-item>
-          <a-form-model-item label="起止时间">
-            <a-range-picker
-              width="200px"
-              v-model="newStage.start"
-              type="date"
-            />
-          </a-form-model-item>
+                          <a-form-model-item label="起止日期" prop="date">
+          <a-date-picker
+            v-model="currEditStage.s_start_time"
+            :format="'YYYY/MM/DD'"
+            type="date"
+            placeholder="开始日期"
+            style="width: 100%"
+          />
+          <a-date-picker
+            v-model="currEditStage.s_end_time"
+            :format="'YYYY/MM/DD'"
+            type="date"
+            placeholder="截止日期"
+            style="width: 100%"
+          />
+        </a-form-model-item>
           <a-form-model-item label="迭代目标">
-            <a-input v-model="newStage.target" type="textarea" />
+            <a-input v-model="currEditStage.s_target" type="textarea" />
           </a-form-model-item>
         </a-form-model>
       </div>
@@ -228,6 +299,20 @@
 <script>
 import draggable from 'vuedraggable'
 import AddModal from '@/components/AddModal.vue'
+import moment from 'moment'
+import {
+  getStage, getStageList, newStage, updateStage, deleteStage,
+} from '@/api/stage'
+import {
+  getTaskList, deleteTask,
+  getTaskDetail, getStageTaskList,
+} from '@/api/task'
+import { getComment } from '@/api/comment'
+import { getDialog } from '@/api/dialog'
+// import STable from '../../components/Table'
+import { getMemberList } from '@/api/member'
+import { getTimestamp, dateformat } from '@/utils/util'
+import __clonedeep from 'lodash.clonedeep'
 import FilterModal from './components/FilterModal.vue'
 import TaskDetail from '../task/Task.vue'
 import TaskList from '../task/TaskList.vue'
@@ -241,16 +326,17 @@ export default {
     FilterModal,
     TaskDetail,
     AddModal,
-
   },
 
   data: () => ({
-    labelCol: { span: 4 },
+    labelCol: { span: 6 },
     wrapperCol: { span: 14 },
-    stageList: [
-      { name: '迭代1', id: '0', target: '下个月上线' },
-      { name: '迭代2', id: '1', target: '日活3万' },
-    ],
+    state: {}, // 当前stage
+    // stageList: // stage列表
+    // [
+    //   { name: '迭代1', id: '0', target: '下个月上线' },
+    //   { name: '迭代2', id: '1', target: '日活3万' },
+    // ],
     kbList: [
       {
         id: 'board1',
@@ -437,12 +523,12 @@ export default {
       time: 'clock',
       msg: 'message-square',
     },
-    // dragOptions: {
-    //   animation: 200,
-    //   group: 'description',
-    //   disabled: false,
-    //   ghostClass: 'ghost',
-    // },
+    dragOptions: {
+      animation: 200,
+      group: 'description',
+      disabled: false,
+      ghostClass: 'ghost',
+    },
     currAdd: { id: '', title: '', content: '' },
     currEdit: {
       title: '这是一个看板标题',
@@ -451,27 +537,92 @@ export default {
       content: '',
       fileName: '',
     },
+    rules: {
+      s_title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      s_start_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
+      s_end_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
+    },
     showDrawer: false,
     showTaskModal: false,
     isTagetShow: false,
     isTaskShow: true,
     isKbShow: true,
+    isEditStageVisible: false,
     newStage: {
-      id: '', // 连数据库后就不自己设这个了
-      name: '',
-      target: '',
-      start: undefined,
-      end: undefined,
+      s_id: '',
+      pro_id: '', // 连数据库后就不自己设这个了
+      s_title: '',
+      s_target: '',
+      s_start_time: null,
+      s_end_time: null,
+    },
+    currEditStage: {
+      s_id: '',
+      pro_id: '', // 连数据库后就不自己设这个了
+      s_title: '',
+      s_target: '',
+      s_start_time: null,
+      s_end_time: null,
     },
     isAddStageVisible: false,
     stageRules: {
       // 暂时没用到
-      name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-      date: [{ required: true, message: '请选择日期', trigger: 'change' }],
+      s_title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      s_start_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
+      s_end_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
     },
   }),
 
+  created() {
+    this.init()
+  },
+  watch: {
+    currStage() {
+      this.init()
+    },
+  },
+
   methods: {
+    moment,
+    dateformat,
+    init() {
+      this.getStageList()
+      this.getStage()
+    },
+    // 获取数据
+    async getStage() {
+      const { data: res } = await getStage(this.currStageId)
+      console.log('stage', res)
+      this.$store.commit('stage/SET_CURR_STAGE', res)
+      this.$store.commit('stage/SET_CURR_STAGE_ID', res.s_id)
+      this.$store.commit('stage/SET_CURR_STAGE_NAME', res.s_title)
+      this.currEditStage = res
+      return true
+    },
+    async getStageList() {
+      const { data: res } = await getStageList()
+      console.log('stagelist', res.stagelist)
+      this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
+
+      return true
+    },
+    async getTask() {
+      const pid = this.currProjectID
+      if (this.currListType === 'stage') {
+        const { data: res } = await getStageTaskList(pid)
+        this.$store.commit('task/SET_TASK_LIST', res)
+        console.log('list', res)
+      } else {
+        const type = this.currListType === 'task' ? 1 : 0// type:1-需求，2-bug，迭代就是12
+        const { data: res } = await getTaskList(pid, type)
+        this.$store.commit('task/SET_TASK_LIST', res)
+        console.log('list', res)
+      }
+
+      // this.data = res
+      return true
+    },
+
     addNewBoard() {
       this.kbList.push({ title: '默认标题', dataList: [] })
     },
@@ -588,7 +739,21 @@ export default {
       console.log(this.newStage)
       this.$store.commit('stage/SET_STAGE_List', this.newStage) // 后面就是commit去数据库了，很多这些commit到store的搭前后端后都要移到数据库
       this.isAddStageVisible = false
+      this.init()
       // 做个创建迭代的弹窗
+    },
+    handleStage({ key }) {
+      switch (key) {
+        case 'edit':
+          this.openEditModal()
+          break
+        case 'delete':
+          this.opendeleteModal()
+          break
+        default:
+          return false
+      }
+      return true
     },
     closeAddStage() {
       this.isAddStageVisible = false
@@ -599,6 +764,196 @@ export default {
       this.newStage.start = start
       this.newStage.end = end
     },
+
+    // 编辑/删除迭代
+    openEditModal() {
+      this.currEditStage.s_id = this.stage.s_id
+      this.currEditStage.s_title = this.stage.s_title
+      this.currEditStage.s_target = this.stage.s_target
+      this.currEditStage.start = dateformat(this.stage.s_start_time)
+      console.log(this.stage.start_time)
+      this.currEditStage.end = dateformat(this.stage.s_end_time)
+      this.isEditStageVisible = true
+    },
+    openDeleteModal(title) {
+      const that = this
+      this.$confirm({
+        title: (
+              <p>
+                此操作将删除<span class="warning">「{title}」</span>项目
+              </p>
+        ),
+        content: '您确定要删除该项目吗？',
+        async onOk() {
+          const res = await deleteStage({ title })
+          // 更新项目失败
+          if (res.meta.status !== 200) {
+            return that.$message.error('删除项目失败')
+          }
+          that.$message.success('删除项目成功！')
+          // 重新获取列表数据
+          that.getStage()
+          return true
+        },
+      })
+    },
+    async editStage(options) {
+      if (options === 'add') {
+        // console.log(e)
+        this.$refs.addFormRef.validate(async (valid, field) => {
+        // 有未校验通过的字段
+          if (!valid) {
+            return this.$message.error('存在错误字段，无法创建')
+          }
+          if (this.newStage.s_start_time && this.newStage.s_end_time) {
+            if (this.newStage.s_start_time - this.newStage.s_end_time > 0) {
+              this.$message.warning('截止时间早于开始时间！')
+              return false
+            }
+          }
+          if (this.newStage.s_start_time) {
+            this.newStage.s_start_time = getTimestamp(
+              this.newStage.s_start_time.format('YYYY-MM-DD h:m:s'),
+            )
+          }
+          if (this.newStage.s_end_time) {
+            this.newStage.s_end_time = getTimestamp(
+              this.newStage.s_end_time.format('YYYY-MM-DD h:m:s'),
+            )
+          }
+          this.newStage.pro_id = this.currProjectId
+          console.log('要new的信息', this.newStage)
+          const res = await newStage(this.newStage)
+          console.log('newStage', res)
+          // 创建项目失败
+          if (res.meta.status !== 200) {
+            return this.$message.error('创建项目失败')
+          }
+          this.$message.success('创建项目成功！')
+          // 隐藏 dialog对话框
+          this.$refs.addFormRef.resetFields()
+          this.isAddStageVisible = false
+          // 重新获取列表数据
+          this.init()
+          return true
+        })
+      } else {
+        console.log('edit', this.currEditStage)
+        if (this.currEditStage.s_start_time && this.currEditStage.s_end_time) {
+          if (this.currEditStage.s_start_time - this.currEditStage.s_end_time > 0) {
+            this.$message.warning('截止时间早于开始时间！')
+            return false
+          }
+        }
+        if (this.currEditStage.s_start_time) {
+          this.currEditStage.s_start_time = getTimestamp(
+            this.currEditStage.s_start_time.format('YYYY-MM-DD h:m:s'),
+          )
+        }
+        if (this.currEditStage.s_end_time) {
+          this.currEditStage.s_end_time = getTimestamp(
+            this.currEditStage.s_end_time.format('YYYY-MM-DD h:m:s'),
+          )
+        }
+        this.currEditStage.pro_id = this.currProjectId
+        const res = await updateStage(this.currEditStage)
+        // 更新项目失败
+        if (res.meta.status !== 200) {
+          return this.$message.error('编辑项目失败')
+        }
+        this.$message.success('编辑项目成功！')
+        // 隐藏 dialog对话框
+        this.currEditStage = {
+          s_id: '',
+          pro_id: '', // 连数据库后就不自己设这个了
+          s_title: '',
+          s_target: '',
+          s_start_time: null,
+          s_end_time: null,
+        }
+        this.isEditStageVisible = false
+        // 重新获取列表数据
+        this.init()
+        return true
+      }
+      return false
+    },
+
+    // async函数区
+    async getTaskDetail(id) {
+      const pid = this.currProjectID
+
+      const { data: res } = await getTaskDetail(pid, id)
+      this.$store.commit('task/SET_TASK_DETAIL', res)
+      if (res.detail.t_level !== 0) {
+        console.log('当前任务的father', res.parent[0])
+        this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
+      }
+      return true
+    },
+    async getDialog(id) {
+      const obj = {
+        pid: this.currProjectID,
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getDialog(obj)
+      this.$store.commit('task/SET_TASK_DIALOG', res)
+      return true
+    },
+    async showDetail(id) {
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      await this.getTaskDetail(id)
+      await this.getDialog(id)
+      await this.getComment(id)
+      this.showTask = true
+      // this.detailTaskId = id
+    },
+    async getComment(id) {
+      const params = {
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getComment(params)
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_COMMENT', res)
+      return true
+    },
+
+    async getMemberList() {
+      const id = this.currProjectID
+      const { data: res } = await getMemberList(id)
+      console.log('memberlist', res)
+      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
+    },
+    async getTask() {
+      const pid = this.currProjectID
+      if (this.currListType === 'stage') {
+        const { data: res } = await getStageTaskList(pid)
+        this.$store.commit('task/SET_TASK_LIST', res)
+        console.log('list', res)
+      } else {
+        const type = this.currListType === 'task' ? 1 : 0// type:1-需求，2-bug，迭代就是12
+        const { data: res } = await getTaskList(pid, type)
+        this.$store.commit('task/SET_TASK_LIST', res)
+        console.log('list', res)
+      }
+
+      // this.data = res
+      return true
+    },
+    async deleteTask(id) {
+      try {
+        const res = await deleteTask(id)
+        this.$message.success(res.meta.msg)
+        this.getTask()
+      } catch (err) {
+        // console.log(err)
+      }
+      return true
+    },
+
+    // 新建需求
     onOpenAdd() {
       console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
@@ -607,24 +962,32 @@ export default {
     },
   },
   computed: {
-    dragOptions() {
-      return {
-        animation: 1,
-        group: 'description',
-        disabled: !this.editable,
-        ghostClass: 'ghost',
-      }
+    currProjectId() {
+      return this.$store.state.project.currProjectId
     },
+    // dragOptions() {
+    //   return {
+    //     animation: 1,
+    //     group: 'description',
+    //     disabled: !this.editable,
+    //     ghostClass: 'ghost',
+    //   }
+    // },
     listString() {
       return JSON.stringify(this.kbList, null, 2)
     },
     currStage() {
       return this.$store.state.stage.currStage
     },
-    currEditStage() {
-      return this.$store.state.filter.currEditFilter
+    currStageId() {
+      return this.$store.state.stage.currStageId
     },
-
+    stage() {
+      return this.$store.state.stage.currStageInfo
+    },
+    stageList() {
+      return this.$store.state.stage.stageList
+    },
     isFilterModalOpened() {
       return this.$store.state.filter.isFilterModalOpened
     },
