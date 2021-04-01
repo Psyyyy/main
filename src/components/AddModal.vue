@@ -36,6 +36,7 @@
         >
           <a-select
             placeholder="点击选择负责人"
+            v-model="form.t_header_name"
           >
             <a-select-option
               v-for="item in memberList"
@@ -92,7 +93,7 @@
             placeholder="点击选择状态"
           >
             <a-select-option
-              v-for="item in stateAdd"
+              v-for="item in taskStatus"
               :key="item"
               :value="item"
             >
@@ -175,6 +176,9 @@ export default {
     openFrom() {
       return this.$store.state.add.isFromDetail
     },
+    currEditTaskLevel() {
+      return this.$store.state.task.currEditTaskLevel
+    },
   },
   data: () => ({
     currAdd: {},
@@ -197,6 +201,15 @@ export default {
       start_time: '',
       end_time: '',
     },
+    taskStatus: [
+      '规划中',
+      '实现中',
+      '已实现',
+      '测试中',
+      '已测试',
+      '已验收',
+      '已关闭',
+    ],
     rules: {
       t_title: [
         { required: true, message: '请输入标题', trigger: 'blur' },
@@ -236,47 +249,53 @@ export default {
     // 表单部分
     async onSubmit() {
       this.formatForm = _clonedeep(this.form) // 这里要用深拷贝，要不然只是复制了指针而已
-      if (this.formatForm.start && this.formatForm.end) {
-        if (this.formatForm.start - this.formatForm.end > 0) {
+      if (this.formatForm.start_time && this.formatForm.end_time) {
+        if (this.formatForm.start_time - this.formatForm.end_time > 0) {
           this.$message.warning('截止时间早于开始时间！')
           return false
         }
       }
-      if (this.formatForm.start) {
-        this.formatForm.start = getTimestamp(
-          this.formatForm.start.format('YYYY-MM-DD h:m:s'),
+      if (this.formatForm.start_time) {
+        this.formatForm.start_time = getTimestamp(
+          this.formatForm.start_time.format('YYYY-MM-DD h:m:s'),
         )
       }
-      if (this.formatForm.end) {
-        this.formatForm.end = getTimestamp(
-          this.formatForm.end.format('YYYY-MM-DD h:m:s'),
+      if (this.formatForm.end_time) {
+        this.formatForm.end_time = getTimestamp(
+          this.formatForm.end_time.format('YYYY-MM-DD h:m:s'),
         )
       }
       this.formatForm.t_project_id = this.currProjectID
       this.formatForm.t_stage_id = this.currStageId
       this.formatForm.t_pid = this.openFrom === true ? this.currEditTask : 0
+      this.formatForm.t_level = this.openFrom === true ? this.currEditTaskLevel : 0
       console.log('currTask', this.currEditTask)
       console.log('pid', this.formatForm.t_pid)
-      this.formatForm.t_level = this.openFrom === true ? this.currEditTaskLevel : 0
-      const { data: res } = await addTask(this.formatForm)
-      console.log('add结果', res)
-      // this.$store.commit('task/SET_TASK_LIST', res)
-      this.$message.success('成功新增需求！')
+      console.log('level', this.formatForm.t_level)
+      console.log('add内容', this.formatForm)
+      try {
+        const { data: res } = await addTask(this.formatForm)
+        console.log('add结果', res)
+        // this.$store.commit('task/SET_TASK_LIST', res)
+        this.$message.success('成功新增需求！')
 
-      this.closeAdd()
-      this.form = {
-        t_pid: '', // 这里要根据是在哪里打开新增窗口判断，默认pid=0
-        t_level: '', // 这个也要判断，默认0
-        t_title: '', // 必须
-        t_stage_id: '', // 必须
-        t_project_id: '', // 必须
-        t_content: '',
-        t_state: '',
-        t_rank: '',
-        t_header_id: '',
-        t_header_name: '',
-        start_time: '',
-        end_time: '',
+        this.closeAdd()
+        this.form = {
+          t_pid: '', // 这里要根据是在哪里打开新增窗口判断，默认pid=0
+          t_level: '', // 这个也要判断，默认0
+          t_title: '', // 必须
+          t_stage_id: '', // 必须
+          t_project_id: '', // 必须
+          t_content: '',
+          t_state: '',
+          t_rank: '',
+          t_header_id: '',
+          t_header_name: '',
+          start_time: '',
+          end_time: '',
+        }
+      } catch (err) {
+        // console.log(err)
       }
       return true
     },

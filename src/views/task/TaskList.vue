@@ -134,7 +134,7 @@
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
                 class="task-pointer"
-                @click="showDetail(record.id,record.t_level)"
+                @click="showDetail(record.id)"
               >
                 <template
                   v-for="(fragment, i) in text
@@ -154,7 +154,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer" @click="showDetail(record.id,record.t_level)">{{
+                <span class="task-pointer" @click="showDetail(record.id)">{{
                   text
                 }}</span>
                 <!-- <editable-cell
@@ -455,12 +455,10 @@ export default {
       this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
     async getTask() {
-      console.log('到这了吗3')
       const pid = this.currProjectID
       const { data: res } = await getTaskList(pid)
       this.$store.commit('task/SET_TASK_LIST', res)
       console.log('list', res)
-      this.$store.commit('task/SET_CURR_FATHER_TASK', 0)
       // this.data = res
       return true
     },
@@ -468,9 +466,7 @@ export default {
       try {
         const res = await deleteTask(id)
         this.$message.success(res.meta.msg)
-        console.log('到这了吗1', res)
         this.getTask()
-        console.log('到这了吗2')
       } catch (err) {
         // console.log(err)
       }
@@ -654,6 +650,7 @@ export default {
       const { data: res } = await getTaskDetail(pid, id)
       this.$store.commit('task/SET_TASK_DETAIL', res)
       if (res.detail.t_level !== 0) {
+        console.log('当前任务的father', res.parent[0])
         this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
       }
       return true
@@ -668,9 +665,8 @@ export default {
       this.$store.commit('task/SET_TASK_DIALOG', res)
       return true
     },
-    async showDetail(id, level) {
+    async showDetail(id) {
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
-      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', level)
       await this.getTaskDetail(id)
       await this.getDialog(id)
       await this.getComment(id)

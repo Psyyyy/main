@@ -1098,10 +1098,9 @@ export default {
     //   //     this.init();
     //   // }
     // },
-    // currEditTask() {
-    //   this.getTaskDetail()
-    //   this.getDialog()
-    // },
+    currEditTask() {
+      this.init()
+    },
     isAddModalOpened() {
       this.getTaskDetail()
     },
@@ -1157,15 +1156,16 @@ export default {
     },
     // 父子跳转
     toChildren(id, level) {
+      console.log('child', id)
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
-      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', level)// 儿子的level
+      // this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', level)// 儿子的level
     },
     backToFather() {
       this.$store.commit(
         'task/SET_CURR_EDIT_TASK',
         this.$store.state.task.currFatherTask,
       )
-      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', this.task.detail.t_level - 1)// 儿子的level-1
+      // this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', this.task.detail.t_level - 1)// 儿子的level-1
       this.init()
     },
 
@@ -1176,8 +1176,9 @@ export default {
       const { data: res } = await getTaskDetail(pid, tid)
       // this.task = res
       this.$store.commit('task/SET_TASK_DETAIL', res)
-      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', res.detail.t_level)
+      // this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', res.detail.t_level)
       if (res.detail.t_level !== 0) {
+        console.log('当前任务的father', res.parent[0])
         this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
       }
       this.newContent = res.detail.t_content
@@ -1236,6 +1237,8 @@ export default {
       return true
     },
     onOpenAdd() {
+      console.log('level in detail', this.task.detail.t_level + 1)
+      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', this.task.detail.t_level + 1)
       if (this.task.detail.is_del || this.task.detail.is_done) return false
       this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
       this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
@@ -1289,7 +1292,7 @@ export default {
         is_done: 1,
       }
       // 然后直接更新
-      console.log('deta的更新信息', childForm)
+      console.log('date的更新信息', childForm)
       const res = await updateTask(childForm)
       this.resetForm()
       // 更新项目失败
@@ -1409,7 +1412,7 @@ export default {
         is_done: '',
       }
       // 然后直接更新
-      console.log('deta的更新信息', dateForm)
+      console.log('date的更新信息', dateForm)
       const res = await updateTask(dateForm)
       this.resetForm()
       // 更新项目失败
