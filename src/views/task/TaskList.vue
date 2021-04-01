@@ -724,8 +724,8 @@ button {
 .todo-app {
   @apply relative w-full flex bg-white rounded-lg overflow-hidden;
   margin-top: -30px;
-  height: 600px;
-  min-height: 600px;
+  height: 640px;
+  min-height: 640px;
 }
 .table-page-search-wrapper {
   .ant-form-inline {

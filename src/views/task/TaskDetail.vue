@@ -114,7 +114,7 @@
                             <a-tag v-if="task.detail.is_done" color="green"
                               >已完成</a-tag
                             >
-                            <a-tag v-if="!task.detail.is_done" color="grey"
+                            <a-tag v-if="!task.detail.is_done" color="red"
                               >未完成</a-tag
                             >
                           </span>
@@ -137,7 +137,7 @@
                             </a-menu-item>
                             <a-menu-item key="undone">
                               <div class="menu-item-content">
-                                <a-tag color="grey">未完成</a-tag>
+                                <a-tag color="red">未完成</a-tag>
                                 <a-icon
                                   type="check"
                                   class="check muted"
@@ -163,10 +163,12 @@
                           :disabled="!!task.detail.is_del"
                           :class="{ disabled: false }"
                         >
-                          <a-tag :color="stateColor(task.detail.t_state)">
+                          <a-tag v-if="task.detail.t_state" :color="stateColor(task.detail.t_state)">
                             {{ task.detail.t_state }}
                           </a-tag>
-
+                          <a-tag v-else color="gray">
+                            点击设置
+                          </a-tag>
                           <a-menu
                             class="field-right-menu"
                             slot="overlay"
@@ -202,20 +204,25 @@
                         <a-dropdown
                           :trigger="['click']"
                           :disabled="!!task.detail.is_del"
-                          placement="bottomCenter"
+                          placement="bottomLeft"
                         >
                           <a-tooltip
                             :mouse-enter-delay="0.5"
                             v-if="!task.detail.is_del"
                           >
                             <template slot="title">
-                              <span>点击修改执行者</span>
+                              <span>点击设置执行者</span>
                             </template>
                             <div class="field-flex">
                               <template v-if="task.detail.t_header_name">
                                 <a class="muted name">{{
                                   task.detail.t_header_name
                                 }}</a>
+                              </template>
+                              <template v-else>
+                                <a class="muted name">
+                                  点击设置执行者
+                                </a>
                               </template>
                             </div>
                           </a-tooltip>
@@ -245,7 +252,7 @@
                         <span class="field-name">时间</span>
                       </div>
                       <div class="field-right field-date">
-                        <template v-if="task.detail.start_time">
+                        <template>
                           <a-dropdown
                             :trigger="['click']"
                             v-model="showBeginTime"
@@ -1222,6 +1229,7 @@ export default {
 
     // 新增操作
     async newComment() {
+      if (this.commentForm.content === '') return false
       this.commentForm.sid = this.task.detail.id
       const { data: res } = await newComment(this.commentForm)
       // this.dialogList = res
@@ -1807,7 +1815,7 @@ export default {
                   }
 
                   .name {
-                    margin: 0 8px;
+                    //margin: 0 8px;
                   }
                 }
 
