@@ -470,7 +470,8 @@ export default {
     },
     async getTask() {
       const pid = this.currProjectID
-      const { data: res } = await getTaskList(pid)
+      const type = 1// type:1-需求，2-bug，迭代就是12
+      const { data: res } = await getTaskList(pid, type)
       this.$store.commit('task/SET_TASK_LIST', res)
       console.log('list', res)
       // this.data = res

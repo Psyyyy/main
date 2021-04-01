@@ -250,7 +250,11 @@ export default {
           this.formatForm.end.format('YYYY-MM-DD h:m:s'),
         )
       }
-
+      if (this.currListType === 'bug') { // 数据库默认是1 task
+        this.formatForm.t_type = 0
+      } else if (this.currListType === 'task') { // 数据库默认是1 task
+        this.formatForm.t_type = 1
+      }
       const { data: res } = await filterTask(this.formatForm)
       // console.log('filter', res)
       this.$store.commit('task/SET_TASK_LIST', res)

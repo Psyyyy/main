@@ -276,9 +276,12 @@ export default {
       this.formatForm.t_project_id = this.currProjectID
       this.formatForm.t_pid = this.openFrom === true ? this.currEditTask : 0
       this.formatForm.t_level = this.openFrom === true ? this.currEditTaskLevel : 0
-      if (this.currListType === 'stage') {
+      if (this.currListType === 'stage') { // 在迭代界面自动填写当前迭代
         this.formatForm.t_stage_id = this.currStageId
         this.formatForm.t_stage_name = this.currStage
+      }
+      if (this.currListType === 'bug') { // 数据库默认是1 task
+        this.formatForm.t_type = 0
       }
       // this.formatForm.t_stage_id = this.currStageId
       console.log('currTask', this.currEditTask)
