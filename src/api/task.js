@@ -25,7 +25,7 @@ export function getUndoneChild(pid, tid) {
   })
 }
 
-export function newTask(data) {
+export function addTask(data) {
   return request({
     url: '/task/new',
     method: 'post',

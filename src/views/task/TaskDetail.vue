@@ -500,13 +500,14 @@
                                       </template>
                                       <div class="check-box-wrapper task-item">
                                         <a-icon
-                                          @click="childTask.is_done
-                                          ?''
-                                           : finishChild(
-                                              childTask.t_level,
-                                              childTask.id,
-                                              childTask.t_title
-                                            )
+                                          @click="
+                                            childTask.is_done
+                                              ? ''
+                                              : finishChild(
+                                                  childTask.t_level,
+                                                  childTask.id,
+                                                  childTask.t_title
+                                                )
                                           "
                                           class="check-box"
                                           :class="{
@@ -543,7 +544,10 @@
                                       ></a-avatar>
                                     </a-tooltip>
                                     <!-- 任务标题 -->
-                                    <div class="task-item task-title" @click="toChildren(childTask.id)">
+                                    <div
+                                      class="task-item task-title"
+                                      @click="toChildren(childTask.id,childTask.t_level)"
+                                    >
                                       <div
                                         class="title-text"
                                         :class="{ done: childTask.is_done }"
@@ -570,16 +574,7 @@
                                 class="add-handler"
                                 :class="{ disabled: task.detail.is_done }"
                                 v-show="!showChildTask"
-                                @click="
-                                  () => {
-                                    if (
-                                      task.detail.is_del ||
-                                      task.detail.is_done
-                                    )
-                                      return false;
-                                    showChildTask = true;
-                                  }
-                                "
+                                @click="onOpenAdd"
                               >
                                 <a-icon
                                   type="plus"
@@ -876,7 +871,10 @@ import { mapState } from 'vuex'
 import $ from 'jquery'
 import { getTimestamp } from '@/utils/util'
 import {
-  getTaskDetail, updateTask, getUndoneChild, deleteTask,
+  getTaskDetail,
+  updateTask,
+  getUndoneChild,
+  deleteTask,
 } from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
@@ -1090,6 +1088,9 @@ export default {
     fatherName() {
       return this.$store.state.task.currFatherTaskName
     },
+    isAddModalOpened() {
+      return this.$store.state.add.isAddModalOpened
+    },
   },
   watch: {
     // $route(to, from) {
@@ -1101,6 +1102,9 @@ export default {
     //   this.getTaskDetail()
     //   this.getDialog()
     // },
+    isAddModalOpened() {
+      this.getTaskDetail()
+    },
     showInviteMember(val) {
       if (!val) {
         this.getTaskMembers()
@@ -1152,12 +1156,16 @@ export default {
       this.getComment()
     },
     // 父子跳转
-    toChildren(id) {
+    toChildren(id, level) {
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
-      this.init()
+      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', level)// 儿子的level
     },
     backToFather() {
-      this.$store.commit('task/SET_CURR_EDIT_TASK', this.$store.state.task.currFatherTask)
+      this.$store.commit(
+        'task/SET_CURR_EDIT_TASK',
+        this.$store.state.task.currFatherTask,
+      )
+      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', this.task.detail.t_level - 1)// 儿子的level-1
       this.init()
     },
 
@@ -1168,6 +1176,7 @@ export default {
       const { data: res } = await getTaskDetail(pid, tid)
       // this.task = res
       this.$store.commit('task/SET_TASK_DETAIL', res)
+      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', res.detail.t_level)
       if (res.detail.t_level !== 0) {
         this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
       }
@@ -1175,11 +1184,12 @@ export default {
       console.log('当前任务信息', res)
       return true
     },
-    async deleteTask(id) {
+    async deleteTask() {
       try {
+        const { id } = this.task.detail
         const res = await deleteTask(id)
         this.$message.success(res.meta.msg)
-        this.getTask()
+        this.detailClose()
       } catch (err) {
         // console.log(err)
       }
@@ -1223,6 +1233,13 @@ export default {
         source: 'task',
         content: '',
       }
+      return true
+    },
+    onOpenAdd() {
+      if (this.task.detail.is_del || this.task.detail.is_done) return false
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
       return true
     },
 
@@ -1293,10 +1310,10 @@ export default {
         if (haveUndone.data.length) {
           this.$info({
             title: (
-                 <p>
-                    <span class="warning">「{title}」</span>
-                    仍存在尚未完成的子任务
-                 </p>
+              <p>
+                <span class="warning">「{title}」</span>
+                仍存在尚未完成的子任务
+              </p>
             ),
             content: '请先将其子任务完成再完成父任务',
             onOk: () => {},
@@ -1319,10 +1336,10 @@ export default {
             if (haveUndone.data.length) {
               this.$info({
                 title: (
-                 <p>
+                  <p>
                     <span class="warning">「{this.task.detail.t_title}」</span>
                     仍存在尚未完成的子任务
-                 </p>
+                  </p>
                 ),
                 content: '请先将子任务完成再完成父任务',
                 onOk: () => {},
@@ -1371,15 +1388,11 @@ export default {
     async formatDate() {
       if (this.form.start_time) {
         const start = _clonedeep(this.form.start_time)
-        this.startFormat = getTimestamp(
-          start.format('YYYY-MM-DD h:m:s'),
-        )
+        this.startFormat = getTimestamp(start.format('YYYY-MM-DD h:m:s'))
       }
       if (this.form.end_time) {
         const end = _clonedeep(this.form.end_time)
-        this.endFormat = getTimestamp(
-          end.format('YYYY-MM-DD h:m:s'),
-        )
+        this.endFormat = getTimestamp(end.format('YYYY-MM-DD h:m:s'))
       }
 
       const dateForm = {
@@ -1476,12 +1489,13 @@ export default {
           this.$confirm({
             title: (
               <p>
-                此操作将删除<span class="warning">「{this.task.detail.t_title}」</span>任务
+                此操作将删除
+                <span class="warning">「{this.task.detail.t_title}」</span>任务
               </p>
             ),
             content: '您确定要删除该任务吗？',
             onOk: () => {
-              console.log('已删除')
+              this.deleteTask()
             },
           })
           break

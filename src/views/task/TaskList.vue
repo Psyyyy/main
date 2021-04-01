@@ -6,12 +6,11 @@
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
          <h3 class="section-card__title">需求管理</h3>
         <div class="flex ml-auto">
-          <div></div>
-          <a-button
+<a-button
             class="ml-1 w-30 flex "
             type="primary"
-            @click="handleAdd"
-            block
+            @click="onOpenAdd()"
+
           >
             <feather class="mr-1 mt-1" size="20" type="plus" />
             新增需求
@@ -135,7 +134,7 @@
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
                 class="task-pointer"
-                @click="showDetail(record.id)"
+                @click="showDetail(record.id,record.t_level)"
               >
                 <template
                   v-for="(fragment, i) in text
@@ -155,7 +154,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer" @click="showDetail(record.id)">{{
+                <span class="task-pointer" @click="showDetail(record.id,record.t_level)">{{
                   text
                 }}</span>
                 <!-- <editable-cell
@@ -234,9 +233,14 @@
               </template>
             </template>
             <!-- 日期 -->
-            <span style="text-align:center" slot="time" slot-scope="time">
+            <span style="text-align:center" slot="start" slot-scope="start">
               <template>
-                {{time|dateFormat}}
+                {{start|dateFormat}}
+              </template>
+            </span>
+            <span style="text-align:center" slot="end" slot-scope="end">
+              <template>
+                {{end|dateFormat}}
               </template>
             </span>
             <!-- 操作 -->
@@ -264,6 +268,7 @@
 
       <task :pop-visible="showTask" detail="detailTaskId" @close="closeDetail" />
       <filter-modal />
+      <add-modal />
     </div>
   </div>
 </template>
@@ -274,9 +279,11 @@ import {
   getTaskList, deleteTask,
   getTaskDetail,
 } from '@/api/task'
+import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
 // import STable from '../../components/Table'
 import { getMemberList } from '@/api/member'
+import AddModal from '@/components/AddModal.vue'
 import Task from './Task.vue'
 import FilterModal from '../kanban/components/FilterModal.vue'
 // import { getOrgTree } from '@/api/modular/system/orgManage'
@@ -285,7 +292,7 @@ import FilterModal from '../kanban/components/FilterModal.vue'
 
 export default {
   name: 'TaskList',
-  components: { Task, FilterModal },
+  components: { Task, FilterModal, AddModal },
   data() {
     return {
       columns: [
@@ -367,13 +374,13 @@ export default {
           title: '预计开始',
           dataIndex: 'start_time',
           key: 'start_time',
-          scopedSlots: { customRender: 'time' },
+          scopedSlots: { customRender: 'start' },
         },
         {
           title: '预计结束',
           dataIndex: 'end_time',
           key: 'end_time',
-          scopedSlots: { customRender: 'time' },
+          scopedSlots: { customRender: 'end' },
         },
         {
           title: '操作',
@@ -416,12 +423,18 @@ export default {
     currProjectID() {
       return this.$store.state.project.currProjectId
     },
-    isFilterModalOpened() {
-      return this.$store.state.filter.isFilterModalOpened
+    isAddModalOpened() {
+      return this.$store.state.add.isAddModalOpened
     },
   },
   watch: {
     currProjectID() {
+      this.getTask()
+    },
+    showTask() {
+      this.getTask()
+    },
+    isAddModalOpened() {
       this.getTask()
     },
     // isFilterModalOpened() {
@@ -432,9 +445,8 @@ export default {
 
   },
   methods: {
-    async closeDetail() {
+    closeDetail() {
       this.showTask = false
-      this.getTask()
     },
     async getMemberList() {
       const id = this.currProjectID
@@ -443,9 +455,12 @@ export default {
       this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
     async getTask() {
+      console.log('到这了吗3')
       const pid = this.currProjectID
       const { data: res } = await getTaskList(pid)
       this.$store.commit('task/SET_TASK_LIST', res)
+      console.log('list', res)
+      this.$store.commit('task/SET_CURR_FATHER_TASK', 0)
       // this.data = res
       return true
     },
@@ -453,7 +468,9 @@ export default {
       try {
         const res = await deleteTask(id)
         this.$message.success(res.meta.msg)
+        console.log('到这了吗1', res)
         this.getTask()
+        console.log('到这了吗2')
       } catch (err) {
         // console.log(err)
       }
@@ -492,19 +509,6 @@ export default {
     },
 
     handleAdd() {
-      const { data } = this
-      const random = Math.ceil(Math.random() * 30)
-      const newData = {
-        id: random,
-        task: '',
-        rank: '',
-        stage: '',
-        state: '',
-        member: '',
-        start: '',
-        end: '',
-      }
-      this.data = [...data, newData]
     },
     onCellChange(key, dataIndex, value) {
       const dataSource = [...this.dataSource]
@@ -635,6 +639,12 @@ export default {
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', 'task')
       this.$store.commit('filter/SET_FILTER_MODAL_STATUS', true)
     },
+    onOpenAdd() {
+      console.log('add')
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
+    },
     resetTable() {
       this.getTask()
     },
@@ -658,12 +668,24 @@ export default {
       this.$store.commit('task/SET_TASK_DIALOG', res)
       return true
     },
-    async showDetail(id) {
+    async showDetail(id, level) {
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', level)
       await this.getTaskDetail(id)
       await this.getDialog(id)
+      await this.getComment(id)
       this.showTask = true
       // this.detailTaskId = id
+    },
+    async getComment(id) {
+      const params = {
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getComment(params)
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_COMMENT', res)
+      return true
     },
   },
 }

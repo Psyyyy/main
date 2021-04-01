@@ -16,6 +16,7 @@ import filter from './modules/filter'
 import file from './modules/file'
 import team from './modules/team'
 import task from './modules/task'
+import add from './modules/add'
 
 Vue.use(Vuex)
 
@@ -30,6 +31,7 @@ export default new Vuex.Store({
     file,
     team,
     task,
+    add,
   },
 
   state,

@@ -1,6 +1,6 @@
 const state = {
   currStage: window.localStorage.getItem('currStage') ? window.localStorage.getItem('currStage') : '',
-  currStageId: '',
+  currStageId: window.localStorage.getItem('currStageId') ? window.localStorage.getItem('currStageId') : '',
   stageList: [
     {
       name: '迭代1',
