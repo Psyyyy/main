@@ -85,8 +85,8 @@
             style="width: 100%"
           />
         </a-form-model-item>
-        <!-- 状态筛选（多选） -->
-        <a-form-item label="状态">
+        <!-- 状态筛选（多选）迭代模块不放这个筛选了 -->
+        <a-form-item label="状态" v-if="currListType==='task'">
           <a-select
             v-model="form.state"
             mode="multiple"
@@ -189,6 +189,9 @@ export default {
     memberList() {
       return this.$store.state.project.currProjectMemberList
     },
+    currListType() {
+      return this.$store.state.task.currListType
+    },
   },
   data: () => ({
     currFilter: {},
@@ -251,6 +254,7 @@ export default {
       const { data: res } = await filterTask(this.formatForm)
       // console.log('filter', res)
       this.$store.commit('task/SET_TASK_LIST', res)
+      console.log('filter', res)
       this.$message.success('列表已更新！')
       this.closeFilter()
       this.form = {

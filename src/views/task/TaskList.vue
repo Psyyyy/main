@@ -10,6 +10,7 @@
             class="ml-1 w-30 flex "
             type="primary"
             @click="onOpenAdd()"
+            v-if="currListType==='task'"
 
           >
             <feather class="mr-1 mt-1" size="20" type="plus" />
@@ -27,7 +28,7 @@
             @click="resetTable()"
           >
             <feather class="mr-1 " size="18" type="refresh-cw" />
-            重置表格</a-button
+            清除筛选</a-button
           >
         </div>
         <div class="mr-4">
@@ -347,9 +348,9 @@ export default {
         },
         {
           title: '迭代',
-          key: 's_title',
+          key: 't_stage_name',
           width: '80px',
-          dataIndex: 's_title',
+          dataIndex: 't_stage_name',
         },
         {
           title: '状态',
@@ -640,6 +641,14 @@ export default {
           return 'green'
         case '已关闭':
           return '#626262'
+
+        // 缺陷
+        case '新':
+          return 'red'
+        case '处理中':
+          return 'blue'
+        case '已解决':
+          return 'green'
         default:
           return '#626262'
       }

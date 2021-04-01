@@ -98,6 +98,12 @@ export default {
         if (name === 'Task') {
           this.$store.commit('task/SET_LIST_TYPE', 'task')
         }
+        if (name === 'Kanban') {
+          this.$store.commit('task/SET_LIST_TYPE', 'stage')
+        }
+        if (name === 'Bug') {
+          this.$store.commit('task/SET_LIST_TYPE', 'bug')
+        }
         if (meta?.openKey) {
           this.openKeys = [meta.openKey]
         }

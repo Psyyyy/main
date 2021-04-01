@@ -61,7 +61,7 @@
         </div>
         <div class="wr">
           <div class="wr mt-1 mr-4">
-            <a-button type="primary" class="mr-4" @click="onOpenFilter()"
+            <a-button type="primary" class="mr-4" @click="onOpenFilter('task')"
               >筛选</a-button
             >
             <a-radio-group default-value="task">
@@ -86,7 +86,7 @@
           class="inline mb-4"
           size="large"
           type="primary"
-          @click="showTaskModal = true"
+            @click="onOpenAdd()"
           >创建{{ isTaskShow ? "需求" : "缺陷" }}</a-button
         >
         <div class="ml-4 inline">
@@ -189,6 +189,7 @@
     </div>
 
     <filter-modal />
+          <add-modal />
     <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
     <a-modal
       :rules="stageRules"
@@ -226,6 +227,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import AddModal from '@/components/AddModal.vue'
 import FilterModal from './components/FilterModal.vue'
 import TaskDetail from '../task/Task.vue'
 import TaskList from '../task/TaskList.vue'
@@ -238,6 +240,8 @@ export default {
     draggable,
     FilterModal,
     TaskDetail,
+    AddModal,
+
   },
 
   data: () => ({
@@ -550,6 +554,7 @@ export default {
         onOk() {},
       })
     },
+    // 切换看板视图
     showKbBoard(type) {
       if (type === 'task') {
         // 切换到需求看板
@@ -564,16 +569,10 @@ export default {
       this.isKbShow = true
       // 点击重新拉取kb数组，重新渲染
     },
+    // 切换列表视图
     showListBoard(type) {
-      // 点击重新拉取kb数组，重新渲染
-      if (type === 'task') {
-        // 切换到需求列表
-        this.isTaskShow = true
-      }
-      if (type === 'bug') {
-        // 切换到缺陷列表
-        this.isTaskShow = false
-      }
+      // 要在这里getTask，getList，然后拼接
+
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
       this.$store.commit('task/SET_LIST_TYPE', 'stage')
       this.currShow = type
@@ -599,6 +598,12 @@ export default {
       const { start, end } = dateString
       this.newStage.start = start
       this.newStage.end = end
+    },
+    onOpenAdd() {
+      console.log('add')
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
     },
   },
   computed: {

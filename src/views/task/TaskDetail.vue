@@ -173,10 +173,32 @@
                             class="field-right-menu"
                             slot="overlay"
                             :selectable="false"
+                            v-if="task.detail.t_type===1"
                           >
                             <a-menu-item
                               :key="status"
                               v-for="status in taskStatus"
+                              @click="editTaskItem('state', status)"
+                            >
+                              <div class="menu-item-content">
+                                <span color="green">{{ status }}</span>
+                                <a-icon
+                                  type="check"
+                                  class="check muted"
+                                  v-show="task.detail.t_state == status"
+                                ></a-icon>
+                              </div>
+                            </a-menu-item>
+                          </a-menu>
+                           <a-menu
+                            class="field-right-menu"
+                            slot="overlay"
+                            :selectable="false"
+                            v-if="task.detail.t_type===0"
+                          >
+                            <a-menu-item
+                              :key="status"
+                              v-for="status in bugStatus"
                               @click="editTaskItem('state', status)"
                             >
                               <div class="menu-item-content">
@@ -697,7 +719,7 @@
           <div class="content-right">
             <!-- 参与者 -->
             <div class="header">
-              <div class="title">参与者 · {{ task.taskMemberList.length }}</div>
+              <div class="title">{{task.detail.t_type===1?'参与者':'处理人'}} · {{ task.taskMemberList.length }}</div>
               <div class="member-list">
                 <a-tooltip
                   :mouse-enter-delay="0.5"
@@ -706,9 +728,9 @@
                 >
                   <template slot="title">
                     <span
-                      >点击将参与者<span style=" color: #f4ba5d;"
+                      >点击将{{task.detail.t_type===1?'参与者':'处理人'}}<span style=" color: #f4ba5d;"
                         >「{{ member.name }}」</span
-                      >移出需求
+                      >移出{{task.detail.t_type===1?'需求':'缺陷'}}
                     </span>
                   </template>
                   <a-avatar
@@ -721,7 +743,7 @@
                 </a-tooltip>
                 <a-tooltip :mouse-enter-delay="0.5">
                   <template slot="title">
-                    <span>点击添加参与者</span>
+                    <span>点击添加{{task.detail.t_type===1?'参与者':'处理人'}}</span>
                   </template>
                   <a-icon
                     class="member-item invite"
@@ -1097,6 +1119,9 @@ export default {
     },
     isAddModalOpened() {
       return this.$store.state.add.isAddModalOpened
+    },
+    currListType() {
+      return this.$store.state.task.currListType
     },
   },
   watch: {

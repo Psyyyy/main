@@ -31,7 +31,6 @@
         </a-form-model-item>
         <!-- 负责人添加（下拉框） -->
         <a-form-model-item
-          v-if="currAddType !== 'stage'"
           label="负责人"
         >
           <a-select
@@ -55,15 +54,16 @@
         </a-form-model-item> -->
         <!-- 迭代添加（下拉框） -->
         <a-form-model-item
-          v-if="currAddType !== 'stage'"
           label="迭代"
           prop="t_stage_id"
+          v-if="currListType !== 'stage'"
         >
           <a-select v-model="form.t_stage_id" placeholder="点击选择迭代">
             <a-select-option
               v-for="item in stageList"
               :key="item.id"
               :value="item.id"
+              @click="selectStage(item.id,item.name)"
             >
               {{ item.name }}
             </a-select-option>
@@ -179,6 +179,9 @@ export default {
     currEditTaskLevel() {
       return this.$store.state.task.currEditTaskLevel
     },
+    currListType() {
+      return this.$store.state.task.currListType
+    },
   },
   data: () => ({
     currAdd: {},
@@ -192,6 +195,7 @@ export default {
       t_level: '', // 这个也要判断，默认0
       t_title: '',
       t_stage_id: '',
+      t_stage_name: '',
       t_project_id: '',
       t_content: '',
       t_state: '',
@@ -238,6 +242,10 @@ export default {
       this.form.t_header_id = id
       this.form.t_header_name = name
     },
+    selectStage(id, name) {
+      this.form.t_stage_id = id
+      this.form.t_stage_name = name
+    },
     closeAdd() {
       this.resetForm()
       this.$store.commit('add/SET_ADD_MODAL_STATUS', false)
@@ -266,9 +274,13 @@ export default {
         )
       }
       this.formatForm.t_project_id = this.currProjectID
-      this.formatForm.t_stage_id = this.currStageId
       this.formatForm.t_pid = this.openFrom === true ? this.currEditTask : 0
       this.formatForm.t_level = this.openFrom === true ? this.currEditTaskLevel : 0
+      if (this.currListType === 'stage') {
+        this.formatForm.t_stage_id = this.currStageId
+        this.formatForm.t_stage_name = this.currStage
+      }
+      // this.formatForm.t_stage_id = this.currStageId
       console.log('currTask', this.currEditTask)
       console.log('pid', this.formatForm.t_pid)
       console.log('level', this.formatForm.t_level)
@@ -283,9 +295,10 @@ export default {
         this.form = {
           t_pid: '', // 这里要根据是在哪里打开新增窗口判断，默认pid=0
           t_level: '', // 这个也要判断，默认0
-          t_title: '', // 必须
-          t_stage_id: '', // 必须
-          t_project_id: '', // 必须
+          t_title: '',
+          t_stage_id: '',
+          t_stage_name: '',
+          t_project_id: '',
           t_content: '',
           t_state: '',
           t_rank: '',
@@ -307,6 +320,7 @@ export default {
         t_level: '', // 这个也要判断，默认0
         t_title: '',
         t_stage_id: '',
+        t_stage_name: '',
         t_project_id: '',
         t_content: '',
         t_state: '',
