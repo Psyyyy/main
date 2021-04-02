@@ -902,6 +902,7 @@ import { getTimestamp } from '@/utils/util'
 import {
   getTaskDetail,
   updateTask,
+  editTaskMember,
   getUndoneChild,
   deleteTask,
 } from '@/api/task'
@@ -1044,6 +1045,7 @@ export default {
 
       // 成员
       isAddMemberVisible: false,
+      addMemnberId: '',
 
       // 日期
       dateFormat: 'YYYY/MM/DD',
@@ -1456,51 +1458,62 @@ export default {
 
     // 成员
     addMember(value) {
-      this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
-      if (this.form.t_member_ids) {
-        this.form.t_member_ids = this.form.t_member_ids.split(',')
-        let same = 0
-        for (let i = 0; i < this.form.t_member_ids.length; i += 1) {
-          this.form.t_member_ids[i] = parseInt(this.form.t_member_ids[i], 0)
-          if (this.form.t_member_ids[i] === value) {
-            same = 1
-          }
-        }
-        if (!same) {
-          console.log('要发送的member信息', value)
-          this.form.t_member_ids.push(value)
-          console.log('push的member1', this.form)
-        }
-      } else {
-        this.form.t_member_ids = `${value}`
-        console.log('push的member2', this.form)
-      }
+      this.addMemnberId = value
+      // this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
+      // if (this.form.t_member_ids) {
+      //   this.form.t_member_ids = this.form.t_member_ids.split(',')
+      //   let same = 0
+      //   for (let i = 0; i < this.form.t_member_ids.length; i += 1) {
+      //     this.form.t_member_ids[i] = parseInt(this.form.t_member_ids[i], 0)
+      //     if (this.form.t_member_ids[i] === value) {
+      //       same = 1
+      //     }
+      //   }
+      //   if (!same) {
+      //     console.log('要发送的member信息', value)
+      //     this.form.t_member_ids.push(value)
+      //     console.log('push的member1', this.form)
+      //   }
+      // } else {
+      //   this.form.t_member_ids = `${value}`
+      //   console.log('push的member2', this.form)
+      // }
     },
     async confirmAddMember() {
-      this.form.id = this.task.detail.id
       // 然后直接更新
-      console.log('要发送的member信息', this.form.t_member_ids)
-      const res = await updateTask(this.form)
+      const params = {
+        uid: this.addMemnberId,
+        tid: this.task.detail.id,
+        option: 'add',
+      }
+      const res = await editTaskMember(params)
       this.isAddMemberVisible = false
       this.resetForm()
       // 创建项目失败
       if (res.meta.status !== 200) {
         return this.$message.error('添加成员失败')
       }
+      if (res.data === '重复添加') {
+        return this.$message.warning(res.data)
+      }
       this.$message.success('添加成员成功！')
       this.getTaskDetail()
       return true
     },
-    async removeMember(id) {
-      let temp = _clonedeep(this.task.detail.t_member_ids)
-      temp = temp.split(',')
-      _.pull(temp, `${id}`)
-      // ["2","3"]字符串转换成数字[2,3]
-      this.form.t_member_ids = temp.map(Number)
-      console.log('要发送的member信息', this.form.t_member_ids)
+    async removeMember(uid) {
+      // let temp = _clonedeep(this.task.detail.t_member_ids)
+      // temp = temp.split(',')
+      // _.pull(temp, `${id}`)
+      // // ["2","3"]字符串转换成数字[2,3]
+      // this.form.t_member_ids = temp.map(Number)
+      // console.log('要发送的member信息', this.form.t_member_ids)
       // 发送
-      this.form.id = this.task.detail.id
-      const res = await updateTask(this.form)
+      const params = {
+        uid,
+        tid: this.task.detail.id,
+        option: 'del',
+      }
+      const res = await editTaskMember(params)
       this.isAddMemberVisible = false
       this.resetForm()
       // 创建项目失败

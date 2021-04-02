@@ -84,7 +84,7 @@
           >
             <li
               class="hover-style py-3 flex items-center"
-              v-for="({ t_title, t_content,index }) in currMemberTask"
+              v-for="({ t_title, t_content,pro_title,index }) in currMemberTask"
               :key="index"
             >
               <div class="w-8 h-10 mr-2 flex justify-center items-center rounded-full">
@@ -92,7 +92,7 @@
               </div>
               <div class="flex-1 overflow-hidden">
                 <div>{{ t_title }}<a-tag class="ml-3 text-sm" color="blue">
-       项目一
+       {{pro_title}}
       </a-tag></div>
                 <div class="truncate">{{ t_content }}</div>
               </div>

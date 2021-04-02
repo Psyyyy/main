@@ -58,6 +58,15 @@ export function updateTask(data) { // 有tid
     data,
   })
 }
+
+export function editTaskMember(data) { // 有tid
+  return request({
+    url: '/task/member',
+    method: 'put',
+    data,
+  })
+}
+
 export function deleteTask(data) { // 有tid
   return request({
     url: `/task/delete/${data}`,
