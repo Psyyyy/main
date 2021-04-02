@@ -187,7 +187,7 @@ export default {
       return this.$store.getters['filter/stateFilter']
     },
     memberList() {
-      return this.$store.state.project.currProjectMemberList
+      return this.$store.state.team.currProjectMemberList
     },
     currListType() {
       return this.$store.state.task.currListType

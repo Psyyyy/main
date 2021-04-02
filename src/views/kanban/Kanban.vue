@@ -769,7 +769,7 @@ export default {
       const id = this.currProjectID
       const { data: res } = await getMemberList(id)
       console.log('memberlist', res)
-      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
     // async getTask() {
     //   if (this.isTaskShow === true) {

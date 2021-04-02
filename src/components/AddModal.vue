@@ -162,7 +162,7 @@ export default {
       return this.$store.getters['add/stateAdd']
     },
     memberList() {
-      return this.$store.state.project.currProjectMemberList
+      return this.$store.state.team.currProjectMemberList
     },
     currProjectID() {
       return this.$store.state.project.currProjectId

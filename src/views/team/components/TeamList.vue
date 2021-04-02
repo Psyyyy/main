@@ -24,7 +24,7 @@
       <a-list
         class="demo-loadmore-list"
         item-layout="horizontal"
-        :data-source="memberList"
+        :data-source="filterItems"
       >
         <a-list-item class="member-item" slot="renderItem" slot-scope="item">
           <a class="ml-1 mr-2" slot="actions">
@@ -104,226 +104,6 @@ export default {
 
   data: () => ({
     searchInputText: '搜索成员...',
-    teamList: [
-      {
-        id: '10',
-        title: 'Amy',
-        email: '251610413@qq.com',
-        activity: '提交了缺陷',
-        manager: true,
-        job: '前端开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          },
-        ],
-        done: false,
-        star: false,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-      {
-        id: '11',
-        title: 'Jack',
-        email: '251610413@qq.com',
-        activity: '提交了需求',
-        manager: false,
-        job: '后端开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        done: false,
-        star: false,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-      {
-        id: '12',
-        title: 'Lucy',
-        email: '251610413@qq.com',
-        activity: '验收了需求',
-        manager: false,
-        job: '前端开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        done: false,
-        star: false,
-        date: ['2020-02-09', '2020-06-10'],
-      },
-      {
-        id: '13',
-        title: 'Monica',
-        email: '251610413@qq.com',
-        activity: '发表了评论',
-        manager: false,
-        job: '产品经理',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        done: false,
-        star: false,
-        date: ['2020-01-23', '2020-02-23'],
-      },
-      {
-        id: '14',
-        title: 'Chandler',
-        email: '251610413@qq.com',
-        activity: '完车了需求1',
-        done: true,
-        job: '测试开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        star: true,
-        manager: true,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-      {
-        id: '15',
-        title: 'Ross',
-        email: '251610413@qq.com',
-        activity: '完车了需求1',
-        manager: false,
-        job: '项目经理',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        done: false,
-        star: false,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-      {
-        id: '16',
-        title: 'Rachel',
-        email: '251610413@qq.com',
-        activity: '完车了需求1',
-        manager: false,
-        job: '后端开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        done: false,
-        star: true,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-      {
-        id: '17',
-        title: 'Phebe',
-        email: '251610413@qq.com',
-        activity: '完车了需求1',
-        job: '前端开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          }],
-        manager: false,
-        done: false,
-        star: false,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-      {
-        id: '18',
-        title: 'Joey',
-        email: '251610413@qq.com',
-        activity: '完车了需求1',
-        job: '前端开发',
-        project: [
-          {
-            name: '项目一',
-            id: '0',
-            description: '这就是项目一',
-
-          },
-          {
-            name: '项目二',
-            id: '1',
-            description: '这就是项目二',
-
-          },
-        ],
-        manager: false,
-        done: true,
-        star: false,
-        date: ['2020-06-09', '2020-06-10'],
-      },
-    ],
   }),
 
   computed: {
@@ -342,7 +122,7 @@ export default {
       return this.$store.state.team.isTeamDrawerOpened
     },
     memberList() {
-      return this.$store.state.project.currProjectMemberList
+      return this.$store.state.team.currProjectMemberList
     },
   },
   created() {
@@ -376,7 +156,7 @@ export default {
       const id = this.currProjectID
       const { data: res } = await getMemberList(id)
       // console.log('memberlist', res)
-      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
     async getMemberInfo(uid) {
       const { data: res } = await getUserInfo(uid)

@@ -1,101 +1,12 @@
 const state = {
-  teamList: [
-    {
-      id: '10',
-      title: 'Amy',
-      email: '251610413@qq.com',
-      activity: '提交了缺陷',
-      tag: ['1', '2'],
-      done: false,
-      star: false,
-      date: ['2020-06-09', '2020-06-10'],
-    },
-    {
-      id: '11',
-      title: 'Jack',
-      email: '251610413@qq.com',
-      activity: '提交了需求',
-      tag: ['2', '3'],
-      done: false,
-      star: false,
-      date: ['2020-06-09', '2020-06-10'],
-    },
-    {
-      id: '12',
-      title: 'Lucy',
-      email: '251610413@qq.com',
-      activity: '验收了需求',
-      tag: ['1'],
-      done: false,
-      star: false,
-      date: ['2020-02-09', '2020-06-10'],
-    },
-    {
-      id: '13',
-      title: 'Monica',
-      email: '251610413@qq.com',
-      activity: '发表了评论',
-      tag: ['3'],
-      done: false,
-      star: false,
-      date: ['2020-01-23', '2020-02-23'],
-    },
-    {
-      id: '14',
-      title: 'Chandler',
-      email: '251610413@qq.com',
-      activity: '完车了需求1',
-      done: true,
-      star: true,
-      date: ['2020-06-09', '2020-06-10'],
-    },
-    {
-      id: '15',
-      title: 'Ross',
-      email: '251610413@qq.com',
-      activity: '完车了需求1',
-      tag: ['1', '2'],
-      done: false,
-      star: false,
-      date: ['2020-06-09', '2020-06-10'],
-    },
-    {
-      id: '16',
-      title:
-        'Rachel',
-      email: '251610413@qq.com',
-      activity: '完车了需求1',
-      tag: ['1', '2'],
-      done: false,
-      star: true,
-      date: ['2020-06-09', '2020-06-10'],
-    },
-    {
-      id: '17',
-      title:
-        'Phebe',
-      email: '251610413@qq.com',
-      activity: '完车了需求1',
-      tag: ['2', '1'],
-      done: false,
-      star: false,
-      date: ['2020-06-09', '2020-06-10'],
-    },
-    {
-      id: '18',
-      title: 'Joey',
-      email: '251610413@qq.com',
-      activity: '完车了需求1',
-      tag: ['1'],
-      done: true,
-      star: false,
-    },
-  ],
+  currProjectMemberList: [],
   barKey: ['1'],
   isTeamDrawerOpened: false,
   currEditMember: {},
   currMemberTask: [],
   currMemberProject: [],
+  isAdmin: false, // 为true时代表role字段加入控制
+  isActive: true, // 控制成员显示，为true时表示isActive字段加入控制
 }
 
 const mutations = {
@@ -117,6 +28,9 @@ const mutations = {
   SET_MEMBER_PROJECT(state, project) {
     state.currMemberProject = project
   },
+  SET_CURR_PROJECT_MEMBER_LIST(state, list) {
+    state.currProjectMemberList = list
+  },
 }
 const actions = {}
 
@@ -126,25 +40,19 @@ const getters = {
     console.log(key)
     // 这应该是纯前端实现的逻辑，带后端的话应该是提交字段之后到数据库查了直接返回
 
-    if (['1', '2', '3'].includes(key)) {
+    if (['1', '2'].includes(key)) {
       if (key === '1') {
-        return state.teamList.filter(({ star }) => !star)
+        return state.currProjectMemberList.filter(({ is_active }) => is_active)
       }
       if (key === '2') {
-        return state.teamList.filter(({ done, star }) => done && !star)
-      }
-      if (key === '3') {
-        return state.teamList.filter(({ star }) => star)
+        return state.currProjectMemberList.filter(({ is_active }) => !is_active)
       }
     } else {
+      if (key === '3') {
+        return state.currProjectMemberList.filter(({ is_active, role }) => is_active && role === 'admin')
+      }
       if (key === '4') {
-        return state.teamList.filter(({ tag }) => tag?.includes('1'))
-      }
-      if (key === '5') {
-        return state.teamList.filter(({ tag }) => tag?.includes('2'))
-      }
-      if (key === '6') {
-        return state.teamList.filter(({ tag }) => tag?.includes('3'))
+        return state.currProjectMemberList.filter(({ is_active, role }) => is_active && role !== 'admin')
       }
     }
     return []

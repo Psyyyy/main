@@ -1064,7 +1064,7 @@ export default {
       const { data: res } = await getMemberList(id)
       this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
       this.$store.commit('project/SET_CURR_PROJECT_ID', id)
-      this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
       window.localStorage.setItem('currProject', name)
       window.localStorage.setItem('currProjectID', id)
       this.$router.push('Ecommerce')
