@@ -317,7 +317,6 @@ export default {
     ],
     filters: [
       { id: '1', label: '所有成员', icon: 'users' },
-      { id: '2', label: '新加入成员', icon: 'user-plus' },
       { id: '3', label: '已停用成员', icon: 'user-x' },
     ],
     tags: [

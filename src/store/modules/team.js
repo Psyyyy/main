@@ -93,21 +93,29 @@ const state = {
   ],
   barKey: ['1'],
   isTeamDrawerOpened: false,
-  currEditTeam: {},
+  currEditMember: {},
+  currMemberTask: [],
+  currMemberProject: [],
 }
 
 const mutations = {
   SET_TEAM_DRAWER_STATUS(state, status) {
-    if (!status) {
-      state.currEditTeam = {}
-    }
+    // if (!status) {
+    //   state.currEditMember = {}
+    // }
     state.isTeamDrawerOpened = status
   },
   SET_TEAM_BAR_KEY(state, key) {
     state.barKey = [key]
   },
-  SET_CURR_EDIT_TEAM(state, teamItem) {
-    state.currEditTeam = teamItem
+  SET_CURR_EDIT_MEMBER(state, member) {
+    state.currEditMember = member
+  },
+  SET_MEMBER_TASK(state, task) {
+    state.currMemberTask = task
+  },
+  SET_MEMBER_PROJECT(state, project) {
+    state.currMemberProject = project
   },
 }
 const actions = {}

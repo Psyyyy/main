@@ -20,7 +20,7 @@
     >
       <a-input
         v-decorator="[
-          'nickname',
+          'name',
           { rules: [{ required: checkNick, message: '请输入您的社交昵称' }] },
         ]"
         placeholder="请输入您的社交昵称"
@@ -84,7 +84,7 @@ export default {
     handleCheckChange(e) {
       this.checkNick = e.target.checked
       this.$nextTick(() => {
-        this.form.validateFields(['nickname'], { force: true })
+        this.form.validateFields(['name'], { force: true })
       })
     },
   },

@@ -13,7 +13,6 @@
             </div>
             <!-- 迭代阶段切换 -->
             <div class="wl">
-
               <a-dropdown :trigger="['click']" class=" mr-26">
                 <div class=" text-2xl ml-1 flex items-center cursor-pointer ">
                   <!-- <a-icon
@@ -23,7 +22,7 @@
                     class="mr-2"
                   /> -->
                   <h3 class="section-card__title">
-                    {{stage.s_title}}
+                    {{ stage.s_title }}
                   </h3>
 
                   <feather
@@ -41,7 +40,7 @@
                       :key="s_id"
                       @click="changeStageTo(s_id, s_title)"
                     >
-                      {{s_title}}
+                      {{ s_title }}
                     </a-menu-item>
                   </a-menu>
                 </template>
@@ -60,23 +59,30 @@
                 class=" flex-no-wrap inline-block "
                 style="color:#bdc0c9;white-space:nowrap;width:30px;margin-top:7px"
               >
-                {{stage.s_start_time|dateFormat}}~{{stage.s_end_time|dateFormat}}
+                {{ stage.s_start_time | dateFormat }}~{{
+                  stage.s_end_time | dateFormat
+                }}
               </div>
             </div>
           </div>
         </div>
         <div class="wr">
-           <div class="wr ml-2 mt-1">
+          <div class="wr ml-2 mt-1">
             <a-dropdown>
-      <a-menu slot="overlay" placement="bottomRight" @click="handleStage">
-        <a-menu-item key="edit" > 编辑迭代 </a-menu-item>
-        <a-menu-item key="delete" > 删除迭代 </a-menu-item>
-      </a-menu>
-      <a-button style="margin-left: 8px"> 更多 <a-icon type="down" /> </a-button>
-    </a-dropdown>
-           </div>
+              <a-menu
+                slot="overlay"
+                placement="bottomRight"
+                @click="handleStage"
+              >
+                <a-menu-item key="edit"> 编辑迭代 </a-menu-item>
+                <a-menu-item key="delete"> 删除迭代 </a-menu-item>
+              </a-menu>
+              <a-button style="margin-left: 8px">
+                更多 <a-icon type="down" />
+              </a-button>
+            </a-dropdown>
+          </div>
           <div class="wr mt-1 mr-2">
-
             <!-- <a-button type="primary" class="mr-4" v-if="!isKbShow" @click="onOpenFilter('task')"
               >筛选</a-button
             > -->
@@ -87,7 +93,9 @@
               <a-radio-button value="list" @click="showListBoard"
                 >列表</a-radio-button
               >
-              <a-radio-button value="board" @click="consoleBoard">仪表盘</a-radio-button>
+              <a-radio-button value="board" @click="consoleBoard"
+                >仪表盘</a-radio-button
+              >
               <a-radio-button value="member">成员</a-radio-button>
               <a-radio-button value="progress">进度图</a-radio-button>
             </a-radio-group>
@@ -128,41 +136,47 @@
                 >{{ it.state }} · {{ it.datalist.length }}</span
               ></span
             >
-
-            <!-- <a-dropdown class="ml-40 pl-4" :trigger="['click']">
-            <feather class="cursor-pointer" size="20" type="more-vertical" />
-            <template #overlay>
-               单个看板的菜单 -->
-            <!-- <a-menu>
-                <a-menu-item @click="$message.success('已复制看板链接')">
-                  复制看板链接
-                </a-menu-item>
-                <a-menu-item @click="deleteBoard(it.title)">
-                  删除此看板
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown> -->
           </div>
           <div class="kb-col__board">
             <draggable class="" v-model="it.datalist" v-bind="dragOptions">
               <transition-group tag="ul">
                 <li
                   class="kb-col__item"
-                  v-for="{ id, t_rank, t_title,t_content,t_header_name,end_time} in it.datalist"
+                  v-for="{
+                    id,
+                    t_rank,
+                    t_title,
+                    t_content,
+                    t_header_name,
+                    end_time,
+                    is_done
+                  } in it.datalist"
                   :key="id"
-                  :data-border="t_rank===2?'danger':t_rank===1?'warning':'success'"
-                   @click="showDetail(id)"
+                  :data-border="rankColor(is_done,t_rank)"
+                  @click="showDetail(id)"
                 >
-                  <div v-html="t_title"></div>
-                   <div class="text-sm text-gray-500">{{t_content}}</div>
+                  <div
+                    v-html="t_title"
+                    class="boardItem"
+                    :class="{ done: is_done }"
+                  ></div>
+                  <div
+                    class="text-sm text-gray-500 boardItem"
+                    :class="{ done: is_done }"
+                  >
+                    {{ t_content }}
+                  </div>
                   <div class="mt-1 flex items-center text-xs">
-                    <div
-                      class="mr-2 flex items-center"
-                    >
-                      <feather class="mr-1" size="12" type="clock" v-if="end_time!==null"/>
-                      <span  v-if="end_time!==null">  {{ end_time|dateFormat }}</span>
-
+                    <div class="mr-2 flex items-center">
+                      <feather
+                        class="mr-1"
+                        size="12"
+                        type="clock"
+                        v-if="end_time !== null"
+                      />
+                      <span v-if="end_time !== null">
+                        {{ end_time | dateFormat }}</span
+                      >
                     </div>
 
                     <div class="ml-auto flex-1 flex flex-wrap justify-end">
@@ -170,33 +184,28 @@
                         class="kb-col__avatar text-xs primary bg-primary-light"
                         :key="id"
                         :size="30"
-                        >{{ t_header_name===null?'暂无':t_header_name }}</a-avatar
+                        >{{
+                          t_header_name === null ? "暂无" : t_header_name
+                        }}</a-avatar
                       >
                     </div>
                   </div>
                 </li>
               </transition-group>
             </draggable>
-            <!-- <div v-show="currAdd.title === it.title" class="mb-2">
-          <a-textarea
-            class="mb-1"
-            v-model.trim="currAdd.content"
-            :auto-size="{ minRows: 3, maxRows: 5 }"
-          />
-          <a-button class="mr-2" size="small" type="primary" @click="addNewItem"
-            >提交</a-button
-          >
-          <a-button size="small" type="danger">取消</a-button>
-        </div> -->
-            <!-- <div class="flex items-center">
-          <div
-            class="flex items-center cursor-pointer"
-            @click="currAdd.title = it.title"
-          >
-            <feather size="15" type="plus" />
-            创建新项
           </div>
-        </div> -->
+        </div>
+        <div class="kb-col" v-for="(it, i) in board" :key="i">
+          <div  v-if="boardList===null" class="kb-col__title overflow-hidden mb-1 flex items-center">
+            <span class="kb-col__input"
+              ><span class="ml-4"
+                >{{ it.state }} · {{ it.datalist.length }}</span
+              ></span
+            >
+          </div>
+          <div class="kb-col__board">
+            <draggable class="" v-model="it.datalist" v-bind="dragOptions">
+            </draggable>
           </div>
         </div>
       </div>
@@ -208,7 +217,11 @@
 
     <filter-modal />
     <add-modal />
-    <task :pop-visible="showTask" detail="detailTaskId" @close="showTask = false" />
+    <task
+      :pop-visible="showTask"
+      detail="detailTaskId"
+      @close="showTask = false"
+    />
     <!-- 创建项目 -->
     <a-modal
       :visible="isAddStageVisible"
@@ -229,22 +242,22 @@
           <a-form-model-item label="迭代名称" type="name" prop="s_title">
             <a-input v-model="newStage.s_title" />
           </a-form-model-item>
-                 <a-form-model-item label="开始日期" prop="s_start_time">
-          <a-date-picker
-            v-model="newStage.s_start_time"
-            :format="'YYYY/MM/DD'"
-            type="date"
-            placeholder="开始日期"
-            style="width: 100%"
-          />
-        </a-form-model-item>
-       <a-form-model-item label="截止日期" prop="s_end_time">
-         <a-date-picker
-            v-model="newStage.s_end_time"
-            :format="'YYYY/MM/DD'"
-            type="date"
-            placeholder="截止日期"
-            style="width: 100%"
+          <a-form-model-item label="开始日期" prop="s_start_time">
+            <a-date-picker
+              v-model="newStage.s_start_time"
+              :format="'YYYY/MM/DD'"
+              type="date"
+              placeholder="开始日期"
+              style="width: 100%"
+            />
+          </a-form-model-item>
+          <a-form-model-item label="截止日期" prop="s_end_time">
+            <a-date-picker
+              v-model="newStage.s_end_time"
+              :format="'YYYY/MM/DD'"
+              type="date"
+              placeholder="截止日期"
+              style="width: 100%"
           /></a-form-model-item>
           <a-form-model-item label="迭代目标">
             <a-input v-model="newStage.s_target" type="textarea" />
@@ -252,12 +265,12 @@
         </a-form-model>
       </div>
     </a-modal>
-     <!-- 编辑项目 -->
-     <a-modal
+    <!-- 编辑项目 -->
+    <a-modal
       :visible="isEditStageVisible"
       title="编辑迭代"
       @ok="editStage('edit')"
-      @cancel="isEditStageVisible=false"
+      @cancel="isEditStageVisible = false"
     >
       <div>
         <a-form-model
@@ -267,25 +280,25 @@
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-          <a-form-model-item ref="name" label="迭代名称" type="name" >
+          <a-form-model-item ref="name" label="迭代名称" type="name">
             <a-input v-model="currEditStage.s_title" />
           </a-form-model-item>
-                          <a-form-model-item label="起止日期" prop="date">
-          <a-date-picker
-            v-model="currEditStage.s_start_time"
-            :format="'YYYY/MM/DD'"
-            type="date"
-            placeholder="开始日期"
-            style="width: 100%"
-          />
-          <a-date-picker
-            v-model="currEditStage.s_end_time"
-            :format="'YYYY/MM/DD'"
-            type="date"
-            placeholder="截止日期"
-            style="width: 100%"
-          />
-        </a-form-model-item>
+          <a-form-model-item label="起止日期" prop="date">
+            <a-date-picker
+              v-model="currEditStage.s_start_time"
+              :format="'YYYY/MM/DD'"
+              type="date"
+              placeholder="开始日期"
+              style="width: 100%"
+            />
+            <a-date-picker
+              v-model="currEditStage.s_end_time"
+              :format="'YYYY/MM/DD'"
+              type="date"
+              placeholder="截止日期"
+              style="width: 100%"
+            />
+          </a-form-model-item>
           <a-form-model-item label="迭代目标">
             <a-input v-model="currEditStage.s_target" type="textarea" />
           </a-form-model-item>
@@ -300,11 +313,18 @@ import draggable from 'vuedraggable'
 import AddModal from '@/components/AddModal.vue'
 import moment from 'moment'
 import {
-  getStage, getStageList, newStage, updateStage, deleteStage,
+  getStage,
+  getStageList,
+  newStage,
+  updateStage,
+  deleteStage,
 } from '@/api/stage'
 import {
-  getTaskList, deleteTask,
-  getTaskDetail, getStageTaskList, getBoardList,
+  getTaskList,
+  deleteTask,
+  getTaskDetail,
+  getStageTaskList,
+  getBoardList,
 } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
@@ -332,12 +352,6 @@ export default {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
     state: {}, // 当前stage
-    // stageList: // stage列表
-    // [
-    //   { name: '迭代1', id: '0', target: '下个月上线' },
-    //   { name: '迭代2', id: '1', target: '日活3万' },
-    // ],
-
     dragOptions: {
       animation: 200,
       group: 'description',
@@ -345,22 +359,14 @@ export default {
       ghostClass: 'ghost',
     },
     currAdd: { id: '', title: '', content: '' },
-    currEdit: {
-      title: '这是一个看板标题',
-      time: null,
-      label: 'primary',
-      content: '',
-      fileName: '',
-    },
     rules: {
       s_title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-      s_start_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
+      s_start_time: [
+        { required: true, message: '请选择日期', trigger: 'change' },
+      ],
       s_end_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
     },
-    showDrawer: false,
     showTask: false,
-    showTaskModal: false,
-    isTagetShow: false,
     isTaskShow: true,
     isKbShow: true,
     isEditStageVisible: false,
@@ -381,12 +387,6 @@ export default {
       s_end_time: null,
     },
     isAddStageVisible: false,
-    stageRules: {
-      // 暂时没用到
-      s_title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-      s_start_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
-      s_end_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
-    },
   }),
 
   created() {
@@ -413,7 +413,8 @@ export default {
 
   methods: {
     consoleBoard() {
-      console.log(this.boardList)
+      console.log('boardlist', this.boardList)
+      console.log('board', this.board)
     },
     moment,
     dateformat,
@@ -422,6 +423,10 @@ export default {
       this.getStage()
       this.getBoardList()
       this.getMemberList()
+      this.$store.commit(// 为了显示空白看板用的！！！
+        'add/SET_ADD_MODAL_TYPE',
+        'task',
+      )
     },
     // 获取数据
     async getStage() {
@@ -507,6 +512,7 @@ export default {
       window.localStorage.setItem('currStageId', id)
 
       console.log(this.$store.state.stage.currStage)
+      this.init()
       // 这里需要向后台提交id拿项目数据，拿回来后重新渲染当前界面
       // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目
     },
@@ -528,10 +534,18 @@ export default {
       if (type === 'task') {
         // 切换到需求看板
         this.isTaskShow = true
+        this.$store.commit(
+          'add/SET_ADD_MODAL_TYPE',
+          'task',
+        )
       }
       if (type === 'bug') {
         // 切换到缺陷看板
         this.isTaskShow = false
+        this.$store.commit(
+          'add/SET_ADD_MODAL_TYPE',
+          'bug',
+        )
       }
       this.getBoardList()
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
@@ -595,9 +609,9 @@ export default {
       const that = this
       this.$confirm({
         title: (
-              <p>
-                此操作将删除<span class="warning">「{title}」</span>项目
-              </p>
+          <p>
+            此操作将删除<span class="warning">「{title}」</span>项目
+          </p>
         ),
         content: '您确定要删除该项目吗？',
         async onOk() {
@@ -617,7 +631,7 @@ export default {
       if (options === 'add') {
         // console.log(e)
         this.$refs.addFormRef.validate(async (valid, field) => {
-        // 有未校验通过的字段
+          // 有未校验通过的字段
           if (!valid) {
             return this.$message.error('存在错误字段，无法创建')
           }
@@ -656,7 +670,10 @@ export default {
       } else {
         console.log('edit', this.currEditStage)
         if (this.currEditStage.s_start_time && this.currEditStage.s_end_time) {
-          if (this.currEditStage.s_start_time - this.currEditStage.s_end_time > 0) {
+          if (
+            this.currEditStage.s_start_time - this.currEditStage.s_end_time
+            > 0
+          ) {
             this.$message.warning('截止时间早于开始时间！')
             return false
           }
@@ -792,25 +809,33 @@ export default {
     onOpenAdd() {
       console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
-      this.$store.commit('add/SET_ADD_MODAL_TYPE', this.isTaskShow === 1 ? 'task' : 'bug')
+      this.$store.commit(
+        'add/SET_ADD_MODAL_TYPE',
+        this.isTaskShow === 1 ? 'task' : 'bug',
+      )
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
+    },
+    rankColor(done, rank) {
+      if (done) {
+        return 'side-menu-icon-color'
+      }
+
+      switch (rank) {
+        case 1:
+          return 'success'
+        case 2:
+          return 'warning'
+        case 3:
+          return 'danger'
+        default:
+          return ''
+      }
     },
   },
   computed: {
     currProjectID() {
       return this.$store.state.project.currProjectId
     },
-    // dragOptions() {
-    //   return {
-    //     animation: 1,
-    //     group: 'description',
-    //     disabled: !this.editable,
-    //     ghostClass: 'ghost',
-    //   }
-    // },
-    // listString() {
-    //   return JSON.stringify(this.taskList, null, 2)
-    // },
     currStage() {
       return this.$store.state.stage.currStage
     },
@@ -837,6 +862,9 @@ export default {
     },
     boardList() {
       return this.$store.state.task.boardList
+    },
+    board() {
+      return this.$store.getters['add/boardInit']
     },
   },
 }
@@ -924,5 +952,11 @@ export default {
   width: 4px;
   height: 10px;
   background-color: transparent;
+}
+.boardItem {
+  &.done {
+    color: #b7b8bb;
+    text-decoration: line-through;
+  }
 }
 </style>

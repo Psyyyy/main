@@ -3,6 +3,60 @@ const state = {
   currStageId: window.localStorage.getItem('currStageId') ? window.localStorage.getItem('currStageId') : '',
   stageList: [],
   currStageInfo: {},
+  currBoardType: '',
+  board: {
+    task: [
+      {
+        id: 1,
+        state: '规划中',
+        datalist: [],
+
+      },
+      {
+        id: 2,
+        state: '实现中',
+        datalist: [],
+      }, {
+        id: 3,
+        state: '已实现',
+        datalist: [],
+      }, {
+        id: 4,
+        state: '已拒绝',
+        datalist: [],
+      },
+    ],
+    bug: [
+      {
+        id: 1,
+        state: '新',
+        datalist: [],
+
+      },
+      {
+        id: 2,
+        state: '处理中',
+        datalist: [],
+      }, {
+        id: 3,
+        state: '已解决',
+        datalist: [],
+      }, {
+        id: 4,
+        state: '已验收',
+        datalist: [],
+      }, {
+        id: 5,
+        state: '已拒绝',
+        datalist: [],
+      }, {
+        id: 6,
+        state: '已关闭',
+        datalist: [],
+      },
+    ],
+    // stage: ['规划中', '实现中', '已实现', '测试中', '已验收', '已拒绝'],
+  },
 }
 
 const mutations = {
@@ -27,8 +81,8 @@ const actions = {
     this.$store.commit('stage/SET_CURR_STAGE_ID', id)
   },
 }
-const getters = {
 
+const getters = {
 }
 export default {
   namespaced: true,

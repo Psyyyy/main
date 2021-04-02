@@ -54,7 +54,7 @@
         <div class="h-full flex items-center">
           <div class="flex items-center text-base">
             <div class="mx-4 text-right">
-              <div class="text-lg">{{ info.nickname || "暂无昵称" }}</div>
+              <div class="text-lg">{{ info.name || "暂无昵称" }}</div>
               <div class="text-sm">{{ info.role }}</div>
             </div>
             <div>

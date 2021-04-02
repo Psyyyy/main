@@ -107,22 +107,6 @@ export const asyncRoutes = [
   //   ],
   // },
 
-  // 任务列表
-  {
-    path: '',
-    component: MainLayout,
-    single: true,
-    meta: { permission: ['normal', 'admin'] },
-    children: [
-      {
-        path: '/task',
-        name: 'Task',
-        component: () => import('@/views/task/TaskList'),
-        meta: { permission: ['normal', 'admin'], title: '需求管理', icon: 'check-circle' },
-      },
-    ],
-  },
-
   // 看板
   {
     path: '',
@@ -135,6 +119,21 @@ export const asyncRoutes = [
         name: 'Kanban',
         component: () => import('@/views/kanban/Kanban.vue'),
         meta: { permission: ['normal', 'admin'], title: '迭代管理', icon: 'trello' },
+      },
+    ],
+  },
+  // 任务列表
+  {
+    path: '',
+    component: MainLayout,
+    single: true,
+    meta: { permission: ['normal', 'admin'] },
+    children: [
+      {
+        path: '/task',
+        name: 'Task',
+        component: () => import('@/views/task/TaskList'),
+        meta: { permission: ['normal', 'admin'], title: '需求管理', icon: 'check-circle' },
       },
     ],
   },

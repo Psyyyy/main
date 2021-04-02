@@ -39,7 +39,7 @@ export default {
         {
           label: '昵称',
           placeholder: '请输入昵称',
-          decorator: ['nickname', { initialValue: '皮埃斯歪' }],
+          decorator: ['name', { initialValue: '皮埃斯歪' }],
         },
         {
           label: '邮箱',

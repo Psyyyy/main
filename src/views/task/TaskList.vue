@@ -4,7 +4,7 @@
     <div>
 
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
-         <h3 class="section-card__title">{{currListType==='stage'?'迭代任务':'需求管理'}}</h3>
+         <h3 class="section-card__title">{{currListType==='stage'?'迭代任务':currListType==='task'?'需求管理':'缺陷管理'}}</h3>
         <div class="flex ml-auto">
 <a-button
             class="ml-1 w-30 flex "
@@ -188,10 +188,10 @@
               <div v-if="rank !== ''">
                 <a-tag
                   :color="
-                    rank === 2 ? '#ff5b5c' : rank === 1 ? '#fdac41' : '#28c175'
+                    rank === 3 ? '#ff5b5c' : rank === 2 ? '#fdac41' : '#28c175'
                   "
                 >
-                  {{ rank === 2 ? "非常紧急" : rank === 1 ? "紧急" : "普通" }}
+                  {{ rank === 3 ? "非常紧急" : rank === 2 ? "紧急" : "普通" }}
                 </a-tag>
               </div>
             </span>
@@ -439,6 +439,9 @@ export default {
     currListType() {
       return this.$store.state.task.currListType
     },
+    currStageId() {
+      return this.$store.state.stage.currStageId
+    },
   },
   watch: {
     currProjectID() {
@@ -451,6 +454,9 @@ export default {
       this.getTask()
     },
     currListType() {
+      this.getTask()
+    },
+    currStageId() {
       this.getTask()
     },
     // isFilterModalOpened() {
@@ -472,15 +478,16 @@ export default {
     },
     async getTask() {
       const pid = this.currProjectID
+      const sid = this.currStageId
       if (this.currListType === 'stage') {
-        const { data: res } = await getStageTaskList(pid)
+        const { data: res } = await getStageTaskList(pid, sid)
         this.$store.commit('task/SET_TASK_LIST', res)
-        console.log('list', res)
+        console.log('stage模块list', res)
       } else {
         const type = this.currListType === 'task' ? 1 : 0// type:1-需求，2-bug，迭代就是12
         const { data: res } = await getTaskList(pid, type)
         this.$store.commit('task/SET_TASK_LIST', res)
-        console.log('list', res)
+        console.log('需求/缺陷模块list', res)
       }
 
       // this.data = res

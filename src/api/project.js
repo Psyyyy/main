@@ -4,11 +4,10 @@
 
 import request from '@/plugins/axios'
 // import request from './request'
-export function getProjectList(data) {
+export function getProjectList(uid) {
   return request({
-    url: '/project',
+    url: `/project/${uid}`,
     method: 'get',
-    data,
   })
 }
 export function newProject(data) {

@@ -9,6 +9,59 @@ const state = {
     bug: ['新', '处理中', '已解决', '已验收', '已拒绝', '已关闭'],
     // stage: ['规划中', '实现中', '已实现', '测试中', '已验收', '已拒绝'],
   },
+  board: {
+    task: [
+      {
+        id: 1,
+        state: '规划中',
+        datalist: [],
+
+      },
+      {
+        id: 2,
+        state: '实现中',
+        datalist: [],
+      }, {
+        id: 3,
+        state: '已实现',
+        datalist: [],
+      }, {
+        id: 4,
+        state: '已拒绝',
+        datalist: [],
+      },
+    ],
+    bug: [
+      {
+        id: 1,
+        state: '新',
+        datalist: [],
+
+      },
+      {
+        id: 2,
+        state: '处理中',
+        datalist: [],
+      }, {
+        id: 3,
+        state: '已解决',
+        datalist: [],
+      }, {
+        id: 4,
+        state: '已验收',
+        datalist: [],
+      }, {
+        id: 5,
+        state: '已拒绝',
+        datalist: [],
+      }, {
+        id: 6,
+        state: '已关闭',
+        datalist: [],
+      },
+    ],
+    // stage: ['规划中', '实现中', '已实现', '测试中', '已验收', '已拒绝'],
+  },
 }
 
 const mutations = {
@@ -43,6 +96,12 @@ const getters = {
     if (state.currAddType === 'stage') {
       return state.stateAdd.stage
     }
+    return []
+  },
+  boardInit: (state) => {
+    // console.log(state)
+    if (state.currAddType === 'task') { return state.board.task }
+    if (state.currAddType === 'bug') { return state.board.bug }
     return []
   },
 }

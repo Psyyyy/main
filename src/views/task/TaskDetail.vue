@@ -441,9 +441,9 @@
                         >
                           <span>
                             <a-tag :color="priColor(task.detail.t_rank)">{{
-                              task.detail.t_rank === 2
+                              task.detail.t_rank === 3
                                 ? "非常紧急"
-                                : task.detail.t_rank === 1
+                                : task.detail.t_rank ===2
                                 ? "紧急"
                                 : "普通"
                             }}</a-tag>
@@ -454,19 +454,9 @@
                             @click="doPri"
                             :selectable="false"
                           >
-                            <a-menu-item :key="0">
-                              <div class="menu-item-content">
-                                <a-tag :color="priColor(0)">普通</a-tag>
-                                <a-icon
-                                  type="check"
-                                  class="check muted"
-                                  v-show="task.detail.t_rank == 0"
-                                ></a-icon>
-                              </div>
-                            </a-menu-item>
                             <a-menu-item :key="1">
                               <div class="menu-item-content">
-                                <a-tag :color="priColor(1)">紧急</a-tag>
+                                <a-tag :color="priColor(1)">普通</a-tag>
                                 <a-icon
                                   type="check"
                                   class="check muted"
@@ -476,11 +466,21 @@
                             </a-menu-item>
                             <a-menu-item :key="2">
                               <div class="menu-item-content">
-                                <a-tag :color="priColor(2)">非常紧急</a-tag>
+                                <a-tag :color="priColor(2)">紧急</a-tag>
                                 <a-icon
                                   type="check"
                                   class="check muted"
                                   v-show="task.detail.t_rank == 2"
+                                ></a-icon>
+                              </div>
+                            </a-menu-item>
+                            <a-menu-item :key="3">
+                              <div class="menu-item-content">
+                                <a-tag :color="priColor(3)">非常紧急</a-tag>
+                                <a-icon
+                                  type="check"
+                                  class="check muted"
+                                  v-show="task.detail.t_rank == 3"
                                 ></a-icon>
                               </div>
                             </a-menu-item>
@@ -1630,8 +1630,10 @@ export default {
     priColor(pri) {
       switch (pri) {
         case 1:
-          return '#fdac41'
+          return '#28c175'
         case 2:
+          return '#fdac41'
+        case 3:
           return '#ff5b5c'
         default:
           return '#28c175'
