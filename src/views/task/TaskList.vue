@@ -13,7 +13,7 @@
 
           >
             <feather class="mr-1 mt-1" size="20" type="plus" />
-            新增{{currListType==='task'?'需求':'缺陷'}}
+            新增{{currListType==='task'?'需求':currListType==='stage'?'需求':'缺陷'}}
           </a-button>
           <a-button
             class="ml-1 mr-4 flex"
@@ -643,15 +643,12 @@ export default {
           return 'blue'
         case '已实现':
           return 'cyan'
-        case '测试中':
-          return 'orange'
-        case '已测试':
+        case '已拒绝':
           return 'purple'
         case '已验收':
           return 'green'
         case '已关闭':
           return '#626262'
-
         // 缺陷
         case '新':
           return 'orange'

@@ -2,7 +2,7 @@
   <div style="z-index:9999">
     <a-modal
       :visible="isAddModalOpened"
-      title="新增需求"
+      :title="currAddType==='bug'?'新增缺陷':'新增需求'"
       @cancel="closeAdd"
       @ok="onSubmit"
     >
@@ -87,13 +87,13 @@
           />
         </a-form-model-item>
         <!-- 状态添加（多选） -->
-        <a-form-item label="状态" v-if="currListType==='task'">
+        <a-form-item label="状态">
           <a-select
             v-model="form.t_state"
             placeholder="点击选择状态"
           >
             <a-select-option
-              v-for="item in taskStatus"
+              v-for="item in stateAdd"
               :key="item"
               :value="item"
             >
@@ -149,9 +149,6 @@ export default {
     isAddModalOpened() {
       return this.$store.state.add.isAddModalOpened
     },
-    currAddType() {
-      return this.$store.state.add.currAddType
-    },
     stageList() {
       return this.$store.state.stage.stageList
     },
@@ -182,6 +179,9 @@ export default {
     currListType() {
       return this.$store.state.task.currListType
     },
+    currAddType() {
+      return this.$store.state.add.currAddType
+    },
   },
   data: () => ({
     currAdd: {},
@@ -209,10 +209,7 @@ export default {
       '规划中',
       '实现中',
       '已实现',
-      '测试中',
-      '已测试',
-      '已验收',
-      '已关闭',
+      '已拒绝',
     ],
     rules: {
       t_title: [
@@ -280,7 +277,7 @@ export default {
         this.formatForm.t_stage_id = this.currStageId
         this.formatForm.t_stage_name = this.currStage
       }
-      if (this.currListType === 'bug') { // 数据库默认是1 task
+      if (this.currAddType === 'bug') { // 数据库默认是1 task
         this.formatForm.t_type = 0
         this.formatForm.t_state = '新'
       } else this.formatForm.t_type = 1

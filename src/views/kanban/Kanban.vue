@@ -77,9 +77,9 @@
            </div>
           <div class="wr mt-1 mr-2">
 
-            <a-button type="primary" class="mr-4" @click="onOpenFilter('task')"
+            <!-- <a-button type="primary" class="mr-4" v-if="!isKbShow" @click="onOpenFilter('task')"
               >筛选</a-button
-            >
+            > -->
             <a-radio-group default-value="kanban">
               <a-radio-button value="kanban" @click="showKbBoard"
                 >看板</a-radio-button
@@ -87,7 +87,7 @@
               <a-radio-button value="list" @click="showListBoard"
                 >列表</a-radio-button
               >
-              <a-radio-button value="board">仪表盘</a-radio-button>
+              <a-radio-button value="board" @click="consoleBoard">仪表盘</a-radio-button>
               <a-radio-button value="member">成员</a-radio-button>
               <a-radio-button value="progress">进度图</a-radio-button>
             </a-radio-group>
@@ -121,11 +121,11 @@
       </div>
       <!-- 看板 -->
       <div class="kb">
-        <div class="kb-col" v-for="(it, i) in kbList" :key="i">
+        <div class="kb-col" v-for="(it, i) in boardList" :key="i">
           <div class="kb-col__title overflow-hidden mb-1 flex items-center">
             <span class="kb-col__input"
               ><span class="ml-4"
-                >{{ it.title }} · {{ it.dataList.length }}</span
+                >{{ it.state }} · {{ it.datalist.length }}</span
               ></span
             >
 
@@ -145,33 +145,32 @@
           </a-dropdown> -->
           </div>
           <div class="kb-col__board">
-            <draggable class=" " v-model="it.dataList" v-bind="dragOptions">
+            <draggable class="" v-model="it.datalist" v-bind="dragOptions">
               <transition-group tag="ul">
                 <li
                   class="kb-col__item"
-                  v-for="{ id, label, content, items, members } in it.dataList"
+                  v-for="{ id, t_rank, t_title,t_content,t_header_name,end_time} in it.datalist"
                   :key="id"
-                  :data-border="label"
-                  @click="showTaskModal = true"
+                  :data-border="t_rank===2?'danger':t_rank===1?'warning':'success'"
+                   @click="showDetail(id)"
                 >
-                  <div v-html="content"></div>
-                  <div v-if="items" class="mt-4 flex items-center text-xs">
+                  <div v-html="t_title"></div>
+                   <div class="text-sm text-gray-500">{{t_content}}</div>
+                  <div class="mt-1 flex items-center text-xs">
                     <div
                       class="mr-2 flex items-center"
-                      v-for="{ item, value } in items"
-                      :key="item"
                     >
-                      <feather class="mr-1" size="12" :type="itemIcon[item]" />
-                      {{ value }}
+                      <feather class="mr-1" size="12" type="clock" v-if="end_time!==null"/>
+                      <span  v-if="end_time!==null">  {{ end_time|dateFormat }}</span>
+
                     </div>
 
                     <div class="ml-auto flex-1 flex flex-wrap justify-end">
                       <a-avatar
                         class="kb-col__avatar text-xs primary bg-primary-light"
-                        v-for="{ id, avatar } in members"
                         :key="id"
-                        :size="22"
-                        >{{ avatar }}</a-avatar
+                        :size="30"
+                        >{{ t_header_name===null?'暂无':t_header_name }}</a-avatar
                       >
                     </div>
                   </div>
@@ -209,7 +208,7 @@
 
     <filter-modal />
     <add-modal />
-    <task-detail :pop-visible="showTaskModal" @close="showTaskModal = false" />
+    <task :pop-visible="showTask" detail="detailTaskId" @close="showTask = false" />
     <!-- 创建项目 -->
     <a-modal
       :visible="isAddStageVisible"
@@ -305,7 +304,7 @@ import {
 } from '@/api/stage'
 import {
   getTaskList, deleteTask,
-  getTaskDetail, getStageTaskList,
+  getTaskDetail, getStageTaskList, getBoardList,
 } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
@@ -313,8 +312,9 @@ import { getDialog } from '@/api/dialog'
 import { getMemberList } from '@/api/member'
 import { getTimestamp, dateformat } from '@/utils/util'
 import __clonedeep from 'lodash.clonedeep'
+import Task from '@/views/task/Task.vue'
 import FilterModal from './components/FilterModal.vue'
-import TaskDetail from '../task/Task.vue'
+
 import TaskList from '../task/TaskList.vue'
 
 export default {
@@ -324,7 +324,7 @@ export default {
     TaskList,
     draggable,
     FilterModal,
-    TaskDetail,
+    Task,
     AddModal,
   },
 
@@ -337,196 +337,11 @@ export default {
     //   { name: '迭代1', id: '0', target: '下个月上线' },
     //   { name: '迭代2', id: '1', target: '日活3万' },
     // ],
-    kbList: [
-      {
-        id: 'board1',
-        title: '定制主题',
-        dataList: [
-          {
-            id: '1',
-            label: 'primary',
-            content: '君自故乡来，应知故乡事。来日绮窗前，寒梅著花未？🌺',
-            items: [
-              { item: 'time', value: '1-6' },
-              { item: 'msg', value: 14 },
-            ],
-            members: [
-              { id: '1', avatar: '头' },
-              { id: '2', avatar: '像' },
-            ],
-          },
-          {
-            id: '2',
-            label: 'warning',
-            content: '昨夜裙带解，今朝蟢子飞。',
-            items: [
-              { item: 'time', value: '2-4' },
-              { item: 'msg', value: 19 },
-            ],
-            members: [
-              { id: '1', avatar: 'B' },
-              { id: '2', avatar: 'V' },
-            ],
-          },
-          {
-            id: '3',
-            label: 'danger',
-            content: '铅华不可弃，莫是藁砧归。',
-            items: [{ item: 'time', value: '1-9' }],
-          },
-          {
-            id: '4',
-            label: 'success',
-            content: '闺中少妇不知愁，春日凝妆上翠楼。',
-            items: [
-              { item: 'time', value: '6-6' },
-              { item: 'msg', value: 1 },
-            ],
-          },
-          {
-            id: '5',
-            label: 'info',
-            content: '忽见陌头杨柳色，悔教夫婿觅封侯。',
-            items: [
-              { item: 'time', value: '4-1' },
-              { item: 'msg', value: 45 },
-            ],
-            members: [
-              { id: '1', avatar: 'A' },
-              { id: '2', avatar: 'V' },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'board2',
-        title: '常见问题',
-        dataList: [
-          {
-            id: '6',
-            label: 'secondary',
-            content: '九月九日忆山东兄弟',
-            items: [
-              { item: 'time', value: '6-9' },
-              { item: 'msg', value: 19 },
-            ],
-          },
-          {
-            id: '7',
-            label: 'secondary',
-            content: '独在异乡为异客，每逢佳节倍思亲。',
-            items: [
-              { item: 'time', value: '7-1' },
-              { item: 'msg', value: 11 },
-            ],
-          },
-          {
-            id: '8',
-            content: '遥知兄弟登高处，遍插茱萸少一人。🐸',
-          },
-          {
-            id: '9',
-            content: '<img width=100% src=""><p>点击编辑看板卡片 👀</p>',
-          },
-        ],
-      },
-      {
-        id: 'board3',
-        title: '支持我们',
-        dataList: [
-          {
-            id: '10',
-            label: 'success',
-            content: '千山鸟飞绝，万径人踪灭。',
-            items: [
-              { item: 'time', value: '6-9' },
-              { item: 'msg', value: 19 },
-            ],
-            members: [
-              { id: '1', avatar: '我' },
-              { id: '2', avatar: '是' },
-              { id: '3', avatar: '头' },
-              { id: '4', avatar: '像' },
-            ],
-          },
-          {
-            id: '11',
-            label: 'primary',
-            content: '孤舟蓑笠翁',
-            items: [
-              { item: 'time', value: '7-16' },
-              { item: 'msg', value: 11 },
-            ],
-            members: [
-              { id: '1', avatar: '头' },
-              { id: '2', avatar: '像' },
-            ],
-          },
-          {
-            id: '12',
-            label: 'warning',
-            content: '独钓寒江雪🐣',
-            items: [
-              { item: 'time', value: '4-9' },
-              { item: 'msg', value: 19 },
-            ],
-          },
-          {
-            id: '13',
-            label: 'danger',
-            content: '独在异乡为异客，每逢佳节倍思亲。',
-            items: [
-              { item: 'time', value: '7-1' },
-              { item: 'msg', value: 11 },
-            ],
-            members: [
-              { id: '1', avatar: '头' },
-              { id: '2', avatar: '像' },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'board2',
-        title: '常见问题',
-        dataList: [
-          {
-            id: '6',
-            label: 'secondary',
-            content: '九月九日忆山东兄弟',
-            items: [
-              { item: 'time', value: '6-9' },
-              { item: 'msg', value: 19 },
-            ],
-          },
-          {
-            id: '7',
-            label: 'secondary',
-            content: '独在异乡为异客，每逢佳节倍思亲。',
-            items: [
-              { item: 'time', value: '7-1' },
-              { item: 'msg', value: 11 },
-            ],
-          },
-          {
-            id: '8',
-            content: '遥知兄弟登高处，遍插茱萸少一人。🐸',
-          },
-          {
-            id: '9',
-            content: '<img width=100% src=""><p>点击编辑看板卡片 👀</p>',
-          },
-        ],
-      },
-    ],
-    itemIcon: {
-      time: 'clock',
-      msg: 'message-square',
-    },
+
     dragOptions: {
       animation: 200,
       group: 'description',
-      disabled: false,
+      disabled: true,
       ghostClass: 'ghost',
     },
     currAdd: { id: '', title: '', content: '' },
@@ -543,6 +358,7 @@ export default {
       s_end_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
     },
     showDrawer: false,
+    showTask: false,
     showTaskModal: false,
     isTagetShow: false,
     isTaskShow: true,
@@ -575,19 +391,37 @@ export default {
 
   created() {
     this.init()
+    console.log('tasklist', this.taskList)
   },
   watch: {
     currStage() {
       this.init()
     },
+    currProjectID() {
+      this.init()
+    },
+    showTask() {
+      this.init()
+    },
+    isAddModalOpened() {
+      this.init()
+    },
+    currListType() {
+      this.init()
+    },
   },
 
   methods: {
+    consoleBoard() {
+      console.log(this.boardList)
+    },
     moment,
     dateformat,
     init() {
       this.getStageList()
       this.getStage()
+      this.getBoardList()
+      this.getMemberList()
     },
     // 获取数据
     async getStage() {
@@ -606,30 +440,14 @@ export default {
 
       return true
     },
-    async getTask() {
-      const pid = this.currProjectID
-      if (this.currListType === 'stage') {
-        const { data: res } = await getStageTaskList(pid)
-        this.$store.commit('task/SET_TASK_LIST', res)
-        console.log('list', res)
-      } else {
-        const type = this.currListType === 'task' ? 1 : 0// type:1-需求，2-bug，迭代就是12
-        const { data: res } = await getTaskList(pid, type)
-        this.$store.commit('task/SET_TASK_LIST', res)
-        console.log('list', res)
-      }
-
-      // this.data = res
-      return true
-    },
 
     addNewBoard() {
-      this.kbList.push({ title: '默认标题', dataList: [] })
+      this.taskList.push({ title: '默认标题', dataList: [] })
     },
 
     addNewItem() {
       if (this.currAdd.content.length > 0) {
-        this.kbList.some((el) => {
+        this.taskList.some((el) => {
           if (el.title === this.currAdd.title) {
             el.dataList.push({ id: '10086', content: this.currAdd.content })
             this.reset()
@@ -650,7 +468,7 @@ export default {
         content: '请点击确定按钮以删除',
         onOk: () => {
           // MOCK: 模拟删除一个看板
-          this.kbList.some((el, i, self) => {
+          this.taskList.some((el, i, self) => {
             if (el.title === boardTitle) {
               self.splice(i, 1)
               return true
@@ -715,18 +533,16 @@ export default {
         // 切换到缺陷看板
         this.isTaskShow = false
       }
+      this.getBoardList()
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
       this.currShow = type
       this.isKbShow = true
       // 点击重新拉取kb数组，重新渲染
     },
     // 切换列表视图
-    showListBoard(type) {
+    showListBoard() {
       // 要在这里getTask，getList，然后拼接
-
-      this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
       this.$store.commit('task/SET_LIST_TYPE', 'stage')
-      this.currShow = type
       this.isKbShow = false
     },
     onOpenFilter(type) {
@@ -821,7 +637,7 @@ export default {
               this.newStage.s_end_time.format('YYYY-MM-DD h:m:s'),
             )
           }
-          this.newStage.pro_id = this.currProjectId
+          this.newStage.pro_id = this.currProjectID
           console.log('要new的信息', this.newStage)
           const res = await newStage(this.newStage)
           console.log('newStage', res)
@@ -855,7 +671,7 @@ export default {
             this.currEditStage.s_end_time.format('YYYY-MM-DD h:m:s'),
           )
         }
-        this.currEditStage.pro_id = this.currProjectId
+        this.currEditStage.pro_id = this.currProjectID
         const res = await updateStage(this.currEditStage)
         // 更新项目失败
         if (res.meta.status !== 200) {
@@ -880,6 +696,17 @@ export default {
     },
 
     // async函数区
+    async getBoardList() {
+      const pid = this.currProjectID
+      const sid = this.currStageId
+      const type = this.isTaskShow === true ? 1 : 0
+      console.log('board type', type)
+      const { data: res } = await getBoardList(pid, sid, type)
+      this.$store.commit('task/SET_BOARD_LIST', res)
+      console.log('boardList', res)
+      // this.boardList = res
+      return true
+    },
     async getTaskDetail(id) {
       const pid = this.currProjectID
 
@@ -902,6 +729,7 @@ export default {
       return true
     },
     async showDetail(id) {
+      console.log('id', id)
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       await this.getTaskDetail(id)
       await this.getDialog(id)
@@ -926,22 +754,29 @@ export default {
       console.log('memberlist', res)
       this.$store.commit('project/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
-    async getTask() {
-      const pid = this.currProjectID
-      if (this.currListType === 'stage') {
-        const { data: res } = await getStageTaskList(pid)
-        this.$store.commit('task/SET_TASK_LIST', res)
-        console.log('list', res)
-      } else {
-        const type = this.currListType === 'task' ? 1 : 0// type:1-需求，2-bug，迭代就是12
-        const { data: res } = await getTaskList(pid, type)
-        this.$store.commit('task/SET_TASK_LIST', res)
-        console.log('list', res)
-      }
-
-      // this.data = res
-      return true
-    },
+    // async getTask() {
+    //   if (this.isTaskShow === true) {
+    //     const params = {
+    //       pid: this.currProjectID,
+    //       sid: this.currStageId,
+    //       type: 1,
+    //     }
+    //     const { data: res } = await getStageTaskList(params)
+    //     this.$store.commit('task/SET_TASK_LIST', res)
+    //     console.log('list', res)
+    //   } else if (this.isTaskShow === false) {
+    //     const params = {
+    //       pid: this.currProjectID,
+    //       sid: this.currStageId,
+    //       type: 0,
+    //     }
+    //     const { data: res } = await getStageTaskList(params)
+    //     this.$store.commit('task/SET_TASK_LIST', res)
+    //     console.log('list', res)
+    //   }
+    //   // this.data = res
+    //   return true
+    // },
     async deleteTask(id) {
       try {
         const res = await deleteTask(id)
@@ -957,12 +792,12 @@ export default {
     onOpenAdd() {
       console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
-      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', this.isTaskShow === 1 ? 'task' : 'bug')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
     },
   },
   computed: {
-    currProjectId() {
+    currProjectID() {
       return this.$store.state.project.currProjectId
     },
     // dragOptions() {
@@ -973,9 +808,9 @@ export default {
     //     ghostClass: 'ghost',
     //   }
     // },
-    listString() {
-      return JSON.stringify(this.kbList, null, 2)
-    },
+    // listString() {
+    //   return JSON.stringify(this.taskList, null, 2)
+    // },
     currStage() {
       return this.$store.state.stage.currStage
     },
@@ -991,8 +826,17 @@ export default {
     isFilterModalOpened() {
       return this.$store.state.filter.isFilterModalOpened
     },
+    isAddModalOpened() {
+      return this.$store.state.add.isAddModalOpened
+    },
     currFilterType() {
       return this.$store.state.filter.currFilterType
+    },
+    taskList() {
+      return this.$store.state.task.taskList
+    },
+    boardList() {
+      return this.$store.state.task.boardList
     },
   },
 }

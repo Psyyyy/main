@@ -1009,12 +1009,9 @@ export default {
         '规划中',
         '实现中',
         '已实现',
-        '测试中',
-        '已测试',
-        '已验收',
-        '已关闭',
+        '已拒绝',
       ],
-      bugStatus: ['新', '处理中', '已解决', '已关闭'],
+      bugStatus: ['新', '处理中', '已解决', '已验收', '已拒绝', '已关闭'],
       form: {
         t_title: '',
         t_content: '',
@@ -1641,15 +1638,13 @@ export default {
           return 'blue'
         case '已实现':
           return 'cyan'
-        case '测试中':
-          return 'orange'
-        case '已测试':
+        case '已拒绝':
           return 'purple'
         case '已验收':
           return 'green'
         case '已关闭':
           return '#626262'
-          // 缺陷
+        // 缺陷
         case '新':
           return 'orange'
         case '处理中':

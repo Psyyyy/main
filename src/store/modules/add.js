@@ -1,13 +1,13 @@
 const state = {
   // barKey: ['1'],
   isAddModalOpened: false,
-  currAddType: '',
+  currAddType: '', // task or bug?
   currEditAdd: {},
   isFromDetail: false,
   stateAdd: {
     task: ['规划中', '实现中', '已实现', '已拒绝'],
     bug: ['新', '处理中', '已解决', '已验收', '已拒绝', '已关闭'],
-    stage: ['规划中', '实现中', '已实现', '测试中', '已验收', '已拒绝'],
+    // stage: ['规划中', '实现中', '已实现', '测试中', '已验收', '已拒绝'],
   },
 }
 

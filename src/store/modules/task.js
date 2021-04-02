@@ -1,5 +1,6 @@
 const state = {
   taskList: [],
+  boardList: [],
   currEditTask: '',
   currEditTaskLevel: '',
   taskDetail: {},
@@ -13,6 +14,9 @@ const state = {
 const mutations = {
   SET_TASK_LIST(state, tasklist) {
     state.taskList = tasklist
+  },
+  SET_BOARD_LIST(state, boardlist) {
+    state.boardList = boardlist
   },
   SET_LIST_TYPE(state, type) {
     state.currListType = type
