@@ -1457,16 +1457,23 @@ export default {
     // 成员
     addMember(value) {
       this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
-      this.form.t_member_ids = this.form.t_member_ids.split(',')
-      let same = 0
-      for (let i = 0; i < this.form.t_member_ids.length; i += 1) {
-        this.form.t_member_ids[i] = parseInt(this.form.t_member_ids[i], 0)
-        if (this.form.t_member_ids[i] === value) {
-          same = 1
+      if (this.form.t_member_ids) {
+        this.form.t_member_ids = this.form.t_member_ids.split(',')
+        let same = 0
+        for (let i = 0; i < this.form.t_member_ids.length; i += 1) {
+          this.form.t_member_ids[i] = parseInt(this.form.t_member_ids[i], 0)
+          if (this.form.t_member_ids[i] === value) {
+            same = 1
+          }
         }
-      }
-      if (!same) {
-        this.form.t_member_ids.push(value)
+        if (!same) {
+          console.log('要发送的member信息', value)
+          this.form.t_member_ids.push(value)
+          console.log('push的member1', this.form)
+        }
+      } else {
+        this.form.t_member_ids = `${value}`
+        console.log('push的member2', this.form)
       }
     },
     async confirmAddMember() {
