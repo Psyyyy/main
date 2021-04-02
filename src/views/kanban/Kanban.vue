@@ -195,8 +195,8 @@
             </draggable>
           </div>
         </div>
-        <div class="kb-col" v-for="(it, i) in board" :key="i">
-          <div  v-if="boardList===null" class="kb-col__title overflow-hidden mb-1 flex items-center">
+        <div class="flex flex-no-wrap flex-shrink-0 inline-block overflow-x-scroll" style="white-space:nowrap" v-if="!boardList">        <div class="kb-col" v-for="(it, i) in board" :key="-i-1">
+          <div  class="kb-col__title overflow-hidden mb-1 flex items-center">
             <span class="kb-col__input"
               ><span class="ml-4"
                 >{{ it.state }} · {{ it.datalist.length }}</span
@@ -207,7 +207,8 @@
             <draggable class="" v-model="it.datalist" v-bind="dragOptions">
             </draggable>
           </div>
-        </div>
+        </div></div>
+
       </div>
     </div>
     <!-- 列表 -->
@@ -413,7 +414,7 @@ export default {
 
   methods: {
     consoleBoard() {
-      console.log('boardlist', this.boardList)
+      console.log('boardlist', !this.boardList)
       console.log('board', this.board)
     },
     moment,
