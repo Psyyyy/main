@@ -9,10 +9,7 @@
         @blur="searchInputText = '搜索任务...'"
       >
         <template #prefix>
-          <feather
-            size="20"
-            type="search"
-          />
+          <feather size="20" type="search" />
         </template>
       </a-input>
     </div>
@@ -21,43 +18,35 @@
       class="todo-list"
       :options="{
         maxScrollbarLength: 160,
-        wheelSpeed: 0.60,
+        wheelSpeed: 0.6,
       }"
     >
-      <flip-list
-        v-if="filterItems.length > 0"
-        style="min-width: 800px;"
-      >
+      <flip-list v-if="filterItems.length > 0" style="min-width: 800px">
         <li
           class="todo-list__item"
-          v-for="(todo) in filterItems"
-          :key="todo.id"
+          v-for="(todo,index) in filterItems"
+          :key="index"
           :class="{ 'todo-list__item-active': todo.id === currEditItem.id }"
-          @click="onOpenDrawer(todo)"
+          @click="showDetail(todo.id)"
         >
-          <a-checkbox
-            class="mr-4"
-            v-model="todo.done"
-            @click.stop
-          />
-          <div class="flex-1 truncate">{{ todo.title }}</div>
-          <div class="ml-auto flex items-center flex-wrap">
+          <a-checkbox class="mr-4" v-model="todo.is_done" @click.stop />
+                    <div class="mr-auto flex items-center flex-wrap">
             <div class="flex-1 flex items-center select-none">
-              <div
-                class="ml-2 px-2 py-1 rounded-lg text-sm"
-                v-for="(it) in todo.tag"
-                :key="it"
-                :class="[tags[it].color, `bg-${tags[it].color}-light`]"
-              >{{ tags[it].text }}</div>
+               <a-tag
+                  :color="
+                    todo.t_rank === 3 ? '#ff5b5c' :todo.t_rank === 2 ? '#fdac41' : '#28c175'
+                  "
+                >
+                 <span class="text-sm"> {{ todo.t_rank === 3 ? "非常紧急" : todo.t_rank === 2 ? "紧急" : "普通" }}</span>
+                </a-tag>
             </div>
-            <feather
-              class="ml-2 transition"
-              size="20"
-              type="star"
-              :class="todo.star ? 'warning' : 'text-gray-500'"
-              @click.stop="todo.star = !todo.star"
-            />
           </div>
+          <div class="flex-1 truncate todoItem" :class="{ done: todo.is_done }">{{ todo.t_title }}
+            <span class="ml-4 text-base" style="color:#b7b8bb">{{todo.t_content}}</span>
+            </div>
+            <div class="ml-auto flex items-center flex-wrap" style="color:#b7b8bb">
+              截止日期：{{todo.end_time|dateFormat}}
+            </div>
         </li>
       </flip-list>
       <a-empty
@@ -65,24 +54,36 @@
         class="h-full flex flex-col justify-center items-center"
       />
     </perfect-scrollbar>
+    <task
+      :pop-visible="showTask"
+      detail="detailTaskId"
+      @close="showTask = false"
+    />
   </div>
+
 </template>
 
 <script>
 import FlipList from '@/components/animation/FlipList.vue'
+import { getUserTaskList, getTaskDetail } from '@/api/task'
+import { getComment } from '@/api/comment'
+import { getDialog } from '@/api/dialog'
+// import STable from '../../components/Table'
+import { getMemberList } from '@/api/member'
+import Task from '@/views/task/Task.vue'
 
 export default {
   name: 'TodoList',
 
-  components: { FlipList },
+  components: { FlipList, Task },
 
   data: () => ({
+    showTask: false,
     searchInputText: '搜索任务...',
     tags: {
-      1: { text: '前端开发', color: 'primary' },
-      2: { text: '后端开发', color: 'success' },
-      3: { text: 'UI 设计', color: 'warning' },
-      4: { text: '架构设计', color: 'danger' },
+      1: { text: '非常紧急', color: 'danger' },
+      2: { text: '紧急', color: 'warning' },
+      3: { text: '普通', color: 'success' },
     },
   }),
 
@@ -90,7 +91,9 @@ export default {
     filterItems() {
       return this.$store.getters['todo/filterItems']
     },
-
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
     currEditItem() {
       return this.$store.state.todo.currEditTodo
     },
@@ -98,16 +101,79 @@ export default {
     isDrawerOpened() {
       return this.$store.state.todo.isTodoDrawerOpened
     },
+    currStage() {
+      return this.$store.state.stage.currStage
+    },
+    currStageId() {
+      return this.$store.state.stage.currStageId
+    },
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
   },
-
+  watch: {
+    showTask() {
+      this.getTask()
+    },
+  },
+  created() {
+    this.getTask()
+  },
   methods: {
-    onOpenDrawer(todoItem) {
-      if (todoItem.id !== this.currEditItem.id) {
-        this.$store.commit('todo/SET_CURR_EDIT_TODO', todoItem)
-        this.$store.commit('todo/SET_TODO_DRAWER_STATUS', true)
-      } else {
-        this.$store.commit('todo/SET_TODO_DRAWER_STATUS', !this.isDrawerOpened)
+    async getTask() {
+      const uid = this.currUserID
+      const { data: res } = await getUserTaskList(uid)
+      console.log('todo', res)
+      this.$store.commit('todo/SET_TODO_LIST', res)
+      console.log('todo Task', res)
+      return true
+    },
+    async showDetail(id) {
+      console.log('id', id)
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      await this.getTaskDetail(id)
+      await this.getDialog(id)
+      await this.getComment(id)
+      this.showTask = true
+      // this.detailTaskId = id
+    },
+    async getComment(id) {
+      const params = {
+        source: 'task',
+        sid: id,
       }
+      const { data: res } = await getComment(params)
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_COMMENT', res)
+      return true
+    },
+
+    async getMemberList() {
+      const id = this.currProjectID
+      const { data: res } = await getMemberList(id)
+      console.log('memberlist', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
+    },
+    async getTaskDetail(id) {
+      const pid = this.currProjectID
+
+      const { data: res } = await getTaskDetail(pid, id)
+      this.$store.commit('task/SET_TASK_DETAIL', res)
+      if (res.detail.t_level !== 0) {
+        console.log('当前任务的father', res)
+        this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
+      }
+      return true
+    },
+    async getDialog(id) {
+      const obj = {
+        pid: this.currProjectID,
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getDialog(obj)
+      this.$store.commit('task/SET_TASK_DIALOG', res)
+      return true
     },
   },
 }
@@ -130,9 +196,11 @@ export default {
 .todo-list {
   @apply h-full overflow-hidden;
   height: calc(100% - 58px);
+
   &__item {
     @apply px-6 py-5 flex items-center cursor-pointer;
     transition: $transition;
+     box-shadow: 0 2px 2px -1px rgba($secondary, 0.1);
     &:hover {
       box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
       transform: translateY(-3px);
@@ -141,5 +209,17 @@ export default {
   &__item-active {
     background: rgba($primary, 0.05);
   }
+}
+
+.todoItem {
+  &.done {
+    color: #b7b8bb;
+    text-decoration: line-through;
+  }
+   display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 </style>

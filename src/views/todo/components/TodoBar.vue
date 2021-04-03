@@ -21,7 +21,7 @@
           disabled
           class="m-0 bg-white cursor-default"
         >
-          查看任务
+          任务状态
         </a-menu-item>
         <a-menu-item
           v-for="({ id, label, icon }) in filters"
@@ -40,7 +40,7 @@
           disabled
           class="mt-6 mb-0 bg-white cursor-default"
         >
-          任务标签
+          任务优先级
         </a-menu-item>
         <a-menu-item
           v-for="({ id, label, color }) in tags"
@@ -66,15 +66,15 @@ export default {
   data: () => ({
     filters: [
       { id: '1', label: '所有任务', icon: 'menu' },
-      { id: '2', label: '已完成', icon: 'check' },
-      { id: '3', label: '已加星标', icon: 'star' },
-      { id: '4', label: '回收站', icon: 'trash' },
+      { id: '2', label: '规划中', icon: 'clipboard' },
+      { id: '3', label: '实现中', icon: 'loader' },
+      { id: '4', label: '已实现', icon: 'code' },
+      { id: '5', label: '已完成', icon: 'check-square' },
     ],
     tags: [
-      { id: '5', label: '前端开发', color: 'primary' },
-      { id: '6', label: '后端开发', color: 'success' },
-      { id: '7', label: 'UI 设计', color: 'warning' },
-      { id: '8', label: '架构设计', color: 'danger' },
+      { id: '6', label: '非常紧急', color: 'danger' },
+      { id: '7', label: '紧急', color: 'warning' },
+      { id: '8', label: '普通', color: 'success' },
     ],
   }),
 
@@ -103,13 +103,4 @@ export default {
 .todo-bar-menu {
   border: none;
 }
-// .open-btn{
-//  &.todo-close {
-//     margin-left: 190px !important;
-//   }
-// &.todo-open {
-//     margin-left: 162px !important;
-//   }
-//  z-index:999;
-// }
 </style>

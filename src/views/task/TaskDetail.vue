@@ -1054,6 +1054,7 @@ export default {
 
       // 备注
       newContent: '',
+      updateFinish: false,
     }
   },
   computed: {
@@ -1129,6 +1130,9 @@ export default {
     //   //     this.init();
     //   // }
     // },
+    updateFinisih() {
+      this.getTaskDetail()
+    },
     currEditTask() {
       this.init()
     },
@@ -1280,6 +1284,7 @@ export default {
 
     // 更新操作
     async editTaskItem(item, content) {
+      this.updateFinish = false
       if (item === 'title') {
         this.form.t_title = content
       } else if (item === 'state') {
@@ -1300,12 +1305,13 @@ export default {
       // 然后直接更新
       console.log('editTask的更新信息', this.form)
       const res = await updateTask(this.form)
-      this.resetForm()
       // 更新项目失败
       if (res.meta.status !== 200) {
         return this.$message.error('更新失败')
       }
       this.$message.success('更新成功！')
+      this.resetForm()
+      this.updateFinish = true
       this.getTaskDetail()
       return true
     },
