@@ -44,3 +44,10 @@ export function resetPassword(data) {
     data,
   })
 }
+export function updateUser(data) {
+  return request({
+    url: '/user/update',
+    method: 'put',
+    data,
+  })
+}

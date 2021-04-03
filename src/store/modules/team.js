@@ -1,5 +1,6 @@
 const state = {
   currProjectMemberList: [],
+  otherMemberList: [],
   barKey: ['1'],
   isTeamDrawerOpened: false,
   currEditMember: {},
@@ -30,6 +31,9 @@ const mutations = {
   },
   SET_CURR_PROJECT_MEMBER_LIST(state, list) {
     state.currProjectMemberList = list
+  },
+  SET_OTHER_MEMBER_LIST(state, list) {
+    state.otherMemberList = list
   },
 }
 const actions = {}

@@ -27,31 +27,23 @@
         :data-source="filterItems"
       >
         <a-list-item class="member-item" slot="renderItem" slot-scope="item">
-          <a class="ml-1 mr-2" slot="actions">
-            <a-tooltip placement="top">
-              <template slot="title">
-                编辑权限
-              </template>
-              <feather size="20" type="edit" />
-            </a-tooltip>
-          </a>
-          <a class="ml-1 mr-2" slot="actions">
-            <a-tooltip placement="top">
+          <a class="ml-1 mr-2 cursor-pointer" slot="actions">
+            <a-tooltip placement="bottom">
               <template slot="title">
                 移出项目
               </template>
-              <a-popconfirm placement="topRight" title="确定将该成员移出项目？">
+              <a-popconfirm placement="topRight" title="确定将该成员移出项目？"  @confirm="updateUser('project',null,item.uid)">
                 <feather size="20" type="user-minus" />
                 <!-- <a-button type="danger" icon="delete" size="small" /> -->
               </a-popconfirm>
             </a-tooltip>
           </a>
           <a class="ml-1 mr-2" slot="actions">
-            <a-tooltip placement="top">
+            <a-tooltip placement="bottom">
               <template slot="title">
-                停用账号
+                {{item.is_active===1?'停用账号':'重新启用'}}
               </template>
-              <a-popconfirm placement="topRight" title="确定停用该成员帐号？">
+              <a-popconfirm placement="topRight" :title="item.is_active===1?'确定停用该成员帐号？':'确定重新启用该成员帐号？'"  @confirm="updateUser('active',!item.is_active,item.uid)">
                 <feather size="20" type="slash" />
                 <!-- <a-button type="danger" icon="delete" size="small" /> -->
               </a-popconfirm>
@@ -70,15 +62,25 @@
           </a-list-item-meta>
           <div>
             <!-- 角色标签 -->
-            <div
-              class="ml-2 px-2 py-1 rounded-lg text-sm"
-              :class="[
-                item.role === 'admin' ? 'warning' : 'primary',
-                `bg-${item.role === 'admin' ? 'warning' : 'primary'}-light`
-              ]"
-            >
-              {{ item.role === 'admin' ? "管理员" : "普通成员" }}
-            </div>
+            <a-dropdown>
+              <div
+                class="pr-2 px-2 py-1 rounded-lg text-sm cursor-pointer"
+                :class="[
+                  item.role === 'admin' ? 'warning' : 'primary',
+                  `bg-${item.role === 'admin' ? 'warning' : 'primary'}-light`
+                ]"
+              >
+                {{ item.role === "admin" ? "管理员" : "普通成员" }}
+              </div>
+              <a-menu slot="overlay">
+                <a-menu-item key="1" @click="updateUser('role', 'admin', item.uid)">
+                  <span>管理员</span>
+                </a-menu-item>
+                <a-menu-item key="2"  @click="updateUser('role', 'normal', item.uid)">
+                  <span>普通成员</span>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
           </div>
         </a-list-item>
       </a-list>
@@ -93,7 +95,7 @@
 <script>
 // import FlipList from '@/components/animation/FlipList.vue'
 import { getMemberList, deleteMember } from '@/api/member'
-import { getUserInfo } from '@/api/user'
+import { getUserInfo, updateUser } from '@/api/user'
 import { getProjectList } from '@/api/project'
 import { getUserTaskList } from '@/api/task'
 
@@ -104,6 +106,13 @@ export default {
 
   data: () => ({
     searchInputText: '搜索成员...',
+    memberInfo: {
+      role: '',
+      is_active: 1,
+      uid: '',
+      pid: '',
+      option: '',
+    },
   }),
 
   computed: {
@@ -138,6 +147,7 @@ export default {
       this.getProject(uid)
       this.getTask(uid)
     },
+    // 操作UI
     onOpenDrawer(member) {
       if (!this.currEditMember.id) {
         this.initMember(member.uid)
@@ -152,6 +162,7 @@ export default {
       console.log('open', this.isDrawerOpened)
     },
 
+    // 拉取数据
     async getMemberList() {
       const id = this.currProjectID
       const { data: res } = await getMemberList(id)
@@ -175,6 +186,34 @@ export default {
       // console.log('project', res)
       this.$store.commit('team/SET_MEMBER_TASK', res)
       console.log('member Task', res)
+      return true
+    },
+    async updateUser(item, content, uid) {
+      this.memberInfo.uid = uid
+      if (item === 'role') {
+        this.memberInfo.role = content
+      } else if (item === 'active') {
+        this.memberInfo.is_active = content === true ? 1 : 0
+      } else if (item === 'project') {
+        this.memberInfo.pid = this.currProjectID
+        this.memberInfo.option = 'del'
+      }
+      // 然后直接更新
+      console.log('editTask的更新信息', this.memberInfo)
+      const res = await updateUser(this.memberInfo)
+      // 更新项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功！')
+      this.memberInfo = {
+        role: '',
+        is_active: true,
+        uid: '',
+        pid: '',
+        options: '',
+      }
+      this.init()
       return true
     },
   },
@@ -214,12 +253,11 @@ export default {
   font-size: 15px;
   color: rgb(181, 186, 192);
 }
-.member-item{
-   transition: $transition;
- &:hover {
-
-          box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
-      transform: translateY(-3px);
-        }
+.member-item {
+  transition: $transition;
+  &:hover {
+    box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+    transform: translateY(-3px);
+  }
 }
 </style>

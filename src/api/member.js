@@ -11,6 +11,13 @@ export function getMemberList(pid) {
   })
 }
 
+export function getOtherMemberList(pid) {
+  return request({
+    url: `/user/others/${pid}`,
+    method: 'get',
+  })
+}
+
 export function deleteMember(data) {
   return request({
     url: '/project',

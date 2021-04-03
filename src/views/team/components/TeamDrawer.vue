@@ -29,22 +29,8 @@
         src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
       />
       <div class="ml-4 mt-1 ">
-        <div class="text-2xl">{{ currEditMember.name }}</div>
+        <div class="text-2xl">{{ currEditMember.name }} <a-tag>{{currEditMember.role}}</a-tag></div>
         <div style="color:rgb(181, 186, 192);">{{ currEditMember.email }}</div>
-      </div>
-      <div class="ml-24 mt-4">
-        <a-select
-          :default-value="currEditMember.role === 'admin' ? '管理员' : '普通成员'"
-          style="width: 120px"
-          @change="changeRole"
-        >
-          <a-select-option value="manager">
-            管理员
-          </a-select-option>
-          <a-select-option value="normal">
-            普通成员
-          </a-select-option>
-        </a-select>
       </div>
     </div>
     <div>

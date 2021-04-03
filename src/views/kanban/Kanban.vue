@@ -86,14 +86,14 @@
             <!-- <a-button type="primary" class="mr-4" v-if="!isKbShow" @click="onOpenFilter('task')"
               >筛选</a-button
             > -->
-            <a-radio-group default-value="kanban">
-              <a-radio-button value="kanban" @click="showKbBoard"
+            <a-radio-group default-value="kanban" @change="onChange">
+              <a-radio-button value="kanban"
                 >看板</a-radio-button
               >
-              <a-radio-button value="list" @click="showListBoard"
+              <a-radio-button value="list"
                 >列表</a-radio-button
               >
-              <a-radio-button value="board" @click="consoleBoard"
+              <a-radio-button value="board"
                 >仪表盘</a-radio-button
               >
               <a-radio-button value="member">成员</a-radio-button>
@@ -215,7 +215,9 @@
     <div v-if="!isKbShow" class="mt-10">
       <task-list></task-list>
     </div>
-
+       <div v-if="showMember" class="mt-10">
+      <member></member>
+    </div>
     <filter-modal />
     <add-modal />
     <task
@@ -335,6 +337,7 @@ import { getTimestamp, dateformat } from '@/utils/util'
 import __clonedeep from 'lodash.clonedeep'
 import Task from '@/views/task/Task.vue'
 import FilterModal from './components/FilterModal.vue'
+import Member from './components/MemberRes.vue'
 
 import TaskList from '../task/TaskList.vue'
 
@@ -346,6 +349,7 @@ export default {
     draggable,
     FilterModal,
     Task,
+    Member,
     AddModal,
   },
 
@@ -368,6 +372,7 @@ export default {
       s_end_time: [{ required: true, message: '请选择日期', trigger: 'change' }],
     },
     showTask: false,
+    showMember: false,
     isTaskShow: true,
     isKbShow: true,
     isEditStageVisible: false,
@@ -402,6 +407,9 @@ export default {
       this.init()
     },
     showTask() {
+      this.init()
+    },
+    showMember() {
       this.init()
     },
     isAddModalOpened() {
@@ -529,6 +537,26 @@ export default {
         ]),
         onOk() {},
       })
+    },
+    onChange({ target }) {
+      switch (target.value) {
+        case 'kanban':
+          this.showKbBoard()
+          break
+        case 'list':
+          this.showListBoard()
+          break
+        case 'board':
+          this.consoleBoard()
+          break
+        case 'member':
+          this.showMember = true
+          break
+        case 'progress':
+        default:
+          return true
+      }
+      return false
     },
     // 切换看板视图
     showKbBoard(type) {

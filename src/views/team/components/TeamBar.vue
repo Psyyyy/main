@@ -56,12 +56,10 @@
       :visible="isAddMemberVisible"
       title="添加成员"
       @cancel="closeAddModal"
+      @ok="confirmAddMember"
     >
       <div class="ml-4">
-        <a-tabs
-
-          default-active-key="1"
-        >
+        <a-tabs default-active-key="1">
           <a-tab-pane key="1" tab="通过账号邀请">
             <div>
               <a-select
@@ -70,24 +68,21 @@
                 option-filter-prop="value"
                 style="width: 95%"
                 :filter-option="filterOption"
-
+                 @change="addMember"
               >
                 <a-select-option
-                  v-for="(item, index) in teamList"
+                  v-for="(item, index) in otherMemberList"
                   :key="index"
-                  :value="item.title"
-
+                  :value="item.uid"
                 >
+                  <a-avatar
+                    class="ml-1 mb-2 "
+                    :size="20"
+                    slot="avatar"
+                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                  />
 
-                    <a-avatar
-                      class="ml-1 mb-2 "
-                      :size="20"
-                      slot="avatar"
-                      src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    />
-
-                        {{ item.title }}
-
+                  {{ item.name }}
                 </a-select-option>
               </a-select>
             </div>
@@ -102,6 +97,9 @@
 </template>
 
 <script>
+import { getOtherMemberList, getMemberList } from '@/api/member'
+import { updateUser } from '@/api/user'
+
 export default {
   name: 'TeamBar',
 
@@ -115,6 +113,7 @@ export default {
       { id: '4', label: '普通成员', color: 'primary' },
     ],
     isAddMemberVisible: false,
+    addMemnberId: '',
   }),
 
   computed: {
@@ -124,8 +123,19 @@ export default {
     isSideMenuOpened() {
       return this.$store.state.isSideMenuOpened
     },
+    memberList() {
+      return this.$store.state.team.currProjectMemberList
+    },
+    otherMemberList() {
+      return this.$store.state.team.otherMemberList
+    },
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
   },
-
+  created() {
+    this.getAllUser()
+  },
   methods: {
     onOpenDrawer() {
       this.$store.commit('team/SET_TEAM_DRAWER_STATUS', true)
@@ -139,10 +149,44 @@ export default {
     },
     filterOption(input, option) {
       return (
-        option.componentOptions.children[1].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        option.componentOptions.children[1].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
       )
     },
-
+    async getAllUser() {
+      const id = this.currProjectID
+      const { data: res } = await getOtherMemberList(id)
+      // console.log('memberlist', res)
+      this.$store.commit('team/SET_OTHER_MEMBER_LIST', res)
+    },
+    addMember(value) {
+      this.addMemnberId = value
+    },
+    async confirmAddMember() {
+      // 然后直接更新
+      const params = {
+        uid: this.addMemnberId,
+        pid: this.currProjectID,
+        option: 'add',
+      }
+      const res = await updateUser(params)
+      this.isAddMemberVisible = false
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('添加成员失败')
+      }
+      this.$message.success('添加成员成功！')
+      this.getMemberList()
+      this.getAllUser(params.pid)
+      return true
+    },
+    async getMemberList() {
+      const id = this.currProjectID
+      const { data: res } = await getMemberList(id)
+      // console.log('memberlist', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
+    },
   },
 }
 </script>
