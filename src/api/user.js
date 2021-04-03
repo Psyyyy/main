@@ -39,8 +39,8 @@ export function getUserInfo(id) {
 
 export function resetPassword(data) {
   return request({
-    url: '/user/resetPassword',
-    method: 'post',
+    url: '/user/reset',
+    method: 'put',
     data,
   })
 }

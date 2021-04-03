@@ -92,6 +92,14 @@ export default {
     }
   },
 
+  computed: {
+    info() {
+      return this.$store.state.user.info
+    },
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
+  },
   methods: {
     handleForm(e) {
       e.preventDefault()
@@ -100,20 +108,30 @@ export default {
         if (!error) {
           this.loading = true
           try {
-            const { oldPwd: oldPassword, newPwd: newPassword } = values
-            if (oldPassword && newPassword) {
-              await resetPassword({
-                oldPassword, newPassword,
-              })
+            const { oldPwd: oldPasswd, newPwd: newPasswd } = values
+            if (oldPasswd && newPasswd) {
+              const params = {
+                uid: this.currUserID,
+                name: this.info.name,
+                oldPasswd,
+                newPasswd,
+              }
+              const res = await resetPassword(params)
+              console.log(res)
+              if (res.meta.status !== 200) {
+                return this.$message.error('更新失败')
+              }
+              this.$message.success('密码修改成功,请重新登录')
               removeToken()
               this.$router.replace('/login')
             } else {
-              this.$message.error('密码加密失败')
+              this.$message.error('密码修改失败')
             }
           } finally {
             this.loading = false
           }
         }
+        return true
       })
     },
   },

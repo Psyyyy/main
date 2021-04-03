@@ -3,7 +3,7 @@
     <div>
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
         <h3 class="section-card__title">成员任务跟踪</h3>
-                 <a-button class="ml-1 w-30 flex " type="primary" @click="onOpenAdd()">
+                 <a-button class="ml-1 w-30 flex " type="primary" @click="onOpenAdd()" >
             <feather class="mr-1 " size="20" type="plus" />
             新增
           </a-button>
@@ -12,7 +12,7 @@
       </div>
       <div>
         <a-card :bordered="false">
-          <a-table :columns="columns" :data-source="data" bordered>
+          <a-table :columns="columns" :data-source="data" bordered  :scroll="{ x: 1200, y: 400 }" :pagination="false">
             <template slot="name" slot-scope="text">
                                          <div style="text-align:center;margin:auto">
                                               <a-avatar
@@ -473,9 +473,8 @@ export default {
 .member {
   @apply relative w-full bg-white rounded-lg overflow-hidden;
   margin-top: -30px;
-  height: 600px;
-  min-height: 600px;
-  overflow-y: scroll;
+  height: 580px;
+  min-height:580px;
 }
 .kb {
   &-col {

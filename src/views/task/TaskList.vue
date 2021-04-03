@@ -59,7 +59,7 @@
           <a-table
             ref="table"
             size="middle"
-            :scroll="{ y: 490 }"
+            :scroll="{ y: 450 }"
             :row-key="record => (record.id+'')"
             :pagination="false"
             :default-expand-all-rows="false"
@@ -725,7 +725,8 @@ export default {
 
 <style lang="scss" scoped>
 .table-operator {
-  margin-bottom: 18px;
+  margin-bottom: 58px;
+  padding-bottom:50px;
 }
 button {
   margin-right: 8px;
@@ -760,7 +761,7 @@ button {
 .todo-app {
   @apply relative w-full flex bg-white rounded-lg overflow-hidden;
   margin-top: -30px;
-  height: 600px;
-  min-height: 600px;
+  height: 590px;
+  min-height: 590px;
 }
 </style>

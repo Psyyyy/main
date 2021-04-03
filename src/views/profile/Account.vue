@@ -8,11 +8,6 @@
       <div class="ml-4">
         <div class="mb-2 text-xl">{{ info.name }}</div>
         <div>
-          <a-button
-            class="text-xs"
-            type="primary"
-            @click="avatarUploadVisible = true"
-          >更改头像</a-button>
           <a-button class="ml-1 text-xs">重置</a-button>
         </div>
       </div>
@@ -26,89 +21,62 @@
       >
         <a-form-item
           class="account-form__item"
-          v-for="({ label, decorator, size='large', placeholder }) in formItems"
-          :key="decorator[0]"
-          :label="label"
+          :key="1"
+          label="昵称"
         >
           <a-input
             class="login-input"
-            :size="size"
-            :placeholder="placeholder"
-            v-decorator="decorator"
+            placeholder=""
+            v-model="form.name"
+          >
+          </a-input>
+        </a-form-item>
+                <a-form-item
+          class="account-form__item"
+          :key="2"
+          label="电话"
+        >
+          <a-input
+            class="login-input"
+            placeholder=""
+            v-model="form.mobile"
+          >
+          </a-input>
+        </a-form-item>
+                <a-form-item
+          class="account-form__item"
+          :key="3"
+          label="邮箱"
+        >
+          <a-input
+            class="login-input"
+            placeholder=""
+            v-model="form.email"
+          >
+          </a-input>
+        </a-form-item>
+                <a-form-item
+          class="account-form__item"
+          :key="4"
+          label="职位"
+        >
+          <a-input
+            class="login-input"
+            placeholder=""
+            v-model="form.job"
           >
           </a-input>
         </a-form-item>
       </a-form>
     </div>
-
-    <!-- <div>
-      <table class="permission-table">
-        <thead>
-          <tr>
-            <th>功能模块权限</th>
-            <th>Read</th>
-            <th>Write</th>
-            <th>Create</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>用户 [Users]</td>
-            <td>
-              <a-checkbox checked />
-            </td>
-            <td>
-              <a-checkbox />
-            </td>
-            <td>
-              <a-checkbox />
-            </td>
-            <td>
-              <a-checkbox checked />
-            </td>
-          </tr>
-          <tr>
-            <td>文章 [Articles]</td>
-            <td>
-              <a-checkbox />
-            </td>
-            <td>
-              <a-checkbox checked />
-            </td>
-            <td>
-              <a-checkbox />
-            </td>
-            <td>
-              <a-checkbox />
-            </td>
-          </tr>
-          <tr>
-            <td>看板 [Board]</td>
-            <td>
-              <a-checkbox />
-            </td>
-            <td>
-              <a-checkbox />
-            </td>
-            <td>
-              <a-checkbox checked />
-            </td>
-            <td>
-              <a-checkbox />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div> -->
-
     <div class="mt-6 flex justify-end">
       <a-button
         class="mr-4"
         size="large"
         type="primary"
+        @click="updateUser"
       >保存更改</a-button>
-      <a-button size="large">取消</a-button>
+      <a-button size="large" @click="resetForm">取消</a-button>
     </div>
 
     <a-modal
@@ -125,6 +93,8 @@
 
 <script>
 import AvatarUpload from '@comp/AvatarUpload.vue'
+import _clonedeep from 'lodash.clonedeep'
+import { getUserInfo, updateUser } from '@/api/user'
 
 export default {
   name: 'Account',
@@ -133,29 +103,7 @@ export default {
 
   data() {
     return {
-      form: this.$form.createForm(this),
-      formItems: [
-        {
-          label: '账号',
-          placeholder: '请输入账号',
-          decorator: ['username', { initialValue: 'admin@magic.com' }],
-        },
-        {
-          label: '昵称',
-          placeholder: '请输入昵称',
-          decorator: ['name', { initialValue: '皮埃斯歪' }],
-        },
-        {
-          label: '邮箱',
-          placeholder: '请输入邮箱',
-          decorator: ['email', { initialValue: 'czc12580520@gmail.com' }],
-        },
-        {
-          label: '角色',
-          placeholder: '请输入角色',
-          decorator: ['role', { initialValue: '销售经理' }],
-        },
-      ],
+      form: {},
       avatarUploadVisible: false,
     }
   },
@@ -163,6 +111,38 @@ export default {
   computed: {
     info() {
       return this.$store.state.user.info
+    },
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
+  },
+  created() {
+    this.init()
+  },
+  methods: {
+    async init() {
+      await this.getUserInfo(this.currUserID)
+      this.form = _clonedeep(this.info)
+      console.log('form', this.form)
+    },
+    resetForm() {
+      this.form = _clonedeep(this.info)
+    },
+    async updateUser() {
+      console.log('update', this.form)
+      this.form.role = this.form.role === '管理员' ? 'admin' : 'normal'
+      const res = await updateUser(this.form)
+      // 更新项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功！')
+      this.init()
+      return true
+    },
+    async getUserInfo(uid) {
+      const { data: res } = await getUserInfo(uid)
+      this.$store.commit('user/SET_USER_INFO', res.info)
     },
   },
 }

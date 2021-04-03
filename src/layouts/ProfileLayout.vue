@@ -5,7 +5,6 @@
         <div
           v-for="({ name, text, icon }) in [
           { text: '账号设置', name: 'Account', icon: 'settings' },
-          { text: '个人信息', name: 'Information', icon: 'user' },
           { text: '修改密码', name: 'Security', icon: 'lock' },
         ]"
           :key="name"
@@ -34,6 +33,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'ProflieLayout',
 

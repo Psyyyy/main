@@ -92,20 +92,6 @@ export const asyncRoutes = [
       },
     ],
   },
-  // // 需求
-  // {
-  //   path: '',
-  //   component: MainLayout,
-  //   single: true,
-  //   children: [
-  //     {
-  //       path: '/task',
-  //       name: 'Task',
-  //       component: () => import('@/views/task/TaskDetail.vue'),
-  //       meta: { title: '需求详情', icon: 'check-circle' },
-  //     },
-  //   ],
-  // },
 
   // 看板
   {
@@ -202,12 +188,6 @@ export const asyncRoutes = [
             name: 'Account',
             component: () => import('@/views/profile/Account.vue'),
             meta: { permission: ['normal', 'admin'], title: '账号设置', breadcrumb: ['个人中心', '账号设置'] },
-          },
-          {
-            path: 'information',
-            name: 'Information',
-            component: () => import('@/views/profile/Information.vue'),
-            meta: { permission: ['normal', 'admin'], title: '个人信息', breadcrumb: ['个人中心', '个人信息'] },
           },
           {
             path: 'security',
