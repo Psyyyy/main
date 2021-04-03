@@ -152,9 +152,9 @@ export default {
 
   methods: {
     async getProject() {
-      const { data: res } = await getProjectList()
-      // console.log('project', res)
-      this.projectList = res.projectlist
+      const uid = window.sessionStorage.getItem('currUserID')
+      const { data: res } = await getProjectList(uid)
+      this.projectList = res
       return true
     },
     async logOut() {
@@ -186,7 +186,7 @@ export default {
     },
     async changeProjectTo(id, name) {
       const { data: res } = await getMemberList(id)
-      console.log('appheader', res)
+
       this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
       this.$store.commit('project/SET_CURR_PROJECT_ID', id)
       this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)

@@ -29,6 +29,12 @@ export function getBoardList(pid, sid, type) { // 迭代用的
     method: 'get',
   })
 }
+export function getMemberBoard(pid, sid) { // 迭代用的
+  return request({
+    url: `/task/board/member?pid=${pid}&sid=${sid}`,
+    method: 'get',
+  })
+}
 
 export function getTaskDetail(pid, tid) { // 有tid的时候就不用区分
   return request({

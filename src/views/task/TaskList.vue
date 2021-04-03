@@ -763,45 +763,4 @@ button {
   height: 600px;
   min-height: 600px;
 }
-.table-page-search-wrapper {
-  .ant-form-inline {
-    .ant-form-item {
-      display: flex;
-      margin-right: 0;
-
-      .ant-form-item-control-wrapper {
-        flex: 1 1;
-        display: inline-block;
-        vertical-align: middle;
-      }
-
-      > .ant-form-item-label {
-        line-height: 32px;
-        padding-right: 8px;
-        width: auto;
-      }
-      .ant-form-item-control {
-        height: 32px;
-        line-height: 32px;
-      }
-    }
-  }
-
-  .table-page-search-submitButtons {
-    display: block;
-    white-space: nowrap;
-  }
-}
-.menu-title {
-  padding-top: 10px;
-  padding-left: 10px;
-  font-size: 16px;
-  color: #3f4a56;
-  font-weight: normal;
-  .span {
-    margin-left: 0;
-    font-size: 16px;
-    color: #3f4a56;
-  }
-}
 </style>

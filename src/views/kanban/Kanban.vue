@@ -212,11 +212,12 @@
       </div>
     </div>
     <!-- 列表 -->
-    <div v-if="!isKbShow" class="mt-10">
+    <div v-if="showList" class="mt-10">
       <task-list></task-list>
     </div>
        <div v-if="showMember" class="mt-10">
-      <member></member>
+           <member-list></member-list>
+
     </div>
     <filter-modal />
     <add-modal />
@@ -337,7 +338,7 @@ import { getTimestamp, dateformat } from '@/utils/util'
 import __clonedeep from 'lodash.clonedeep'
 import Task from '@/views/task/Task.vue'
 import FilterModal from './components/FilterModal.vue'
-import Member from './components/MemberRes.vue'
+import MemberList from './components/MemberRes.vue'
 
 import TaskList from '../task/TaskList.vue'
 
@@ -349,7 +350,7 @@ export default {
     draggable,
     FilterModal,
     Task,
-    Member,
+    MemberList,
     AddModal,
   },
 
@@ -373,6 +374,7 @@ export default {
     },
     showTask: false,
     showMember: false,
+    showList: false,
     isTaskShow: true,
     isKbShow: true,
     isEditStageVisible: false,
@@ -539,11 +541,16 @@ export default {
       })
     },
     onChange({ target }) {
+      this.isKbShow = false
+      this.showList = false
+      this.showMember = false
       switch (target.value) {
         case 'kanban':
+          this.isKbShow = true
           this.showKbBoard()
           break
         case 'list':
+          this.showList = true
           this.showListBoard()
           break
         case 'board':
@@ -551,6 +558,7 @@ export default {
           break
         case 'member':
           this.showMember = true
+          console.log('啊啊啊啊', this.showMember)
           break
         case 'progress':
         default:
@@ -579,14 +587,13 @@ export default {
       this.getBoardList()
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
       this.currShow = type
-      this.isKbShow = true
+      // this.isKbShow = true
       // 点击重新拉取kb数组，重新渲染
     },
     // 切换列表视图
     showListBoard() {
       // 要在这里getTask，getList，然后拼接
       this.$store.commit('task/SET_LIST_TYPE', 'stage')
-      this.isKbShow = false
     },
     onOpenFilter(type) {
       this.$store.commit('filter/SET_FILTER_MODAL_TYPE', type)
@@ -746,7 +753,7 @@ export default {
       const pid = this.currProjectID
       const sid = this.currStageId
       const type = this.isTaskShow === true ? 1 : 0
-      console.log('board type', type)
+      console.log('board type', pid)
       const { data: res } = await getBoardList(pid, sid, type)
       this.$store.commit('task/SET_BOARD_LIST', res)
       console.log('boardList', res)
