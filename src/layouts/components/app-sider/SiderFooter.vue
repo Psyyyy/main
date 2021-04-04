@@ -52,32 +52,33 @@
               }"
           >
             <li
-              class="py-3 flex items-center"
-              v-for="({ title, sub }) in [
-                  { title: '琵琶行', sub: '浔阳江头夜送客，枫叶荻花秋瑟瑟' },
-                  { title: '是唐朝诗人白居易', sub: '主人下马客在船，举酒欲饮无管弦。醉不成欢惨将别，别时茫茫江浸月。' },
-                  { title: '的长篇乐府诗之一', sub: '忽闻水上琵琶声，主人忘归客不发' },
-                  { title: '作于元和十一年', sub: '寻声暗问弹者谁？琵琶声停欲语迟。' },
-                  { title: '千呼万唤始出来', sub: '犹抱琵琶半遮面' },
-                ]"
-              :key="title"
+              class="todo-item py-3 flex items-center cursor-pointer"
+              v-for="({ t_id,t_title, t_content,t_rank }) in todoList"
+              :key="t_id"
             >
               <div class="w-8 h-10 mr-2 flex justify-center items-center rounded-full">
                 <a-checkbox />
               </div>
-              <div class="flex-1 overflow-hidden">
-                <div>{{ title }}</div>
-                <div class="truncate">{{ sub }}</div>
+
+              <div class="flex flex-1 overflow-hidden">
+                <div>{{ t_title }}</div>
+                <div class="truncate text-gray-400 ml-3">{{ t_content }}</div>
               </div>
               <div class="ml-auto text-lg text-gray-600 font-bold">
-
+                 <a-tag
+                  :color="
+                    t_rank === 3 ? '#ff5b5c' :t_rank === 2 ? '#fdac41' : '#28c175'
+                  "
+                >
+                 <span class="text-sm"> {{ t_rank === 3 ? "非常紧急" : t_rank === 2 ? "紧急" : "普通" }}</span>
+                </a-tag>
               </div>
             </li>
           </perfect-scrollbar>
         </div>
 
         <!-- 进度条 -->
-        <div v-show="isTaskOpen">
+        <!-- <div v-show="isTaskOpen">
           <div class="progress-grid">
             <div
               class="progress-item text-sm"
@@ -93,7 +94,7 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div
           v-show="isTaskOpen"
@@ -117,6 +118,8 @@
 </template>
 
 <script>
+import { getUserTaskList } from '@/api/task'
+
 export default {
   name: 'SiderFooter',
 
@@ -131,14 +134,12 @@ export default {
     isTaskOpen: false,
   }),
 
+  created: {
+
+  },
   computed: {
-    progress() {
-      return [
-        { label: '前端', color: 'rgb(100, 133, 255)', percent: 80 },
-        { label: '后端', color: 'rgb(87, 223, 156)', percent: 60 },
-        { label: '其它', color: 'rgb(253, 172, 65)', percent: 40 },
-        { label: 'BUG', color: 'rgb(255, 91, 92)', percent: 20 },
-      ]
+    todoList() {
+      return this.$store.state.todo.todoList
     },
   },
 
@@ -146,6 +147,14 @@ export default {
     viewAll() {
       this.$router.push({ name: 'Todo' })
       this.isTaskOpen = false
+    },
+    async getTask() {
+      const uid = this.currUserID
+      const { data: res } = await getUserTaskList(uid)
+      console.log('todo', res)
+      this.$store.commit('todo/SET_TODO_LIST', res)
+      console.log('todo Task', res)
+      return true
     },
   },
 }
@@ -169,7 +178,15 @@ export default {
     box-shadow: $base-shadow;
     cursor: default;
   }
-
+.todo-item{
+   @apply  py-4 flex items-center cursor-pointer;
+    transition: $transition;
+     box-shadow: 0 2px 2px -1px rgba($secondary, 0.1);
+    &:hover {
+      box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+      transform: translateY(-3px);
+    }
+}
   .progress-grid {
     @apply p-5 flex justify-between flex-wrap;
     .progress-item {

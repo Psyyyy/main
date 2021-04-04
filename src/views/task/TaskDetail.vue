@@ -1018,12 +1018,14 @@ export default {
         t_content: '',
         t_state: '',
         t_rank: '',
+        old_header_id: '',
         t_header_id: '',
         t_header_name: '',
         t_member_ids: [],
         start_time: '',
         end_time: '',
         is_done: '',
+
       },
       commentForm: {
         uid: window.sessionStorage.getItem('currUserID'),
@@ -1294,6 +1296,7 @@ export default {
       } else if (item === 'content') {
         this.form.t_content = content
       } else if (item === 'header') {
+        this.form.old_header_id = this.task.detail.t_header_id
         this.form.t_header_id = content.uid
         this.form.t_header_name = content.name
       } else if (item === 'member') {
@@ -1323,6 +1326,7 @@ export default {
         t_state: '',
         t_rank: '',
         t_header_id: '',
+        old_header_id: '',
         t_header_name: '',
         t_member_ids: [],
         start_time: '',
@@ -1419,6 +1423,7 @@ export default {
         t_state: '',
         t_rank: '',
         t_header_id: '',
+        old_header_id: '',
         t_header_name: '',
         t_member_ids: [],
         start_time: '',
@@ -1443,6 +1448,7 @@ export default {
         t_state: '',
         t_rank: '',
         t_header_id: '',
+        old_header_id: '',
         t_header_name: '',
         t_member_ids: [],
         start_time: this.startFormat,

@@ -629,6 +629,7 @@ import {
   getProjectList, newProject, updateProject, deleteProject,
 } from '@/api/project'
 import { getMemberList } from '@/api/member'
+import { getUserTaskList } from '@/api/task'
 import screenfull from 'screenfull'
 import { isValidUrl } from '@/utils/util'
 import infiniteScroll from 'vue-infinite-scroll'
@@ -1034,17 +1035,6 @@ export default {
         },
       })
     },
-    // fetchData(callback) {
-    //   reqwest({
-    //     url: fakeDataUrl,
-    //     type: 'json',
-    //     method: 'get',
-    //     contentType: 'application/json',
-    //     success: (res) => {
-    //       callback(res)
-    //     },
-    //   })
-    // },
     handleInfiniteOnLoad() {
       const { todos } = this
       this.loading = true
@@ -1071,6 +1061,14 @@ export default {
     },
     enterFolder() {
       console.log('进入文库')
+    },
+    async getTask() {
+      const uid = this.currUserID
+      const { data: res } = await getUserTaskList(uid)
+      console.log('todo', res)
+      this.$store.commit('todo/SET_TODO_LIST', res)
+      console.log('todo Task', res)
+      return true
     },
   },
 }
