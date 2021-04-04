@@ -460,12 +460,6 @@ export default {
     currStageId() {
       this.getTask()
     },
-    // isFilterModalOpened() {
-    //   if (this.$store.state.filter.isFilterModalOpened === false) {
-    //     this.getTask()
-    //   }
-    // },
-
   },
   methods: {
     closeDetail() {
@@ -542,9 +536,6 @@ export default {
     handleReset(clearFilters) {
       clearFilters()
       this.searchText = ''
-    },
-
-    handleAdd() {
     },
     onCellChange(key, dataIndex, value) {
       const dataSource = [...this.dataSource]
@@ -710,14 +701,6 @@ export default {
       this.$store.commit('task/SET_TASK_DIALOG', res)
       return true
     },
-    async showDetail(id) {
-      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
-      await this.getTaskDetail(id)
-      await this.getDialog(id)
-      await this.getComment(id)
-      this.showTask = true
-      // this.detailTaskId = id
-    },
     async getComment(id) {
       const params = {
         source: 'task',
@@ -727,6 +710,14 @@ export default {
       // this.dialogList = res
       this.$store.commit('task/SET_TASK_COMMENT', res)
       return true
+    },
+    async showDetail(id) {
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      await this.getTaskDetail(id)
+      await this.getDialog(id)
+      await this.getComment(id)
+      this.showTask = true
+      // this.detailTaskId = id
     },
   },
 }

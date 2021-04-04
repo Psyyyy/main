@@ -1028,6 +1028,7 @@ export default {
 
       },
       commentForm: {
+        pid: '',
         uid: window.sessionStorage.getItem('currUserID'),
         sid: '',
         source: 'task',
@@ -1148,6 +1149,9 @@ export default {
     },
     isAddModalOpened() {
       this.getTaskDetail()
+      if (this.isAddModalOpened === false) {
+        this.newDialog('添加了子任务', '')
+      }
     },
     showInviteMember(val) {
       if (!val) {
@@ -1258,9 +1262,13 @@ export default {
         source: 'task',
         sid: this.task.detail.id,
       }
-      const { data: res } = await getComment(params)
+      const res = await getComment(params)
       // this.dialogList = res
-      this.$store.commit('task/SET_TASK_COMMENT', res)
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取评论失败')
+      }
+      // this.$message.success('获取评论成功！')
+      this.$store.commit('task/SET_TASK_COMMENT', res.data)
       this.showComment = true
       return true
     },
@@ -1269,17 +1277,21 @@ export default {
     async newComment() {
       if (this.commentForm.content === '') return false
       this.commentForm.sid = this.task.detail.id
-      const { data: res } = await newComment(this.commentForm)
-      // this.dialogList = res
-      // this.$store.commit('task/SET_TASK_COMMENT', res)
-      // this.showComment = true
-      this.getComment()
+      this.commentForm.pid = this.currProjectID
+      const res = await newComment(this.commentForm)
+      console.log('评论', res)
+      if (res.meta.status !== 200) {
+        return this.$message.error('评论失败')
+      }
+      this.$message.success('评论成功！')
       this.commentForm = {
+        pid: this.currProjectID,
         uid: window.sessionStorage.getItem('currUserID'),
         sid: '',
         source: 'task',
         content: '',
       }
+      await this.getComment()
       return true
     },
     async newDialog(action, target) {
@@ -1288,18 +1300,18 @@ export default {
       this.dialogForm.sourceId = this.task.detail.id
       this.dialogForm.action = action
       this.dialogForm.target = target
-      const { data: res } = await newDialog(this.dialogForm)
+      const res = await newDialog(this.dialogForm)
       console.log('新增Dialog', res)
-      // this.getDialog()
-      // this.dialogForm = {
-      //   pid: window.LocalStorage.getItem('currProjectID'), // 决定在哪个项目页显示
-      //   source: '', // this.currListType
-      //   sourceId: '', // task.detail.id
-      //   user: window.sessionStorage.getItem('currUserID'),
-      //   action: '', // 决定内容
-      //   target: '', // 决定内容
-      // }
-      // return true
+      this.getDialog()
+      this.dialogForm = {
+        pid: window.LocalStorage.getItem('currProjectID'), // 决定在哪个项目页显示
+        source: '', // this.currListType
+        sourceId: '', // task.detail.id
+        user: window.sessionStorage.getItem('currUserID'),
+        action: '', // 决定内容
+        target: '', // 决定内容
+      }
+      return true
     },
     onOpenAdd() {
       console.log('level in detail', this.task.detail.t_level + 1)
@@ -1313,24 +1325,31 @@ export default {
 
     // 更新操作
     async editTaskItem(item, content) {
+      let action = ''
       this.updateFinish = false
       if (item === 'title') {
         this.form.t_title = content
-        await this.newDialog('修改了标题为', content)
+        action = '修改了标题为'
       } else if (item === 'state') {
+        action = '修改了状态为'
         this.form.t_state = content
       } else if (item === 'rank') {
         this.form.t_rank = content
+        action = '修改了优先级为'
       } else if (item === 'content') {
         this.form.t_content = content
+        action = '添加了备注'
       } else if (item === 'header') {
         this.form.old_header_id = this.task.detail.t_header_id
         this.form.t_header_id = content.uid
         this.form.t_header_name = content.name
+        action = '修改了执行者为'
       } else if (item === 'member') {
         this.form.t_member = content
+        action = '更新了参与者'
       } else if (item === 'done') {
         this.form.is_done = content
+        action = '修改了任务完成状态'
       }
       this.form.id = this.task.detail.id
       // 然后直接更新
@@ -1343,7 +1362,29 @@ export default {
       this.$message.success('更新成功！')
       this.resetForm()
       this.updateFinish = true
-      this.getTaskDetail()
+      await this.getTaskDetail()
+      // 完成所有更新再添加日志
+      if (item === 'header') {
+        await this.newDialog(action, content.name)
+      } else if (item === 'done') {
+        await this.newDialog(action, '')
+      } else if (item === 'rank') {
+        let rank = ''
+        switch (content) {
+          case 1:
+            rank = '普通'
+            break
+          case 2:
+            rank = '紧急'
+            break
+          case 3:
+            rank = '非常紧急'
+            break
+          default:
+            rank = ''
+        }
+        await this.newDialog(action, rank)
+      } else await this.newDialog(action, content)
       return true
     },
     async editChildDone(id) {
@@ -1492,6 +1533,7 @@ export default {
         return this.$message.error('更新失败')
       }
       this.$message.success('更新成功！')
+      await this.newDialog('更新了任务起止时间', '')
       this.getTaskDetail()
       return true
     },
@@ -1537,6 +1579,7 @@ export default {
         return this.$message.warning(res.data)
       }
       this.$message.success('添加成员成功！')
+      await this.newDialog('更新了任务成员', '')
       this.getTaskDetail()
       return true
     },
@@ -1561,6 +1604,7 @@ export default {
         return this.$message.error('移出成员失败')
       }
       this.$message.success('移出成员成功！')
+      await this.newDialog('更新了任务成员', '')
       this.getTaskDetail()
       return true
     },

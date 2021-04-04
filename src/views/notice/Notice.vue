@@ -37,6 +37,11 @@
 </template>
 
 <script>
+import {
+  getTaskDetail,
+} from '@/api/task'
+import { getComment } from '@/api/comment'
+import { getDialog } from '@/api/dialog'
 
 export default {
   name: 'Notice',
@@ -85,6 +90,55 @@ export default {
       },
     },
   }),
+  methods: {
+
+    // 获取任务详情
+    async showDetail(id) {
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      await this.getTaskDetail(id)
+      await this.getDialog(id)
+      await this.getComment(id)
+      this.showTask = true
+      // this.detailTaskId = id
+    },
+    async getTaskDetail(id) {
+      const pid = this.currProjectID
+
+      const { data: res } = await getTaskDetail(pid, id)
+      this.$store.commit('task/SET_TASK_DETAIL', res)
+      if (res.detail.t_level !== 0) {
+        console.log('当前任务的father', res.parent[0])
+        this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
+      }
+      return true
+    },
+    async getDialog(id) {
+      const obj = {
+        pid: this.currProjectID,
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getDialog(obj)
+      this.$store.commit('task/SET_TASK_DIALOG', res)
+      return true
+    },
+    async getComment(id) {
+      const params = {
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getComment(params)
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_COMMENT', res)
+      return true
+    },
+    onOpenAdd() {
+      console.log('add')
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
+    },
+  },
 
 }
 </script>
