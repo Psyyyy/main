@@ -4,11 +4,10 @@
 
 import request from '@/plugins/axios'
 // import request from './request'
-export function getStageList(data) {
+export function getStageList(pid) {
   return request({
-    url: '/stage',
+    url: `/stage/all/${pid}`,
     method: 'get',
-    data,
   })
 }
 export function getStage(id) {

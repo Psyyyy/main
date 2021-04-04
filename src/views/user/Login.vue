@@ -130,14 +130,19 @@ export default {
           this.loading = true
           // console.log('Login:', values)
           try {
-            this.$store.dispatch('user/login', values).then(() => {
-              this.$message.success('登录成功')
-              const { redirectPath } = this.$store.state
-              if (redirectPath) {
+            this.$store.dispatch('user/login', values).then((data) => {
+              console.log('login', data)
+              if (data) {
+                this.$message.success('登录成功')
+                const { redirectPath } = this.$store.state
+                if (redirectPath) {
                 // 通过记录重定向路径，前往授权前想要访问的页面
-                this.$router.replace(redirectPath)
+                  this.$router.replace(redirectPath)
+                } else {
+                  this.$router.replace('/project').catch(() => {})
+                }
               } else {
-                this.$router.replace('/project').catch(() => {})
+                this.loading = false
               }
             }).catch(() => {})
           } finally {

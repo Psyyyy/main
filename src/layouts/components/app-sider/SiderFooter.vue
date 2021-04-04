@@ -134,9 +134,6 @@ export default {
     isTaskOpen: false,
   }),
 
-  created: {
-
-  },
   computed: {
     todoList() {
       return this.$store.state.todo.todoList

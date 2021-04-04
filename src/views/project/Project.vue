@@ -389,62 +389,42 @@
               class="mb-2 px-3 py-4 flex items-center"
             >
               <h3 class="dashboard-card-title">
-                我的任务（ {{ todos.length }} ）
+                我的任务（ {{ todoList.length }} ）
               </h3>
               <div class="ml-auto flex items-center">
-                <a-dropdown class="mr-2">
-                  <div class="flex items-center cursor-pointer">
-                    <feather class="mr-1" size="18" type="check-circle" />
-                    所有任务
-                    <feather
-                      class="ml-1 text-gray-500"
-                      size="18"
-                      type="chevron-down"
-                    />
-                  </div>
-                  <template #overlay>
-                    <a-menu>
-                      <a-menu-item>
-                        所有任务
-                      </a-menu-item>
-                      <a-menu-item>
-                        未完成
-                      </a-menu-item>
-                      <a-menu-item>
-                        已完成
-                      </a-menu-item>
-                    </a-menu>
-                  </template>
-                </a-dropdown>
+                <a-button  @click.stop="viewAll()">查看所有任务</a-button>
               </div>
             </div>
             <div style="height:380px" class="overflow-auto">
               <ul>
                 <li
-                  class="px-5 py-4 flex items-center hover:bg-gray-100 transition"
-                  v-for="({ id, title, tag, tagColor, avatar }, i) in todos"
+                  class="px-5 py-4 flex items-center hover:bg-gray-100 transition cursor-pointer"
+                  v-for="({ id, t_title,t_rank,end_time,t_content }) in todoList"
                   :key="id"
                 >
-                  <a-checkbox v-model="todos[i].done" />
+
                   <div class="mx-4 truncate text-gray-600">
-                    {{ title }}
+                    {{ t_title }}
+                    <span class="ml-4 text-gray-400">
+                      {{t_content}}
+                    </span>
                   </div>
                   <div
-                    class="ml-auto flex items-center text-sm rounded-lg"
+                    class="ml-auto flex items-center text-sm rounded-lg text-gray-400"
                     :style="
-                      `padding: .1rem 1rem; background: rgba(var(--${tagColor}), .2);`
+                      `padding: .1rem 1rem;`
                     "
-                    :class="tagColor"
                   >
-                    {{ tag }}
+                    {{ end_time|dateFormat}}
                   </div>
-                  <a-avatar
-                    class="mx-3"
-                    :style="
-                      `color: rgba(var(--${tagColor}), 1); background-color: rgba(var(--${tagColor}), .15);`
-                    "
-                    >{{ avatar }}</a-avatar
-                  >
+                   <a-tag
+                   class="ml-3"
+                  :color="
+                    t_rank === 3 ? '#ff5b5c' :t_rank === 2 ? '#fdac41' : '#28c175'
+                  "
+                >
+                 <span class="text-sm"> {{ t_rank === 3 ? "非常紧急" : t_rank === 2 ? "紧急" : "普通" }}</span>
+                </a-tag>
                   <a-dropdown>
                     <div
                       class="flex items-center text-base text-gray-500 cursor-pointer"
@@ -455,32 +435,6 @@
                         type="more-vertical"
                       ></feather>
                     </div>
-                    <template #overlay>
-                      <a-menu>
-                        <a-menu-item
-                          class="flex items-center"
-                          @click="editTodo(id)"
-                        >
-                          <feather
-                            class="mr-2 cursor-pointer"
-                            size="16"
-                            type="edit"
-                          ></feather>
-                          编辑
-                        </a-menu-item>
-                        <a-menu-item
-                          class="flex items-center"
-                          @click="editTodo(id)"
-                        >
-                          <feather
-                            class="mr-2 cursor-pointer"
-                            size="16"
-                            type="trash"
-                          ></feather>
-                          删除
-                        </a-menu-item>
-                      </a-menu>
-                    </template>
                   </a-dropdown>
                 </li>
               </ul>
@@ -630,6 +584,7 @@ import {
 } from '@/api/project'
 import { getMemberList } from '@/api/member'
 import { getUserTaskList } from '@/api/task'
+import { getStageList } from '@/api/stage'
 import screenfull from 'screenfull'
 import { isValidUrl } from '@/utils/util'
 import infiniteScroll from 'vue-infinite-scroll'
@@ -881,9 +836,13 @@ export default {
     isHeaderFixed() {
       return this.$store.state.isHeaderFixed
     },
+    todoList() {
+      return this.$store.state.todo.todoList
+    },
   },
   created() {
     this.getProject()
+    this.getTask()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -917,6 +876,9 @@ export default {
     percentCalc(done, all) {
       const tmp = done / all
       return tmp * 100
+    },
+    viewAll() {
+      this.$router.push({ name: 'Todo' })
     },
     async getProject() {
       const uid = window.sessionStorage.getItem('currUserID')
@@ -1035,7 +997,7 @@ export default {
         },
       })
     },
-    handleInfiniteOnLoad() {
+    handleInfiniteOnLoad() { // 项目动态用的
       const { todos } = this
       this.loading = true
       if (todos.length > 6 && todos.length < 8) {
@@ -1057,13 +1019,23 @@ export default {
       this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
       window.localStorage.setItem('currProject', name)
       window.localStorage.setItem('currProjectID', id)
+
       this.$router.push('Ecommerce')
     },
+    async getStageList() {
+      const pid = this.currProjectID
+      const { data: res } = await getStageList(pid)
+      console.log('stagelist', res.stagelist)
+      this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
+
+      return true
+    },
+
     enterFolder() {
       console.log('进入文库')
     },
     async getTask() {
-      const uid = this.currUserID
+      const uid = window.sessionStorage.getItem('currUserID')
       const { data: res } = await getUserTaskList(uid)
       console.log('todo', res)
       this.$store.commit('todo/SET_TODO_LIST', res)

@@ -291,6 +291,7 @@ import {
 } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
+import { getStageList } from '@/api/stage'
 // import STable from '../../components/Table'
 import { getMemberList } from '@/api/member'
 import AddModal from '@/components/AddModal.vue'
@@ -469,6 +470,14 @@ export default {
   methods: {
     closeDetail() {
       this.showTask = false
+    },
+    async getStageList() {
+      const pid = this.currProjectID
+      const { data: res } = await getStageList(pid)
+      console.log('stagelist', res.stagelist)
+      this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
+
+      return true
     },
     async getMemberList() {
       const id = this.currProjectID

@@ -122,12 +122,6 @@ export default {
   }),
 
   watch: {
-    '$store.state.todo.currEditTodo': {
-      handler(val) {
-        this.currTodo = _clonedeep(val)
-      },
-      immediate: true,
-    },
   },
 
   methods: {

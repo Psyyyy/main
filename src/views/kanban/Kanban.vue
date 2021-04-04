@@ -450,7 +450,8 @@ export default {
       return true
     },
     async getStageList() {
-      const { data: res } = await getStageList()
+      const pid = this.currProjectID
+      const { data: res } = await getStageList(pid)
       console.log('stagelist', res.stagelist)
       this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
 

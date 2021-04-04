@@ -61,11 +61,11 @@
           <a-select v-model="form.t_stage_id" placeholder="点击选择迭代">
             <a-select-option
               v-for="item in stageList"
-              :key="item.id"
-              :value="item.id"
-              @click="selectStage(item.id,item.name)"
+              :key="item.s_id"
+              :value="item.s_id"
+              @click="selectStage(item.s_id,item.s_title)"
             >
-              {{ item.name }}
+              {{ item.s_title }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -107,9 +107,9 @@
             v-model="form.t_rank"
             placeholder="点击选择优先级"
           >
-            <a-select-option value="2"> 普通 </a-select-option>
-            <a-select-option value="1"> 紧急 </a-select-option>
-            <a-select-option value="0"> 非常紧急 </a-select-option>
+            <a-select-option value="1"> 普通 </a-select-option>
+            <a-select-option value="2"> 紧急 </a-select-option>
+            <a-select-option value="3"> 非常紧急 </a-select-option>
           </a-select>
         </a-form-item>
         <!-- 单选 -->
@@ -140,6 +140,7 @@
 import _clonedeep from 'lodash.clonedeep'
 import { getTimestamp } from '@/utils/util'
 import { addTask } from '@/api/task'
+import { getStageList } from '@/api/stage'
 
 export default {
   name: 'AddModal',
@@ -231,10 +232,18 @@ export default {
   },
 
   created() {
-    // console.log(this.memberList)
+    this.getStageList()
   },
 
   methods: {
+    async getStageList() {
+      const pid = this.currProjectID
+      const { data: res } = await getStageList(pid)
+      console.log('stagelist', res.stagelist)
+      this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
+
+      return true
+    },
     selectHeader(id, name) {
       this.form.t_header_id = id
       this.form.t_header_name = name
