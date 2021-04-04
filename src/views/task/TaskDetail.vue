@@ -1033,6 +1033,14 @@ export default {
         source: 'task',
         content: '',
       },
+      dialogForm: {
+        pid: '', // 决定在哪个项目页显示
+        source: '', // this.currListType
+        sourceId: '', // task.detail.id
+        user: window.sessionStorage.getItem('currUserID'),
+        action: '', // 决定内容
+        target: '', // 决定内容
+      },
       showTaskDesc: false,
 
       // 项目动态
@@ -1274,6 +1282,25 @@ export default {
       }
       return true
     },
+    async newDialog(action, target) {
+      this.dialogForm.pid = this.currProjectID
+      this.dialogForm.source = this.currListType
+      this.dialogForm.sourceId = this.task.detail.id
+      this.dialogForm.action = action
+      this.dialogForm.target = target
+      const { data: res } = await newDialog(this.dialogForm)
+      console.log('新增Dialog', res)
+      // this.getDialog()
+      // this.dialogForm = {
+      //   pid: window.LocalStorage.getItem('currProjectID'), // 决定在哪个项目页显示
+      //   source: '', // this.currListType
+      //   sourceId: '', // task.detail.id
+      //   user: window.sessionStorage.getItem('currUserID'),
+      //   action: '', // 决定内容
+      //   target: '', // 决定内容
+      // }
+      // return true
+    },
     onOpenAdd() {
       console.log('level in detail', this.task.detail.t_level + 1)
       this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', this.task.detail.t_level + 1)
@@ -1289,6 +1316,7 @@ export default {
       this.updateFinish = false
       if (item === 'title') {
         this.form.t_title = content
+        await this.newDialog('修改了标题为', content)
       } else if (item === 'state') {
         this.form.t_state = content
       } else if (item === 'rank') {
