@@ -7,40 +7,32 @@
     <template #content>
       <div class="w-64">
         <div class="flex justify-between items-center">
-          <div class="text-gray-900">5 条新通知</div>
+          <div class="text-gray-900">{{newNotice.length}}条新通知</div>
           <div
             class="text-gray-500 hover:primary transition cursor-pointer"
-            @click="setAllNoticeRead()"
+            @click="haveRead"
           >全部已读</div>
         </div>
 
         <div class="divider"></div>
 
-        <a-spin :spinning="spinning">
-          <ul class="notice-list -mx-4 px-2">
-            <li
-              class="p-2 flex items-center text-sm rounded cursor-pointer transition"
-              v-for="({ id, title, time, type }) in noticeList"
-              :key="id"
-              :class="`hover-${noticeTypes[type].color}`"
-            >
-              <div
-                class="mr-4 flex items-center justify-center rounded-full"
-                style="padding: 0.35rem;"
-                :class="`bg-${noticeTypes[type].color}-light`"
-              >
-                <feather
-                  size="18"
-                  :class="noticeTypes[type].color"
-                  :type="noticeTypes[type].icon"
-                />
-              </div>
-              <div>
-                <div class="title transition">{{ title }}</div>
-                <div class="text-gray-500">{{ time }}</div>
-              </div>
-            </li>
-          </ul>
+        <a-spin :spinning="spinning" class="notice-board">
+           <div v-for="notice in newNotice" :key="notice.id">
+             <a-comment v-if="notice.uid!==1">
+    <a slot="author" class="text-base"> {{notice.user}}</a>
+    <a-avatar
+      slot="avatar"
+      class="bg-primary"
+    >{{notice.user}}</a-avatar>
+   <p slot="content" class="notice-item">
+
+     <span class="warning">{{notice.title}}</span>：{{notice.action}} <span class="warning" v-if="notice.target!==''">「{{notice.target}}」</span>
+    </p>
+    <a-tooltip slot="datetime" >
+      <span>{{notice.create|dateFormat}}</span>
+    </a-tooltip>
+  </a-comment>
+          </div>
         </a-spin>
 
         <div class="divider"></div>
@@ -49,7 +41,8 @@
       </div>
     </template>
     <a-badge
-      dot
+
+     :count="newNotice.length"
       class="mt-1"
     >
       <feather type="bell" />
@@ -58,57 +51,30 @@
 </template>
 
 <script>
+import { getNoticeList, updateAllNotice } from '@/api/notice'
+
 export default {
   name: 'HeaderNotice',
 
   data: () => ({
     visible: false,
     spinning: false,
-    noticeList: [
-      {
-        id: '1', title: '订单已创建', time: '2 分钟前', type: 'primary',
-      },
-      {
-        id: '2', title: '系统升级程序已准备就绪', time: '30 分钟前', type: 'success',
-      },
-      {
-        id: '3', title: '今日剩余 3 项待办事项', time: '1 小时前', type: 'warning',
-      },
-      {
-        id: '4', title: '系统存在 2 个安全隐患', time: '5 小时前', type: 'danger',
-      },
-      {
-        id: '5', title: '6 个文件已完成下载', time: '2020-08-01', type: 'info',
-      },
-    ],
-    noticeTypes: {
-      undefined: {
-        icon: 'bell',
-        color: 'primary',
-      },
-      primary: {
-        icon: 'bell',
-        color: 'primary',
-      },
-      success: {
-        icon: 'check-circle',
-        color: 'success',
-      },
-      warning: {
-        icon: 'layers',
-        color: 'warning',
-      },
-      danger: {
-        icon: 'alert-circle',
-        color: 'danger',
-      },
-      info: {
-        icon: 'download',
-        color: 'info',
-      },
-    },
+    newNotice: [],
   }),
-
+  created() {
+    this.getNoticeList()
+  },
+  computed: {
+    noticeList() {
+      return this.$store.state.notice.noticeList
+    },
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
+    haveNew() {
+      return this.$store.state.notice.haveNewNotice
+    },
+  },
   methods: {
     setAllNoticeRead() {
       this.spinning = true
@@ -120,6 +86,32 @@ export default {
       this.visible = false
       this.$router.push({ path: '/notice' })
       console.log(this.$router)
+    },
+    async getNoticeList() {
+      const uid = window.sessionStorage.getItem('currUserID')
+      const { data: res } = await getNoticeList(uid)
+      this.$store.commit('notice/SET_NOTICE_LIST', res)
+      console.log('notice', res)
+      let haveNew = false
+      for (let i = 0; i < res.length; i += 1) {
+        if (res[i].read === 0) {
+          haveNew = true
+          this.newNotice.push(res[i])
+        }
+      }
+      console.log('noticelist', this.newNotice)
+      this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
+      return true
+    },
+    async haveRead() {
+      const res = await updateAllNotice(this.currUserID)
+      if (res.meta.status !== 200) {
+        return this.$message.error('全部已读失败')
+      }
+      this.newNotice = []
+      await this.getNoticeList()
+      this.$message.success('已全部标为已读')
+      return true
     },
   },
 }
@@ -144,5 +136,14 @@ export default {
   @apply my-2 bg-gray-300;
   width: 100%;
   height: 1px;
+}
+.notice-item{
+  overflow: hidden;
+text-overflow:ellipsis;
+white-space: nowrap;
+}
+.notice-board{
+  height:200px;
+  overflow-y:scroll;
 }
 </style>

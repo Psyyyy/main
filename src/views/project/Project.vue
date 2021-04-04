@@ -584,6 +584,7 @@ import {
 } from '@/api/project'
 import { getMemberList } from '@/api/member'
 import { getUserTaskList } from '@/api/task'
+import { getNoticeList } from '@/api/notice'
 import { getStageList } from '@/api/stage'
 import screenfull from 'screenfull'
 import { isValidUrl } from '@/utils/util'
@@ -843,6 +844,7 @@ export default {
   created() {
     this.getProject()
     this.getTask()
+    this.getNoticeList()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -1040,6 +1042,18 @@ export default {
       console.log('todo', res)
       this.$store.commit('todo/SET_TODO_LIST', res)
       console.log('todo Task', res)
+      return true
+    },
+    async getNoticeList() {
+      const uid = window.sessionStorage.getItem('currUserID')
+      const { data: res } = await getNoticeList(uid)
+      this.$store.commit('notice/SET_NOTICE_LIST', res)
+      console.log('notice', res)
+      let haveNew = false
+      for (let i = 0; i < res.length; i += 1) {
+        if (res[i].is_read === 0)haveNew = true
+      }
+      this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true
     },
   },

@@ -17,6 +17,7 @@ import file from './modules/file'
 import team from './modules/team'
 import task from './modules/task'
 import add from './modules/add'
+import notice from './modules/notice'
 
 Vue.use(Vuex)
 
@@ -32,6 +33,7 @@ export default new Vuex.Store({
     team,
     task,
     add,
+    notice,
   },
 
   state,

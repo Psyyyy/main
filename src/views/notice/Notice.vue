@@ -2,104 +2,87 @@
   <div>
     <div class="section-card mb-8 ">
       <h3 class="section-card__title flex items-center text-xl">
-       全部通知
-       <a-button class="ml-4 mt-1" size="small">
-           全部标为已读 <a-icon type="check"></a-icon>
-       </a-button>
+        全部通知
+        <a-button class="ml-4 mt-1" size="small" @click="haveReadAll">
+          全部标为已读 <a-icon type="check"></a-icon>
+        </a-button>
       </h3>
-<div class="mt-2"> <ul class="notice-list ">
-            <li
-              class="notice-item p-2 flex items-center text-sm rounded"
-              v-for="({ id, title, time, type }) in noticeList"
-              :key="id"
-              :class="`hover-${noticeTypes[type].color}`"
-            >
-              <div
-                class="mr-4 flex items-center justify-center rounded-full"
-                style="padding: 0.35rem;"
-                :class="`bg-${noticeTypes[type].color}-light`"
-              >
-                <feather
-                  size="18"
-                  :class="noticeTypes[type].color"
-                  :type="noticeTypes[type].icon"
-                />
-              </div>
-              <div>
-                <div class="title transition">{{ title }}</div>
-                <div class="text-gray-500">{{ time }}</div>
-              </div>
-            </li>
-          </ul></div>
-    </div>
+      <div class="mt-2">
+        <ul class="notice-list ">
+          <div class="px-6" v-for="notice in noticeList" :key="notice.id">
+             <a-comment v-if="notice.uid!==1" class="notice-item" @click="showDetail(notice.sourceId,notice.id)">
+    <a slot="author" class="text-base"> {{notice.user}}</a>
+    <a-avatar
+      slot="avatar"
+      class="bg-primary"
+    >{{notice.user}}</a-avatar>
+    <p slot="content">
 
+     <span class="warning">{{notice.title}}</span>：{{notice.action}} <span class="warning" v-if="notice.target!==''">「{{notice.target}}」</span>
+    </p>
+    <a-tooltip slot="datetime" >
+      <span>{{notice.create|dateFormat}}</span><span v-if="notice.read===0" class="ml-3" style="color:#f72727;font-weight:bold;font-style: italic">new !</span>
+    </a-tooltip>
+  </a-comment>
+          </div>
+        </ul>
+      </div>
+    </div>
+     <task :pop-visible="showTask" detail="detailTaskId" @close="showTask = false" />
+      <add-modal />
   </div>
 </template>
 
 <script>
-import {
-  getTaskDetail,
-} from '@/api/task'
+import { getTaskDetail } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
+import { getNoticeList, updateAllNotice, updateOneNotice } from '@/api/notice'
+import AddModal from '@/components/AddModal.vue'
+import Task from '@/views/task/Task.vue'
 
 export default {
   name: 'Notice',
+  components: { Task, AddModal },
   data: () => ({
-    noticeList: [
-      {
-        id: '1', title: '订单已创建', time: '2 分钟前', type: 'primary',
-      },
-      {
-        id: '2', title: '系统升级程序已准备就绪', time: '30 分钟前', type: 'success',
-      },
-      {
-        id: '3', title: '今日剩余 3 项待办事项', time: '1 小时前', type: 'warning',
-      },
-      {
-        id: '4', title: '系统存在 2 个安全隐患', time: '5 小时前', type: 'danger',
-      },
-      {
-        id: '5', title: '6 个文件已完成下载', time: '2020-08-01', type: 'info',
-      },
-    ],
-    noticeTypes: {
-      undefined: {
-        icon: 'bell',
-        color: 'primary',
-      },
-      primary: {
-        icon: 'bell',
-        color: 'primary',
-      },
-      success: {
-        icon: 'check-circle',
-        color: 'success',
-      },
-      warning: {
-        icon: 'layers',
-        color: 'warning',
-      },
-      danger: {
-        icon: 'alert-circle',
-        color: 'danger',
-      },
-      info: {
-        icon: 'download',
-        color: 'info',
-      },
-    },
+    showTask: false,
   }),
+  computed: {
+    noticeList() {
+      return this.$store.state.notice.noticeList
+    },
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
+    isAddModalOpened() {
+      return this.$store.state.add.isAddModalOpened
+    },
+    currListType() {
+      return this.$store.state.task.currListType
+    },
+    currStageId() {
+      return this.$store.state.stage.currStageId
+    },
+  },
+  created() {
+    this.getNoticeList()
+  },
   methods: {
-
-    // 获取任务详情
-    async showDetail(id) {
-      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
-      await this.getTaskDetail(id)
-      await this.getDialog(id)
-      await this.getComment(id)
-      this.showTask = true
-      // this.detailTaskId = id
+    // 任务详情
+    closeDetail() {
+      this.showTask = false
+    },
+    onOpenAdd() {
+      console.log('add')
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
+    },
+    resetTable() {
+      this.getTask()
     },
     async getTaskDetail(id) {
       const pid = this.currProjectID
@@ -132,24 +115,54 @@ export default {
       this.$store.commit('task/SET_TASK_COMMENT', res)
       return true
     },
-    onOpenAdd() {
-      console.log('add')
-      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
-      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
-      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
+    async showDetail(tid, nid) {
+      await this.haveReadOne(nid)
+      this.$store.commit('task/SET_CURR_EDIT_TASK', tid)
+      await this.getTaskDetail(tid)
+      await this.getDialog(tid)
+      await this.getComment(tid)
+      this.showTask = true
+    // this.detailTaskId = id
+    },
+    async getNoticeList() {
+      const uid = window.sessionStorage.getItem('currUserID')
+      const { data: res } = await getNoticeList(uid)
+      this.$store.commit('notice/SET_NOTICE_LIST', res)
+      console.log('notice', res)
+      let haveNew = false
+      for (let i = 0; i < res.length; i += 1) {
+        if (res[i].is_read === 0) haveNew = true
+      }
+      this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
+      return true
+    },
+    async haveReadAll() {
+      const res = await updateAllNotice(this.currUserID)
+      if (res.meta.status !== 200) {
+        return this.$message.error('全部已读失败')
+      }
+      await this.getNoticeList()
+      this.$message.success('已全部标为已读')
+      return true
+    },
+    async haveReadOne(nid) {
+      console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊')
+      await updateOneNotice(nid)
+      await this.getNoticeList()
+      return true
     },
   },
-
 }
 </script>
 
 <style lang="scss" scoped>
-.notice-item{
-        transition: $transition;
-    &:hover {
-        cursor:pointer;
-      box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
-      transform: translateY(-3px);
-    }
+.notice-item {
+  transition: $transition;
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+    transform: translateY(-3px);
+  }
 }
+
 </style>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import {
   Avatar, Button, Badge, Breadcrumb,
-  Card, ConfigProvider, Col, Checkbox, Dropdown, Descriptions, DatePicker, Drawer, Divider,
+  Card, ConfigProvider, Comment, Col, Checkbox, Dropdown, Descriptions, DatePicker, Drawer, Divider,
   Empty, Form, FormModel, Input, Icon, List,
   message, Menu, Modal, notification, Popconfirm, Progress, Popover,
   Result, Row, Radio, Spin, Select, Skeleton, Switch,
@@ -15,6 +15,7 @@ Vue.use(Button)
 Vue.use(Badge)
 Vue.use(Breadcrumb)
 Vue.use(Card)
+Vue.use(Comment)
 Vue.use(ConfigProvider)
 Vue.use(Checkbox)
 Vue.use(Col)
