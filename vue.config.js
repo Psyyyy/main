@@ -1,6 +1,7 @@
 const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const path = require('path')
 
 const IS_PROD = process.env.NODE_ENV === 'production'
 
@@ -25,9 +26,8 @@ module.exports = {
   outputDir: process.env.VUE_APP_OUTPUT_DIR,
 
   productionSourceMap: false,
-
   devServer: {
-    host: '0.0.0.0',
+    host: '106.14.132.104',
     proxy: {
       // VUE_APP_REQUEST_BASE_URL=api
       [process.env.VUE_APP_REQUEST_BASE_URL]: {
@@ -35,6 +35,10 @@ module.exports = {
         changeOrigin: true,
       },
     },
+    index: path.resolve(__dirname, '../dist/index.html'),
+    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsSubDirectory: 'static',
+    assetsPublicPath: './',
   },
 
   css: {
