@@ -12,10 +12,6 @@ const mutations = {
   },
 }
 const actions = {
-  setCurrStage(id, name) {
-    this.$store.commit('stage/SET_CURR_STAGE_NAME', name)
-    this.$store.commit('stage/SET_CURR_STAGE_ID', id)
-  },
 }
 
 const getters = {

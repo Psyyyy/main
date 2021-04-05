@@ -1,6 +1,6 @@
 const state = {
-  currStage: window.localStorage.getItem('currStage') ? window.localStorage.getItem('currStage') : '',
-  currStageId: window.localStorage.getItem('currStageId') ? window.localStorage.getItem('currStageId') : '',
+  currStage: window.localStorage.getItem('currStage') ? window.localStorage.getItem('currStage') : '迭代二',
+  currStageId: window.localStorage.getItem('currStageId') ? window.localStorage.getItem('currStageId') : 1,
   stageList: [],
   currStageInfo: {},
   currBoardType: '',
