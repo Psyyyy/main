@@ -22,12 +22,12 @@ const assetsCDN = {
 }
 
 module.exports = {
-  publicPath: process.env.VUE_APP_PUBLIC_PATH,
+  publicPath: '/main/',
   outputDir: process.env.VUE_APP_OUTPUT_DIR,
 
   productionSourceMap: false,
   devServer: {
-    host: '106.14.132.104',
+    host: '0.0.0.0',
     proxy: {
       // VUE_APP_REQUEST_BASE_URL=api
       [process.env.VUE_APP_REQUEST_BASE_URL]: {
