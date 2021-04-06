@@ -27,7 +27,7 @@ module.exports = {
 
   productionSourceMap: false,
   devServer: {
-    host: '106.14.132.104',
+    host: '0.0.0.0',
     proxy: {
       // VUE_APP_REQUEST_BASE_URL=api
       [process.env.VUE_APP_REQUEST_BASE_URL]: {
@@ -35,10 +35,10 @@ module.exports = {
         changeOrigin: true,
       },
     },
-    index: path.resolve(__dirname, '../dist/index.html'),
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    // index: path.resolve(__dirname, '../dist/index.html'),
+    // assetsRoot: path.resolve(__dirname, '../dist'),
+    // assetsSubDirectory: 'static',
+    // assetsPublicPath: './',
   },
 
   css: {

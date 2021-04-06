@@ -49,7 +49,7 @@
 
           <!-- 角色头像资料 -->
           <a-list-item-meta>
-            <a slot="title" @click="donwloadFile(item)">
+            <a href="javascript:void(0)" slot="title" v-on:click="downloadFile(item)">
               <div class="float-left mt-1">
                 <a-icon
                   :type="matchFileIcon(item.end)"
@@ -92,6 +92,9 @@
 
 <script>
 // import FlipList from '@/components/animation/FlipList.vue'
+import {
+  getProjectFileList, getTaskFileList, downloadFile, uploadFile, deleteFile, deleteAllFile,
+} from '@/api/file'
 
 export default {
   name: 'FileList',
@@ -101,62 +104,10 @@ export default {
   data: () => ({
     searchInputText: '搜索文件...',
     tags: {
-      1: { text: '项目', color: 'primary' },
-      2: { text: '需求', color: 'success' },
-      3: { text: '迭代', color: 'warning' },
-      4: { text: '缺陷', color: 'danger' },
+      1: { text: '需求', color: 'primary' },
+      2: { text: '缺陷', color: 'danger' },
     },
-    fileList: [
-      {
-        name: '项目简介',
-        end: 'ppt',
-        url: '',
-        uploadTime: '2021年3月1日 20:39',
-        source: 'task',
-      },
-      {
-        name: '需求分析',
-        end: 'doc',
-        url: '',
-        uploadTime: '2021年3月1日 20:39',
-        source: 'task',
-      },
-      {
-        name: '接口文档',
-        end: 'xls',
-        url: '',
-        uploadTime: '2021年3月1日 20:39',
-        source: 'bug',
-      },
-      {
-        name: '需求规约',
-        end: 'zip',
-        url: '',
-        uploadTime: '2021年3月1日 20:39',
-        source: 'task',
-      },
-      {
-        name: 'UI设计',
-        end: 'jpg',
-        url: '',
-        source: 'bug',
-        uploadTime: '2021年3月1日 20:39',
-      },
-      {
-        name: '缺陷截图',
-        end: 'md',
-        url: '',
-        source: 'bug',
-        uploadTime: '2021年3月1日 20:39',
-      },
-      {
-        name: '任务说明',
-        end: 'txt',
-        url: '',
-        source: 'task',
-        uploadTime: '2021年3月1日 20:39',
-      },
-    ],
+    fileList: [],
     fileIcon: [
       {
         end: 'ppt',
@@ -230,24 +181,62 @@ export default {
         color: '#eb2f96',
       },
     ],
+    file: {
+      id: '',
+      name: '',
+      end: '',
+      uploadTime: '',
+      source: 'task',
+    },
   }),
 
   computed: {
-    // filterItems() {
-    //   return this.$store.getters['file/filterItems']
-    // },
-    // currEditItem() {
-    //   return this.$store.state.file.currEditFile
-    // },
-    // isDrawerOpened() {
-    //   return this.$store.state.file.isFileDrawerOpened
-    // },
-  },
-
-  methods: {
-    donwloadFile(file) {
-      console.log(file)
+    currProjectID() {
+      return this.$store.state.project.currProjectId
     },
+    filterItems() {
+      return this.$store.getters['team/filterItems']
+    },
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
+
+  },
+  created() {
+    this.getFileList()
+  },
+  methods: {
+    // 数据获取
+    async getFileList() {
+      const id = this.currProjectID
+      const { data: res } = await getProjectFileList(id)
+      res.forEach((item, index) => {
+        this.fileList.push(
+          {
+            id: index,
+            name: item.file_name.split('.')[0],
+            end: item.file_name.split('.')[1],
+            uploadTime: item.file_latest_ch,
+            source: 'task',
+          },
+        )
+      })
+      console.log('文件列表', this.fileList)
+
+      this.$store.commit('file/SET_FILE_LIST', res)
+    },
+    async downloadFile(file) {
+      const uid = this.currUserID
+      const fileName = `${file.name}.${file.end}`
+      window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
+      // const res = await downloadFile(uid, fileName)
+      // if (res.meta.status !== 200) {
+      //   return this.$message.error('获取资源失败')
+      // }
+      // this.$message.success('开始下载..')
+      return false
+    },
+    // UI操作
     matchFileIcon(type) {
       for (let i = 0; i < this.fileIcon.length; i += 1) {
         if (type === this.fileIcon[i].end) {
