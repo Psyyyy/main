@@ -4,8 +4,10 @@
       <a-upload
       multiple
       name="file"
-      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+      action="http://127.0.0.1:8888/api/private/v1/file/upload"
       :headers="headers"
+      :file-list="[]"
+      :custom-request="uploadFile"
       @change="handleChange"
     >
   <div style="width:230px">
@@ -85,9 +87,12 @@
 </template>
 
 <script>
+import {
+  uploadFile, getProjectFileList,
+} from '@/api/file'
+
 export default {
   name: 'FileBar',
-
   data: () => ({
     filters: [
       { id: '1', label: '所有文件', icon: 'menu' },
@@ -95,11 +100,10 @@ export default {
       { id: '3', label: '图片', icon: 'image' },
       { id: '4', label: '其他', icon: 'archive' },
     ],
+    fileList: [],
     tags: [
-      { id: '5', label: '项目', color: 'primary' },
-      { id: '6', label: '需求', color: 'success' },
-      { id: '7', label: '迭代', color: 'warning' },
-      { id: '8', label: '缺陷', color: 'danger' },
+      { id: '5', label: '需求', color: 'primary' },
+      { id: '6', label: '缺陷', color: 'danger' },
     ],
     headers: {
       authorization: 'authorization-text',
@@ -107,6 +111,9 @@ export default {
   }),
 
   computed: {
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
     selectedKeys() {
       return this.$store.state.file.barKey
     },
@@ -122,13 +129,50 @@ export default {
     },
     handleChange(info) {
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList)
+        this.$message.loading('正在上传')
       }
       if (info.file.status === 'done') {
         this.$message.success(`成功上传 ${info.file.name}`)
       } else if (info.file.status === 'error') {
         this.$message.error(`${info.file.name} 上传失败`)
       }
+    },
+    async uploadFile(data) {
+      const formData = new FormData()
+      formData.append('file', data.file)
+      formData.append('token', window.sessionStorage.getItem('token'))// 随便写一个token示例
+      const uid = window.sessionStorage.getItem('currUserID')
+      const pid = this.currProjectID
+      console.log('上传uid', uid)
+      console.log('上传pid', pid)
+      const res = await uploadFile(formData, uid, pid)
+      if (res.meta.status !== 200) {
+        this.$message.error('上传失败')
+      }
+      this.getFileList()
+      console.log(res.data)
+      this.$message.success(`【${res.data.f_name}】上传成功`)
+      await this.newDialog('上传了了文件', res.data.f_name)
+    },
+
+    async getFileList() {
+      const id = this.currProjectID
+      const { data: res } = await getProjectFileList(id)
+      this.fileList = []
+      res.forEach((item, index) => {
+        this.fileList.push(
+          {
+            id: index,
+            name: item.file_name.split('.')[0],
+            end: item.file_name.split('.')[1],
+            uploadTime: item.file_latest_ch,
+            source: 'task',
+          },
+        )
+      })
+      console.log('文件列表', this.fileList)
+
+      this.$store.commit('file/SET_FILE_LIST', this.fileList)
     },
   },
 }

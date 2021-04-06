@@ -292,6 +292,9 @@ import {
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
 import { getStageList } from '@/api/stage'
+import {
+  getTaskFileList,
+} from '@/api/file'
 // import STable from '../../components/Table'
 import { getMemberList } from '@/api/member'
 import AddModal from '@/components/AddModal.vue'
@@ -711,11 +714,30 @@ export default {
       this.$store.commit('task/SET_TASK_COMMENT', res)
       return true
     },
+    async getFileList(id) {
+      const res = await getTaskFileList(id)
+      const files = []
+      if (res.meta.status !== 200) {
+        this.$store.commit('file/SET_FILE_LIST', files)
+      }
+      res.data.forEach((item, index) => {
+        files.push({
+          id: index,
+          name: item.file_name.split('.')[0],
+          end: item.file_name.split('.')[1],
+          uploadTime: item.file_latest_ch,
+          source: 'task',
+        })
+      })
+      console.log('文件列表', files)
+      this.$store.commit('file/SET_FILE_LIST', files)
+    },
     async showDetail(id) {
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       await this.getTaskDetail(id)
       await this.getDialog(id)
       await this.getComment(id)
+      this.getFileList(id)
       this.showTask = true
       // this.detailTaskId = id
     },

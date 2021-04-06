@@ -24,23 +24,15 @@
       <a-list
         class="demo-loadmore-list"
         item-layout="horizontal"
-        :data-source="fileList"
+        :data-source="filterItems"
       >
         <a-list-item class="member-item" slot="renderItem" slot-scope="item">
-          <a class="ml-1 mr-2" slot="actions">
-            <a-tooltip placement="top">
-              <template slot="title">
-                重命名文件
-              </template>
-              <feather size="20" type="edit" />
-            </a-tooltip>
-          </a>
-          <a class="ml-1 mr-2" slot="actions">
-            <a-tooltip placement="top">
+          <a class="-ml-6 mr-2 " slot="actions">
+            <a-tooltip placement="bottom">
               <template slot="title">
                 删除文件
               </template>
-              <a-popconfirm placement="topRight" title="确定删除该文件？">
+              <a-popconfirm placement="topRight" title="确定删除该文件？" @confirm="deleteFile(item)">
                 <feather size="20" type="trash" />
                 <!-- <a-button type="danger" icon="delete" size="small" /> -->
               </a-popconfirm>
@@ -49,7 +41,11 @@
 
           <!-- 角色头像资料 -->
           <a-list-item-meta>
-            <a href="javascript:void(0)" slot="title" v-on:click="downloadFile(item)">
+            <a
+              href="javascript:void(0)"
+              slot="title"
+              v-on:click="downloadFile(item)"
+            >
               <div class="float-left mt-1">
                 <a-icon
                   :type="matchFileIcon(item.end)"
@@ -63,8 +59,16 @@
                 ></a-icon>
               </div>
               <div class="float-left">
-                <div class="text-base">{{ item.name }}.{{item.end}}</div>
-                <div class="text-sm" style="color:#bdc0c9">上传时间：{{ item.uploadTime }}</div>
+                <a-tooltip placement="left">
+                   <template slot="title">
+                点击下载
+              </template>
+                   <div class="text-base">{{ item.name }}.{{ item.end }}</div>
+                </a-tooltip>
+
+                <div class="text-sm" style="color:#bdc0c9">
+                  上传时间：{{ item.uploadTime }}
+                </div>
               </div>
             </a>
           </a-list-item-meta>
@@ -108,79 +112,6 @@ export default {
       2: { text: '缺陷', color: 'danger' },
     },
     fileList: [],
-    fileIcon: [
-      {
-        end: 'ppt',
-        icon: 'file-ppt',
-        color: '#ff5b5c',
-      },
-      {
-        end: 'pptx',
-        icon: 'file-ppt',
-        color: '#ff5b5c',
-      },
-
-      {
-        end: 'pdf',
-        icon: 'file-pdf',
-        color: '#ff5b5c',
-      },
-      {
-        end: 'doc',
-        icon: 'file-word',
-        color: '#6485ff',
-      },
-      {
-        end: 'docx',
-        icon: 'file-word',
-        color: '#6485ff',
-      },
-      {
-        end: 'xls',
-        icon: 'file-excel',
-        color: '#2bbf3d',
-      },
-      {
-        end: 'csv',
-        icon: 'file-excel',
-        color: '#2bbf3d',
-      },
-      {
-        end: 'txt',
-        icon: 'file-text',
-        color: '#adafb2',
-      },
-      {
-        end: 'rar',
-        icon: 'file-zip',
-        color: '#b27c8a',
-      },
-      {
-        end: 'zip',
-        icon: 'file-zip',
-        color: '#b27c8a',
-      },
-      {
-        end: 'md',
-        icon: 'file-markdown',
-        color: '#ad99e5',
-      },
-      {
-        end: 'jpeg',
-        icon: 'file-image',
-        color: '#eb2f96',
-      },
-      {
-        end: 'png',
-        icon: 'file-image',
-        color: '#eb2f96',
-      },
-      {
-        end: 'jpg',
-        icon: 'file-image',
-        color: '#eb2f96',
-      },
-    ],
     file: {
       id: '',
       name: '',
@@ -195,10 +126,16 @@ export default {
       return this.$store.state.project.currProjectId
     },
     filterItems() {
-      return this.$store.getters['team/filterItems']
+      return this.$store.getters['file/filterItems']
     },
     currUserID() {
       return window.sessionStorage.getItem('currUserID')
+    },
+    files() {
+      return this.$store.state.file.fileList
+    },
+    fileIcon() {
+      return this.$store.state.file.fileIcon
     },
 
   },
@@ -209,32 +146,45 @@ export default {
     // 数据获取
     async getFileList() {
       const id = this.currProjectID
-      const { data: res } = await getProjectFileList(id)
-      res.forEach((item, index) => {
-        this.fileList.push(
-          {
-            id: index,
-            name: item.file_name.split('.')[0],
-            end: item.file_name.split('.')[1],
-            uploadTime: item.file_latest_ch,
-            source: 'task',
-          },
-        )
+      const res = await getProjectFileList(id)
+      const files = []
+      if (res.meta.status !== 200) {
+        this.$store.commit('file/SET_FILE_LIST', files)
+      }
+      res.data.forEach((item, index) => {
+        files.push({
+          id: item.id,
+          name: item.file_name.split('.')[0],
+          end: item.file_name.split('.')[1],
+          uploadTime: item.file_latest_ch,
+          source: 'task',
+        })
       })
-      console.log('文件列表', this.fileList)
-
-      this.$store.commit('file/SET_FILE_LIST', res)
+      console.log('文件列表', files)
+      this.$store.commit('file/SET_FILE_LIST', files)
     },
+
     async downloadFile(file) {
-      const uid = this.currUserID
+      const uid = window.sessionStorage.getItem('currUserID')
       const fileName = `${file.name}.${file.end}`
       window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
-      // const res = await downloadFile(uid, fileName)
-      // if (res.meta.status !== 200) {
-      //   return this.$message.error('获取资源失败')
-      // }
-      // this.$message.success('开始下载..')
       return false
+    },
+    async deleteFile(file) {
+      console.log('文件', file)
+      const uid = window.sessionStorage.getItem('currUserID')
+      const fileName = `${file.name}.${file.end}`
+      const params = {
+        file_name: fileName,
+      }
+      await deleteFile(params).then(() => {
+        this.$message.success('删除成功')
+        this.getFileList()
+        this.newDialog('删除了了文件', fileName)
+      }).catch(() => {
+        this.$message.warning('删除成功')
+      })
+      return true
     },
     // UI操作
     matchFileIcon(type) {
@@ -251,7 +201,7 @@ export default {
           return this.fileIcon[i].color
         }
       }
-      return '#000'
+      return '#ddd'
     },
   },
 }

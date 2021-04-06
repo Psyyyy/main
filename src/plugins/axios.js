@@ -34,10 +34,11 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const { data } = response
-    // console.log('axios', data)
+    if (!data.meta) {
+      return Promise.reject(data)
+    }
     if (data.meta.status !== 200) {
       Message.warning(data.meta.msg)
-
       if (data.meta.status === 4018) {
         removeToken()
         window.location.reload()

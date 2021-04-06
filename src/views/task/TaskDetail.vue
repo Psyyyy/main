@@ -163,7 +163,10 @@
                           :disabled="!!task.detail.is_del"
                           :class="{ disabled: false }"
                         >
-                          <a-tag v-if="task.detail.t_state" :color="stateColor(task.detail.t_state)">
+                          <a-tag
+                            v-if="task.detail.t_state"
+                            :color="stateColor(task.detail.t_state)"
+                          >
                             {{ task.detail.t_state }}
                           </a-tag>
                           <a-tag v-else color="gray">
@@ -173,7 +176,7 @@
                             class="field-right-menu"
                             slot="overlay"
                             :selectable="false"
-                            v-if="task.detail.t_type===1"
+                            v-if="task.detail.t_type === 1"
                           >
                             <a-menu-item
                               :key="status"
@@ -190,11 +193,11 @@
                               </div>
                             </a-menu-item>
                           </a-menu>
-                           <a-menu
+                          <a-menu
                             class="field-right-menu"
                             slot="overlay"
                             :selectable="false"
-                            v-if="task.detail.t_type===0"
+                            v-if="task.detail.t_type === 0"
                           >
                             <a-menu-item
                               :key="status"
@@ -443,7 +446,7 @@
                             <a-tag :color="priColor(task.detail.t_rank)">{{
                               task.detail.t_rank === 3
                                 ? "非常紧急"
-                                : task.detail.t_rank ===2
+                                : task.detail.t_rank === 2
                                 ? "紧急"
                                 : "普通"
                             }}</a-tag>
@@ -575,7 +578,12 @@
                                     <!-- 任务标题 -->
                                     <div
                                       class="task-item task-title"
-                                      @click="toChildren(childTask.id,childTask.t_level)"
+                                      @click="
+                                        toChildren(
+                                          childTask.id,
+                                          childTask.t_level
+                                        )
+                                      "
                                     >
                                       <div
                                         class="title-text"
@@ -632,19 +640,25 @@
                     <div class="field">
                       <div class="block-field width-block">
                         <div class="task-child">
-                          <a class="add-handler" id="upload-file">
-                            <a-icon type="plus" style="margin-right: 6px;" />
+                           <a-upload
+                            multiple
+                            name="file"
+                            action="http://127.0.0.1:8888/api/private/v1/file/upload"
+                            :headers="headers"
+                            :file-list="[]"
+                            :custom-request="uploadFile"
+                          >
+                            <a class="add-handler cursor-pointer" id="upload-file">
+                            <a-icon type="plus"  style="margin-right: 6px;" />
                             上传文件
-                          </a>
-                        </div>
+                            </a>
+                          </a-upload>
                       </div>
                     </div>
+                     </div>
                   </div>
                   <!-- 关联文件 -->
-                  <div
-                    class="component-mount"
-                    v-show="taskSourceList.length > 0"
-                  >
+                  <div class="component-mount" v-show="fileList.length > 0">
                     <div class="field">
                       <div class="block-field width-block">
                         <div class="file-list">
@@ -652,22 +666,25 @@
                           <a-list>
                             <a-list-item
                               :key="index"
-                              v-for="(item, index) in taskSourceList"
+                              v-for="(item, index) in fileList"
                             >
                               <a-list-item-meta>
-                                <a-avatar
-                                  size="small"
-                                  slot="avatar"
-                                  shape="square"
-                                  icon="link"
-                                  :src="item.sourceDetail.file_url"
-                                />
+                                 <a-icon
+                                    :type="matchFileIcon(item.end)"
+                                    slot="avatar"
+                                    class="mr-2"
+                                    style="font-size:20px"
+                                    theme="twoTone"
+                                    :two-tone-color="matchFileColor(item.end)"
+                                  ></a-icon>
                                 <div slot="title">
                                   <a
                                     class="muted"
                                     target="_blank"
-                                    :href="item.sourceDetail.file_url"
-                                    >{{ item.title }}</a
+                                    href="javascript:void(0)"
+                                    slot="title"
+                                    v-on:click="downloadFile(item)"
+                                    >{{ item.name }}<span class="text-gray-500">.{{item.end}}</span> </a
                                   >
                                 </div>
                                 <div slot="description">
@@ -675,36 +692,15 @@
                                 </div>
                               </a-list-item-meta>
                               <a class="muted" slot="actions">
-                                <span>{{ item.sourceDetail.projectName }}</span>
-                              </a>
-                              <a class="muted" slot="actions">
-                                <a-dropdown
-                                  :trigger="['click']"
-                                  placement="bottomCenter"
-                                >
-                                  <!-- <a-tooltip :mouseEnterDelay="0.5">
-                                                                         <template slot="title">
-                                                                             <span>更多操作</span>
-                                                                         </template>-->
-                                  <a class="action-item muted">
-                                    <a-icon type="down" />
-                                  </a>
-                                  <!--</a-tooltip>-->
-                                  <a-menu
-                                    v-clipboard="item.sourceDetail.file_url"
-                                    class="field-right-menu"
-                                    slot="overlay"
-                                  >
-                                    <a-menu-item key="copy">
-                                      <a-icon type="link" />
-                                      <span>复制链接</span>
-                                    </a-menu-item>
-                                    <a-menu-item key="unlink">
-                                      <a-icon type="disconnect" />
-                                      <span>取消关联</span>
-                                    </a-menu-item>
-                                  </a-menu>
-                                </a-dropdown>
+                               <a-tooltip placement="bottom">
+              <template slot="title">
+                取消关联
+              </template>
+              <a-popconfirm placement="topRight" title="确定删除该文件？" @confirm="deleteFile(item)">
+                <feather size="15" type="trash" />
+                <!-- <a-button type="danger" icon="delete" size="small" /> -->
+              </a-popconfirm>
+              </a-tooltip>
                               </a>
                             </a-list-item>
                           </a-list>
@@ -719,7 +715,10 @@
           <div class="content-right">
             <!-- 参与者 -->
             <div class="header">
-              <div class="title">{{task.detail.t_type===1?'参与者':'处理人'}} · {{ task.taskMemberList.length }}</div>
+              <div class="title">
+                {{ task.detail.t_type === 1 ? "参与者" : "处理人" }} ·
+                {{ task.taskMemberList.length }}
+              </div>
               <div class="member-list">
                 <a-tooltip
                   :mouse-enter-delay="0.5"
@@ -728,9 +727,10 @@
                 >
                   <template slot="title">
                     <span
-                      >点击将{{task.detail.t_type===1?'参与者':'处理人'}}<span style=" color: #f4ba5d;"
+                      >点击将{{ task.detail.t_type === 1 ? "参与者" : "处理人"
+                      }}<span style=" color: #f4ba5d;"
                         >「{{ member.name }}」</span
-                      >移出{{task.detail.t_type===1?'需求':'缺陷'}}
+                      >移出{{ task.detail.t_type === 1 ? "需求" : "缺陷" }}
                     </span>
                   </template>
                   <a-avatar
@@ -743,7 +743,11 @@
                 </a-tooltip>
                 <a-tooltip :mouse-enter-delay="0.5">
                   <template slot="title">
-                    <span>点击添加{{task.detail.t_type===1?'参与者':'处理人'}}</span>
+                    <span
+                      >点击添加{{
+                        task.detail.t_type === 1 ? "参与者" : "处理人"
+                      }}</span
+                    >
                   </template>
                   <a-icon
                     class="member-item invite"
@@ -908,6 +912,14 @@ import {
 } from '@/api/task'
 import { getDialog, newDialog } from '@/api/dialog'
 import { getComment, newComment } from '@/api/comment'
+import {
+  getProjectFileList,
+  getTaskFileList,
+  downloadFile,
+  uploadFile,
+  deleteFile,
+  deleteAllFile,
+} from '@/api/file'
 import _ from 'lodash'
 import _clonedeep from 'lodash.clonedeep'
 import { Keyboard } from '@icon-park/vue'
@@ -920,8 +932,10 @@ export default {
     return {
       // moment,
       loading: false,
-      code: this.taskCode,
-      projectCodeCurrent: '',
+      // 文件上传
+      headers: {
+        authorization: 'authorization-text',
+      },
       // 颜色是看板的
       taskStatusList: [
         { id: 0, name: '未开始', color: 'rgba(0, 0, 0, 0.65)' },
@@ -930,25 +944,9 @@ export default {
         { id: 3, name: '挂起', color: '#f5222d' },
         { id: 4, name: '测试中', color: '#faad14' },
       ],
-      // taskStatusList: COMMON.TASK_STATUS,
-      taskLogList: [],
-      taskLogTotal: 0,
-      taskMemberList: [],
-      workTimeList: [],
-      workTimeTotal: [],
 
       /* 任务菜单 */
       visibleTaskMenu: false,
-
-      /* 成员菜单 */
-      visibleTaskMemberMenu: false,
-      /* 任务标签 */
-      visibleTaskTagMenu: false,
-      visibleProjectMemberMenu: false,
-      showInviteMember: false,
-
-      /* 任务标题 */
-      taskName: '',
 
       /* 日期 */
       showEditName: false,
@@ -959,59 +957,19 @@ export default {
       showTaskDescriptionEdit: false,
       showMoreDesc: false,
       hasMoreDesc: false,
-      editorConfig: {
-        uploadImgHeaders: {
-          // Authorization: authorization,
-        },
-        menus: [
-          'head', // 标题
-          'bold', // 粗体
-          'italic', // 斜体
-          'justify', // 居中
-          'image', // 图片
-          'link', // 链接
-          'list', // 无序列表
-          'quote', // 引用
-          'table', // 表格
-          '|',
-          'fullscreen', // 全屏
-        ],
-      },
-
-      departmentMemberInfo: null,
 
       /* 子任务 */
-      childTaskList: [],
       showChildTask: false,
-      childTaskName: '',
-      childExecutor: null,
-      visibleChildTaskMemberMenu: false,
-      showInviteChildTaskMember: false,
 
       /* 资源 */
       taskSourceList: [],
-
-      /* 任务动态 */
-      taskLogType: ['all'],
-      showMoreTaskLog: 0,
-      hasMoreTaskLog: false,
-      hideShowMore: false,
 
       /* 评论 */
       comment: '',
       showComment: false,
       commenting: false,
 
-      // 显示评论提及
-      showMentions: false,
-      mentionsList: [],
-
-      taskStatus: [
-        '规划中',
-        '实现中',
-        '已实现',
-        '已拒绝',
-      ],
+      taskStatus: ['规划中', '实现中', '已实现', '已拒绝'],
       bugStatus: ['新', '处理中', '已解决', '已验收', '已拒绝', '已关闭'],
       form: {
         t_title: '',
@@ -1025,7 +983,6 @@ export default {
         start_time: '',
         end_time: '',
         is_done: '',
-
       },
       commentForm: {
         pid: '',
@@ -1072,6 +1029,9 @@ export default {
     task() {
       return this.$store.state.task.taskDetail
     },
+    fileList() {
+      return this.$store.state.file.fileList
+    },
     dialogList() {
       return this.$store.state.task.taskDialog
     },
@@ -1087,21 +1047,7 @@ export default {
       // uploader: (state) => state.common.uploader,
       // socketAction: (state) => state.socketAction,
     }),
-    childTaskDoneNum() {
-      const list = this.childTaskList.filter((item) => item.done === 1)
-      return list.length
-    },
-    checkShowMoreLog() {
-      if (!this.hideShowMore) {
-        if (this.taskLogTotal > 5) {
-          return true
-        }
-      }
-      return false
-    },
-    taskLink() {
-      return window.location.href
-    },
+
     scrollOps() {
       return {
         rail: {
@@ -1134,6 +1080,9 @@ export default {
     currListType() {
       return this.$store.state.task.currListType
     },
+    fileIcon() {
+      return this.$store.state.file.fileIcon
+    },
   },
   watch: {
     // $route(to, from) {
@@ -1156,17 +1105,6 @@ export default {
     showInviteMember(val) {
       if (!val) {
         this.getTaskMembers()
-      }
-    },
-    taskLogType() {
-      this.getTaskLog()
-    },
-    socketAction(val) {
-      if (val.action === 'organization:task') {
-        const { data } = val.data
-        if (data.taskCode === this.code) {
-          this.init(null, false)
-        }
       }
     },
     uploader: {
@@ -1202,6 +1140,7 @@ export default {
       this.getTaskDetail()
       this.getDialog()
       this.getComment()
+      this.getFileList()
     },
     // 父子跳转
     toChildren(id, level) {
@@ -1272,6 +1211,82 @@ export default {
       this.showComment = true
       return true
     },
+    async getFileList() {
+      const { id } = this.task.detail
+      const res = await getTaskFileList(id)
+      const files = []
+      if (res.meta.status !== 200) {
+        this.$store.commit('file/SET_FILE_LIST', files)
+      }
+      res.data.forEach((item, index) => {
+        files.push({
+          id: item.id,
+          name: item.file_name.split('.')[0],
+          end: item.file_name.split('.')[1],
+          uploadTime: item.file_latest_ch,
+          source: 'task',
+        })
+      })
+      console.log('文件列表', files)
+      this.$store.commit('file/SET_FILE_LIST', files)
+    },
+
+    async downloadFile(file) {
+      const uid = window.sessionStorage.getItem('currUserID')
+      const fileName = `${file.name}.${file.end}`
+      window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
+      return false
+    },
+    async deleteFile(file) {
+      console.log('文件', file)
+      const uid = this.currUserID
+      const fileName = `${file.name}.${file.end}`
+      const params = {
+        file_name: fileName,
+      }
+      await deleteFile(params).then(() => {
+        this.$message.success('删除成功')
+        this.newDialog('删除了了文件', fileName)
+        this.getFileList()
+      }).catch(() => {
+        this.$message.warning('删除成功')
+      })
+      return true
+    },
+    async uploadFile(data) {
+      const formData = new FormData()
+      formData.append('file', data.file)
+      formData.append('token', window.sessionStorage.getItem('token'))// 随便写一个token示例
+      const uid = window.sessionStorage.getItem('currUserID')
+      const pid = this.currProjectID
+      const tid = this.task.detail.id
+      console.log('上传', formData)
+      const res = await uploadFile(formData, uid, pid, tid)
+      if (res.meta.status !== 200) {
+        this.$message.error('上传失败')
+      }
+      console.log(res.data)
+      this.$message.success(`【${res.data.f_name}】上传成功`)
+      await this.newDialog('上传了了文件', res.data.f_name)
+      this.getFileList()
+    },
+    // UI操作
+    matchFileIcon(type) {
+      for (let i = 0; i < this.fileIcon.length; i += 1) {
+        if (type === this.fileIcon[i].end) {
+          return this.fileIcon[i].icon
+        }
+      }
+      return 'file-text'
+    },
+    matchFileColor(type) {
+      for (let i = 0; i < this.fileIcon.length; i += 1) {
+        if (type === this.fileIcon[i].end) {
+          return this.fileIcon[i].color
+        }
+      }
+      return '#ddd'
+    },
 
     // 新增操作
     async newComment() {
@@ -1304,7 +1319,7 @@ export default {
       console.log('新增Dialog', res)
       this.getDialog()
       this.dialogForm = {
-        pid: window.LocalStorage.getItem('currProjectID'), // 决定在哪个项目页显示
+        pid: this.currProjectID, // 决定在哪个项目页显示
         source: '', // this.currListType
         sourceId: '', // task.detail.id
         user: window.sessionStorage.getItem('currUserID'),
@@ -1315,7 +1330,10 @@ export default {
     },
     onOpenAdd() {
       console.log('level in detail', this.task.detail.t_level + 1)
-      this.$store.commit('task/SET_CURR_EDIT_TASK_LEVEL', this.task.detail.t_level + 1)
+      this.$store.commit(
+        'task/SET_CURR_EDIT_TASK_LEVEL',
+        this.task.detail.t_level + 1,
+      )
       if (this.task.detail.is_del || this.task.detail.is_done) return false
       this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
       this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
@@ -1541,25 +1559,6 @@ export default {
     // 成员
     addMember(value) {
       this.addMemnberId = value
-      // this.form.t_member_ids = _clonedeep(this.task.detail.t_member_ids)
-      // if (this.form.t_member_ids) {
-      //   this.form.t_member_ids = this.form.t_member_ids.split(',')
-      //   let same = 0
-      //   for (let i = 0; i < this.form.t_member_ids.length; i += 1) {
-      //     this.form.t_member_ids[i] = parseInt(this.form.t_member_ids[i], 0)
-      //     if (this.form.t_member_ids[i] === value) {
-      //       same = 1
-      //     }
-      //   }
-      //   if (!same) {
-      //     console.log('要发送的member信息', value)
-      //     this.form.t_member_ids.push(value)
-      //     console.log('push的member1', this.form)
-      //   }
-      // } else {
-      //   this.form.t_member_ids = `${value}`
-      //   console.log('push的member2', this.form)
-      // }
     },
     async confirmAddMember() {
       // 然后直接更新
