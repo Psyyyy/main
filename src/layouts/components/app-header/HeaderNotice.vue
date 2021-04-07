@@ -7,7 +7,7 @@
     <template #content>
       <div class="w-64">
         <div class="flex justify-between items-center">
-          <div class="text-gray-900">{{newNotice.length}}条新通知</div>
+          <div class="text-gray-900">{{news.length}}条新通知</div>
           <div
             class="text-gray-500 hover:primary transition cursor-pointer"
             @click="haveRead"
@@ -17,7 +17,7 @@
         <div class="divider"></div>
 
         <a-spin :spinning="spinning" class="notice-board">
-           <div v-for="notice in newNotice" :key="notice.id">
+           <div v-for="notice in news" :key="notice.id">
              <a-comment v-if="notice.uid!==1">
     <a slot="author" class="text-base"> {{notice.user}}</a>
     <a-avatar
@@ -41,8 +41,8 @@
       </div>
     </template>
     <a-badge
-
-     :count="newNotice.length"
+:count="news.length"
+dot
       class="mt-1"
     >
       <feather type="bell" />
@@ -59,7 +59,7 @@ export default {
   data: () => ({
     visible: false,
     spinning: false,
-    newNotice: [],
+    news: [],
   }),
   created() {
     this.getNoticeList()
@@ -71,9 +71,18 @@ export default {
     currUserID() {
       return window.sessionStorage.getItem('currUserID')
     },
-    haveNew() {
+    newNotice() {
+      return this.$store.state.notice.NewNotice
+    },
+    haveNewNotice() {
       return this.$store.state.notice.haveNewNotice
     },
+  },
+  watch: {
+    // 会陷入死循环...
+    // noticeList() {
+    //   this.getNoticeList()
+    // },
   },
   methods: {
     setAllNoticeRead() {
@@ -93,13 +102,15 @@ export default {
       this.$store.commit('notice/SET_NOTICE_LIST', res)
       console.log('notice', res)
       let haveNew = false
+      this.news = []
       for (let i = 0; i < res.length; i += 1) {
-        if (res[i].read === 0) {
+        if (res[i].read === 0 && res[i].uid !== 1) {
           haveNew = true
-          this.newNotice.push(res[i])
+          this.news.push(res[i])
         }
       }
-      console.log('noticelist', this.newNotice)
+      console.log('noticelist', this.news)
+      this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true
     },
@@ -108,7 +119,6 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('全部已读失败')
       }
-      this.newNotice = []
       await this.getNoticeList()
       this.$message.success('已全部标为已读')
       return true

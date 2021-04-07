@@ -59,6 +59,7 @@
       detail="detailTaskId"
       @close="showTask = false"
     />
+     <add-modal />
   </div>
 
 </template>
@@ -70,12 +71,13 @@ import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
 // import STable from '../../components/Table'
 import { getMemberList } from '@/api/member'
+import AddModal from '@/components/AddModal.vue'
 import Task from '@/views/task/Task.vue'
 
 export default {
   name: 'TodoList',
 
-  components: { FlipList, Task },
+  components: { FlipList, Task, AddModal },
 
   data: () => ({
     showTask: false,
@@ -173,6 +175,18 @@ export default {
       }
       const { data: res } = await getDialog(obj)
       this.$store.commit('task/SET_TASK_DIALOG', res)
+      return true
+    },
+    onOpenAdd() {
+      console.log('level in detail', this.task.detail.t_level + 1)
+      this.$store.commit(
+        'task/SET_CURR_EDIT_TASK_LEVEL',
+        this.task.detail.t_level + 1,
+      )
+      if (this.task.detail.is_del || this.task.detail.is_done) return false
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
+      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
       return true
     },
   },

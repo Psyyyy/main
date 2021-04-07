@@ -696,7 +696,7 @@
               <template slot="title">
                 取消关联
               </template>
-              <a-popconfirm placement="topRight" title="确定删除该文件？" @confirm="deleteFile(item)">
+              <a-popconfirm placement="topRight" title="确定删除该文件？" @confirm="cutDownFile(item)">
                 <feather size="15" type="trash" />
                 <!-- <a-button type="danger" icon="delete" size="small" /> -->
               </a-popconfirm>
@@ -1225,6 +1225,7 @@ export default {
           end: item.file_name.split('.')[1],
           uploadTime: item.file_latest_ch,
           source: 'task',
+          sourceId: item.tid,
         })
       })
       console.log('文件列表', files)
@@ -1237,7 +1238,7 @@ export default {
       window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
       return false
     },
-    async deleteFile(file) {
+    async cutDownFile(file) {
       console.log('文件', file)
       const uid = this.currUserID
       const fileName = `${file.name}.${file.end}`
@@ -1260,14 +1261,14 @@ export default {
       const uid = window.sessionStorage.getItem('currUserID')
       const pid = this.currProjectID
       const tid = this.task.detail.id
-      console.log('上传', formData)
+      console.log('上传', tid)
       const res = await uploadFile(formData, uid, pid, tid)
       if (res.meta.status !== 200) {
         this.$message.error('上传失败')
       }
       console.log(res.data)
       this.$message.success(`【${res.data.f_name}】上传成功`)
-      await this.newDialog('上传了了文件', res.data.f_name)
+      await this.newDialog('上传了文件', res.data.f_name)
       this.getFileList()
     },
     // UI操作

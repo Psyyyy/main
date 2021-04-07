@@ -152,7 +152,7 @@ export default {
       this.getFileList()
       console.log(res.data)
       this.$message.success(`【${res.data.f_name}】上传成功`)
-      await this.newDialog('上传了了文件', res.data.f_name)
+      // await this.newDialog('上传了了文件', res.data.f_name)
     },
 
     async getFileList() {
@@ -167,6 +167,7 @@ export default {
             end: item.file_name.split('.')[1],
             uploadTime: item.file_latest_ch,
             source: 'task',
+            sourceId: 0,
           },
         )
       })

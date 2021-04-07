@@ -727,6 +727,7 @@ export default {
           end: item.file_name.split('.')[1],
           uploadTime: item.file_latest_ch,
           source: 'task',
+          sourceId: item.tid,
         })
       })
       console.log('文件列表', files)

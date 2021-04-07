@@ -46,6 +46,7 @@ export default {
   components: { Task, AddModal },
   data: () => ({
     showTask: false,
+    news: [],
   }),
   computed: {
     noticeList() {
@@ -76,13 +77,16 @@ export default {
       this.showTask = false
     },
     onOpenAdd() {
-      console.log('add')
-      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      console.log('level in detail', this.task.detail.t_level + 1)
+      this.$store.commit(
+        'task/SET_CURR_EDIT_TASK_LEVEL',
+        this.task.detail.t_level + 1,
+      )
+      if (this.task.detail.is_del || this.task.detail.is_done) return false
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
       this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
-    },
-    resetTable() {
-      this.getTask()
+      return true
     },
     async getTaskDetail(id) {
       const pid = this.currProjectID
@@ -130,9 +134,15 @@ export default {
       this.$store.commit('notice/SET_NOTICE_LIST', res)
       console.log('notice', res)
       let haveNew = false
+      this.news = []
       for (let i = 0; i < res.length; i += 1) {
-        if (res[i].is_read === 0) haveNew = true
+        if (res[i].read === 0 && res[i].uid !== 1) {
+          haveNew = true
+          this.news.push(res[i])
+        }
       }
+      console.log('noticelist', this.newNotice)
+      this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true
     },
@@ -146,7 +156,6 @@ export default {
       return true
     },
     async haveReadOne(nid) {
-      console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊')
       await updateOneNotice(nid)
       await this.getNoticeList()
       return true

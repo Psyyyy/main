@@ -578,6 +578,7 @@
 
 <script>
 import _debounce from 'lodash.debounce'
+import { getDay, isValidUrl } from '@/utils/util'
 // import reqwest from 'reqwest'
 import {
   getProjectList, newProject, updateProject, deleteProject,
@@ -587,7 +588,6 @@ import { getUserTaskList } from '@/api/task'
 import { getNoticeList } from '@/api/notice'
 import { getStageList } from '@/api/stage'
 import screenfull from 'screenfull'
-import { isValidUrl } from '@/utils/util'
 import infiniteScroll from 'vue-infinite-scroll'
 import HeaderNotice from '../../layouts/components/app-header/HeaderNotice.vue'
 
@@ -812,6 +812,7 @@ export default {
       title: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
       content: [{ required: true, message: '请输入项目内容', trigger: 'blur' }],
     },
+    news: [],
     isFullScreen: false,
     showProjectList: false,
     showProject: '图片视图',
@@ -824,6 +825,7 @@ export default {
       title: '',
       content: '',
     },
+    weekDate: [],
   }),
   //   beforeMount() {
   //     this.fetchData((res) => {
@@ -845,6 +847,7 @@ export default {
     this.getProject()
     this.getTask()
     this.getNoticeList()
+    this.getWeekDate()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -875,6 +878,13 @@ export default {
   },
 
   methods: {
+    getWeekDate() {
+      this.weekDate = []
+      for (let i = 6; i > -1; i -= 1) {
+        this.weekDate.push(getDay(-i))
+      }
+      this.$store.commit('analysis/SET_WEEK_DATE', this.weekDate)
+    },
     percentCalc(done, all) {
       const tmp = done / all
       return tmp * 100
@@ -1050,9 +1060,15 @@ export default {
       this.$store.commit('notice/SET_NOTICE_LIST', res)
       console.log('notice', res)
       let haveNew = false
+      this.news = []
       for (let i = 0; i < res.length; i += 1) {
-        if (res[i].is_read === 0)haveNew = true
+        if (res[i].read === 0 && res[i].uid !== 1) {
+          haveNew = true
+          this.news.push(res[i])
+        }
       }
+      console.log('noticelist', this.news)
+      this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true
     },

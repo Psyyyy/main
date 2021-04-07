@@ -97,8 +97,9 @@
 <script>
 // import FlipList from '@/components/animation/FlipList.vue'
 import {
-  getProjectFileList, getTaskFileList, downloadFile, uploadFile, deleteFile, deleteAllFile,
+  getProjectFileList, deleteFile,
 } from '@/api/file'
+import { newDialog } from '@/api/dialog'
 
 export default {
   name: 'FileList',
@@ -118,6 +119,15 @@ export default {
       end: '',
       uploadTime: '',
       source: 'task',
+      sourceId: 0,
+    },
+    dialogForm: {
+      pid: '', // 决定在哪个项目页显示
+      source: '', // this.currListType
+      sourceId: '', // task.detail.id
+      user: window.sessionStorage.getItem('currUserID'),
+      action: '', // 决定内容
+      target: '', // 决定内容
     },
   }),
 
@@ -158,6 +168,7 @@ export default {
           end: item.file_name.split('.')[1],
           uploadTime: item.file_latest_ch,
           source: 'task',
+          sourceId: item.tid,
         })
       })
       console.log('文件列表', files)
@@ -180,10 +191,31 @@ export default {
       await deleteFile(params).then(() => {
         this.$message.success('删除成功')
         this.getFileList()
-        this.newDialog('删除了了文件', fileName)
+        console.log('删除', file)
+        if (file.sourceId) {
+          this.newDialog(file, '删除了文件', fileName)
+        }
       }).catch(() => {
-        this.$message.warning('删除成功')
+        // this.$message.warning('删除失败')
       })
+      return true
+    },
+    async newDialog(file, action, target) {
+      this.dialogForm.pid = this.currProjectID
+      this.dialogForm.source = file.source
+      this.dialogForm.sourceId = file.sourceId
+      this.dialogForm.action = action
+      this.dialogForm.target = target
+      const res = await newDialog(this.dialogForm)
+      console.log('新增Dialog', res)
+      this.dialogForm = {
+        pid: this.currProjectID, // 决定在哪个项目页显示
+        source: '', // this.currListType
+        sourceId: '', // task.detail.id
+        user: window.sessionStorage.getItem('currUserID'),
+        action: '', // 决定内容
+        target: '', // 决定内容
+      }
       return true
     },
     // UI操作

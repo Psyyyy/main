@@ -141,6 +141,7 @@ import _clonedeep from 'lodash.clonedeep'
 import { getTimestamp } from '@/utils/util'
 import { addTask } from '@/api/task'
 import { getStageList } from '@/api/stage'
+import { getMemberList } from '@/api/member'
 
 export default {
   name: 'AddModal',
@@ -233,6 +234,7 @@ export default {
 
   created() {
     this.getStageList()
+    this.getMemberList()
   },
 
   methods: {
@@ -340,6 +342,12 @@ export default {
         start_time: '',
         end_time: '',
       }
+    },
+    async getMemberList() {
+      const id = this.currProjectID
+      const { data: res } = await getMemberList(id)
+      console.log('memberlist', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
   },
 }

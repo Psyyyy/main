@@ -1,6 +1,7 @@
 const state = {
   noticeList: [],
   haveNewNotice: false,
+  newNotice: [],
 }
 
 const mutations = {
@@ -9,6 +10,9 @@ const mutations = {
   },
   SET_NOTICE_STATUS(state, status) {
     state.haveNewNotice = status
+  },
+  SET_NEW_NOTICE(state, list) {
+    state.newNotice = list
   },
 }
 const actions = {
