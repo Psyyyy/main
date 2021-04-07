@@ -94,10 +94,9 @@
                 >列表</a-radio-button
               >
               <a-radio-button value="board"
-                >仪表盘</a-radio-button
+                >统计图</a-radio-button
               >
               <a-radio-button value="member">成员</a-radio-button>
-              <a-radio-button value="progress">进度图</a-radio-button>
             </a-radio-group>
           </div>
           <!-- <h3 class="title-card__title text-xl"> <a-button @click="backToEntry">迭代</a-button></h3> -->
@@ -217,6 +216,10 @@
     </div>
        <div v-if="showMember" class="mt-10">
            <member-list></member-list>
+
+    </div>
+    <div v-if="showAnalysis" class="mt-10">
+           <analysis-board></analysis-board>
 
     </div>
     <filter-modal />
@@ -339,6 +342,7 @@ import __clonedeep from 'lodash.clonedeep'
 import Task from '@/views/task/Task.vue'
 import FilterModal from './components/FilterModal.vue'
 import MemberList from './components/MemberRes.vue'
+import AnalysisBoard from './components/AnalysisBoard.vue'
 
 import TaskList from '../task/TaskList.vue'
 
@@ -350,6 +354,7 @@ export default {
     draggable,
     FilterModal,
     Task,
+    AnalysisBoard,
     MemberList,
     AddModal,
   },
@@ -375,6 +380,7 @@ export default {
     showTask: false,
     showMember: false,
     showList: false,
+    showAnalysis: false,
     isTaskShow: true,
     isKbShow: true,
     isEditStageVisible: false,
@@ -412,6 +418,9 @@ export default {
       this.init()
     },
     showMember() {
+      this.init()
+    },
+    showAnalysis() {
       this.init()
     },
     isAddModalOpened() {
@@ -545,6 +554,7 @@ export default {
       this.isKbShow = false
       this.showList = false
       this.showMember = false
+      this.showAnalysis = false
       switch (target.value) {
         case 'kanban':
           this.isKbShow = true
@@ -555,13 +565,12 @@ export default {
           this.showListBoard()
           break
         case 'board':
-          this.consoleBoard()
+          this.showAnalysis = true
           break
         case 'member':
           this.showMember = true
           console.log('啊啊啊啊', this.showMember)
           break
-        case 'progress':
         default:
           return true
       }

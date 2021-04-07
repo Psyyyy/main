@@ -3,6 +3,7 @@ import errorHandler from '@/utils/error-handler'
 import vuescroll from 'vuescroll'
 import axios from 'axios'
 import moment from 'moment'
+import * as echarts from 'echarts' // 引入组件
 import App from './App.vue'
 import router from './router/router'
 import store from './store/store'
@@ -11,7 +12,9 @@ import './router/control'
 import './plugins'
 import '@/assets/scss/reset.scss'
 import '@/assets/scss/common.scss'
-import './directives' // 自定义指令
+import './directives'
+// 引入echarts
+Vue.prototype.$echarts = echarts
 
 Vue.config.errorHandler = errorHandler
 Vue.config.productionTip = false
@@ -22,6 +25,7 @@ Vue.config.productionTip = false
 // })
 Vue.use(vuescroll)
 Vue.use(moment)
+Vue.prototype.$echarts = echarts
 Vue.prototype.$vuescrollConfig = {
   vuescroll: {
     mode: 'native',

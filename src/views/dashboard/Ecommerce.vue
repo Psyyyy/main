@@ -103,7 +103,8 @@
               style="margin: 0 -5px -6px -5px; over-flow: hidden;"
               class="mt-auto"
             >
-              <order-summary-chart />
+            <!-- <div id='myChart' style='width:500px;height:400px'></div> -->
+              <!-- <order-summary-chart :x-data="weekDate"/> -->
             </div>
           </div>
           <div class="w-1/3">
@@ -290,7 +291,11 @@ export default {
   name: 'Ecommerce',
 
   components: { MultiRadialChart, RevenueChart, OrderSummaryChart },
-
+  computed: {
+    weekDate() {
+      return this.$store.state.analysis.weekDate
+    },
+  },
   data() {
     return {
       tableColumns: [
@@ -358,6 +363,119 @@ export default {
         },
       ],
     }
+  },
+  mounted() {
+    this.drawLine()
+  },
+  methods: {
+    // 项目进度，面积堆叠图
+    drawLine() {
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = this.$echarts.init(document.getElementById('myChart'))
+      // 绘制图表
+      myChart.setOption({
+        title: { text: '在Vue中使用echarts' },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'line',
+            label: {
+              backgroundColor: '#6a7985',
+            },
+          },
+        },
+        xAxis: {
+          data: this.weekDate,
+          boundaryGap: false,
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {},
+          },
+        },
+        yAxis: [
+          {
+            show: false,
+          },
+        ],
+        series: [
+          {
+            name: '已完成',
+            stack: '任务数', // 保证是堆叠的而不是覆盖的
+            showSymbol: false,
+            lineStyle: {
+              width: 0,
+            },
+            itemStyle: {
+              normal: {
+                color: '#39da8a',
+              },
+            },
+            areaStyle: {
+              opacity: 0.8,
+              color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(128, 255, 165)',
+              }, {
+                offset: 1,
+                color: 'rgba(1, 191, 236)',
+              }]),
+            },
+            type: 'line',
+            data: [5, 20, 26, 10, 10, 20, 5],
+          },
+          {
+            name: '已延误',
+            lineStyle: {
+              width: 0,
+            },
+            stack: '任务数',
+            showSymbol: false,
+            itemStyle: {
+              normal: {
+                color: '#ff5b5c',
+              },
+            },
+            areaStyle: {
+              opacity: 0.8,
+              color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(255, 0, 34)',
+              }, {
+                offset: 1,
+                color: 'rgba(247, 81, 81)',
+              }]),
+            },
+            type: 'line',
+            data: [10, 30, 36, 20, 12, 26, 15],
+          }, {
+            name: '待处理',
+            showSymbol: false,
+            lineStyle: {
+              width: 0,
+            },
+            stack: '任务数',
+            areaStyle: {
+              opacity: 0.8,
+              color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(55, 162, 255)',
+              }, {
+                offset: 1,
+                color: 'rgba(116, 21, 219)',
+              }]),
+            },
+            itemStyle: {
+              normal: {
+                color: '#6485ff',
+              },
+            },
+            type: 'line',
+            data: [10, 40, 46, 30, 15, 29, 25],
+          },
+        ],
+      })
+    },
   },
 }
 </script>

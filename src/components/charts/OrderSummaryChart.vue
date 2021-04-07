@@ -8,31 +8,47 @@
 </template>
 
 <script>
+
 export default {
   name: 'OrderSummaryChart',
 
   props: {
+    xData: {
+      type: Object,
+      default: () => {
+        ['周一', '周二', '周二', '周二', '周二', '周二', '周二']
+      },
+    },
     series: {
       type: Array,
       default: () => [
         {
-          name: '周度',
-          data: [165, 175, 162, 173, 160, 195, 160, 170, 160, 190, 180],
+          name: '已完成',
+          data: [165, 175, 162, 173, 160, 195, 160],
           type: 'area',
         },
         {
-          name: '月度',
-          data: [168, 168, 155, 178, 155, 170, 190, 160, 150, 170, 140],
-          type: 'line',
+          name: '已延误',
+          data: [168, 168, 155, 178, 155, 170, 170],
+          type: 'area',
+        },
+        {
+          name: '待处理',
+          data: [175, 190, 175, 178, 190, 178, 200],
+          type: 'area',
         },
       ],
     },
   },
-
+  computed: {
+    weekDate() {
+      return this.$store.state.analysis.weekDate
+    },
+  },
   data: () => ({
     orderSummaryChartOptions: {
       chart: {
-        stacked: false,
+        stacked: true,
         toolbar: {
           show: false,
         },
@@ -40,14 +56,14 @@ export default {
           enabled: true,
         },
       },
-      colors: ['#6485ff', '#6485ff'],
+      colors: ['#39da8a', '#ff5b5c', '#6485ff'],
       dataLabels: {
         enabled: false,
       },
       stroke: {
         curve: 'smooth',
         width: 2.5,
-        dashArray: [0, 8],
+        // dashArray: [0, 8],
       },
       fill: {
         type: 'gradient',
@@ -55,30 +71,22 @@ export default {
           inverseColors: false,
           shade: 'light',
           type: 'vertical',
-          gradientToColors: ['rgba(100, 133, 255, .05)', '#6485ff'],
-          opacityFrom: 0.7,
-          opacityTo: 0.55,
+          gradientToColors: ['#39da8a', '#ff5b5c', '#6485ff'],
           stops: [0, 100],
         },
       },
+      markers: {
+        size: 0,
+      },
       xaxis: {
-        offsetY: -50,
-        categories: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, ''],
-        axisBorder: {
-          show: false,
-        },
-        axisTicks: {
-          show: false,
-        },
+        type: 'datetime',
+        categories: this.weekDate,
         labels: {
           show: true,
           style: {
             colors: '#718096',
           },
         },
-      },
-      tooltip: {
-        x: { show: false },
       },
     },
   }),
