@@ -443,6 +443,9 @@ export default {
     currListType() {
       return this.$store.state.task.currListType
     },
+    currAddType() {
+      return this.$store.state.add.currAddType
+    },
     currStageId() {
       return this.$store.state.stage.currStageId
     },
@@ -482,7 +485,7 @@ export default {
       console.log('memberlist', res)
       this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
-    async getTask() {
+    async getTask() { // 这是公共组件..
       const pid = this.currProjectID
       const sid = this.currStageId
       if (this.currListType === 'stage') {
@@ -677,7 +680,7 @@ export default {
     onOpenAdd() {
       console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
-      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      // this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
     },
     resetTable() {

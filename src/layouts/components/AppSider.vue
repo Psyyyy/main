@@ -97,12 +97,14 @@ export default {
         console.log('bar', name)
         if (name === 'Task') {
           this.$store.commit('task/SET_LIST_TYPE', 'task')
+          this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
         }
         if (name === 'Kanban') {
           this.$store.commit('task/SET_LIST_TYPE', 'stage')
         }
         if (name === 'Bug') {
           this.$store.commit('task/SET_LIST_TYPE', 'bug')
+          this.$store.commit('add/SET_ADD_MODAL_TYPE', 'bug')
         }
         if (meta?.openKey) {
           this.openKeys = [meta.openKey]

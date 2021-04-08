@@ -84,7 +84,7 @@ export default {
       )
       if (this.task.detail.is_del || this.task.detail.is_done) return false
       this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
-      this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
+      // this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
       return true
     },

@@ -580,7 +580,7 @@ export default {
     }
   },
   created() {
-    console.log(this.data)
+    this.$store.commit('add/SET_ADD_MODAL_TYPE', 'bug')
   },
   methods: {
     // 占位函数

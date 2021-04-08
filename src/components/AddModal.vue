@@ -207,12 +207,6 @@ export default {
       start_time: '',
       end_time: '',
     },
-    taskStatus: [
-      '规划中',
-      '实现中',
-      '已实现',
-      '已拒绝',
-    ],
     rules: {
       t_title: [
         { required: true, message: '请输入标题', trigger: 'blur' },
@@ -233,6 +227,8 @@ export default {
   },
 
   created() {
+    console.log('add type', this.currAddType)
+    console.log('lst type', this.currListType)
     this.getStageList()
     this.getMemberList()
   },

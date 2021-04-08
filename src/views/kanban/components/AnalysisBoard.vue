@@ -42,7 +42,7 @@
                 <a-card class="card-box">
                   <span class="card-item">待处理任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(119, 126, 241)">8</div>
+                    <div style="color:rgba(119, 126, 241)">{{data.unfinish[dayNum-1]+data.delay[dayNum-1]}}</div>
                   </div>
                 </a-card>
               </div>
@@ -50,7 +50,7 @@
                 <a-card class="card-box">
                   <span class="card-item">已延误任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(253, 68, 88)">1</div>
+                    <div style="color:rgba(253, 68, 88)">{{data.delay[dayNum-1]}}</div>
                   </div>
                 </a-card>
               </div>
@@ -59,7 +59,7 @@
                 <a-card class="card-box">
                   <span class="card-item">已完成任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(72, 214, 228)">72</div>
+                    <div style="color:rgba(72, 214, 228)">{{data.finish[dayNum-1]}}</div>
                   </div>
                 </a-card>
               </div>
@@ -202,6 +202,7 @@ export default {
         delay: [],
       },
       week: [],
+      dayNum: 0,
     }
   },
   watch: {},
@@ -233,6 +234,7 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取数据失败')
       }
+      this.dayNum = res.data.finish.length
       this.data.finish = res.data.finish
       this.data.delay = res.data.delay
       this.date = res.data.date

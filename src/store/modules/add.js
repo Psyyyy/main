@@ -90,7 +90,7 @@ const actions = {
 
 const getters = {
   stateAdd: (state) => {
-    // console.log(state)
+    console.log('add的type', state.currAddType)
     if (state.currAddType === 'task') { return state.stateAdd.task }
     if (state.currAddType === 'bug') { return state.stateAdd.bug }
     if (state.currAddType === 'stage') {
