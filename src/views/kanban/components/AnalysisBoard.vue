@@ -292,7 +292,7 @@ export default {
           textStyle: {
             fontSize: '16',
           },
-          data: ['已完成', '已延误', '待处理'],
+          // sdata: ['已完成', '已延误', '待处理'],
         },
         toolbox: {
           feature: {
@@ -345,7 +345,7 @@ export default {
             stack: '任务数',
             showSymbol: false,
             itemStyle: {
-              color: '#39da8a',
+              color: '#ff5b5c',
             },
             areaStyle: {
               opacity: 0.8,
