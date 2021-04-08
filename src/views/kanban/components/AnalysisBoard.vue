@@ -74,7 +74,7 @@
                 <div>统计</div>
                 <div class="flex ml-10">
                   <div class="inline-block w-1/3">
-                    <a-progress type="dashboard" stroke-width="9" :percent="75">
+                    <a-progress type="dashboard" :stroke-width="9" :percent="75">
                       <template #format="percent">
                         <span
                           style="fontSize:20px;fontWeight:bolder;color:#108ee9"
@@ -129,7 +129,7 @@
                     <div class="inline-block w-1/3">
                       <a-progress
                         type="dashboard"
-                        stroke-width="9"
+                        :stroke-width="9"
                         :percent="75"
                       >
                         <template #format="percent">
@@ -185,6 +185,10 @@
 </template>
 <script>
 import { getDay } from '@/utils/util'
+import _ from 'lodash'
+import {
+  getStageRecord,
+} from '@/api/analysis'
 
 export default {
   components: {},
@@ -192,16 +196,21 @@ export default {
   data() {
     return {
       name: 'AnalysisBoard',
-      data: [],
+      data: {
+        finish: [],
+        unfinish: [],
+        delay: [],
+      },
       week: [],
     }
   },
   watch: {},
   created() {
+    this.getStageRecord()
     this.getWeekDate()
   },
   mounted() {
-    this.drawLine()
+    // this.drawLine()
     this.drawBurnLine()
     window.onresize = () => { // 自适应
       // 基于准备好的dom，初始化echarts实例
@@ -212,10 +221,28 @@ export default {
   methods: {
     getWeekDate() {
       this.week = []
-      for (let i = 6; i > -1; i -= 1) {
+      for (let i = 7; i > 1; i -= 1) {
         this.week.push(getDay(-i))
       }
       this.$store.commit('analysis/SET_WEEK_DATE', this.week)
+    },
+    async getStageRecord() {
+      const res = await getStageRecord(this.currStageId)
+      console.log('project', res)
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取数据失败')
+      }
+      this.data.finish = res.data.finish
+      this.data.delay = res.data.delay
+      this.date = res.data.date
+      for (let i = 0; i < res.data.unfinish.length; i += 1) { // 考虑到时间顺序，这里可能要倒置
+        this.data.unfinish.push(res.data.unfinish[i] - res.data.delay[i])
+      }
+      // _.reverse(this.data)
+      console.log('图数据', this.data)
+      this.drawLine()
+      return true
     },
     // 项目进度，面积堆叠图
     drawLine() {
@@ -224,7 +251,7 @@ export default {
       // 绘制图表
       myChart.setOption({
         title: {
-          text: '项目进展',
+          text: '迭代进展',
           left: '43%',
           top: 5,
           textStyle: {
@@ -242,12 +269,12 @@ export default {
           },
         },
         xAxis: {
-          data: this.weekDate,
+          data: this.date,
           boundaryGap: false,
         },
         grid: {
-          right: '2%',
-          top: '0',
+          right: '4%',
+          top: '30',
           bottom: '22%',
           left: '6%',
         },
@@ -276,11 +303,10 @@ export default {
             },
           },
         },
-        yAxis: [
-          {
-            show: false,
-          },
-        ],
+        yAxis: {
+          show: false,
+          max: '100',
+        },
         // legend: {
         //   data: ['已完成', '已延误', '待处理'],
         // },
@@ -293,9 +319,7 @@ export default {
               width: 0,
             },
             itemStyle: {
-              normal: {
-                color: '#39da8a',
-              },
+              color: '#39da8a',
             },
             areaStyle: {
               opacity: 0.8,
@@ -311,7 +335,7 @@ export default {
               ]),
             },
             type: 'line',
-            data: [0, 0, 1, 15, 20, 30, 40],
+            data: this.data.finish,
           },
           {
             name: '已延误',
@@ -321,9 +345,7 @@ export default {
             stack: '任务数',
             showSymbol: false,
             itemStyle: {
-              normal: {
-                color: '#ff5b5c',
-              },
+              color: '#39da8a',
             },
             areaStyle: {
               opacity: 0.8,
@@ -339,7 +361,7 @@ export default {
               ]),
             },
             type: 'line',
-            data: [0, 0, 0, 2, 1, 4, 2],
+            data: this.data.delay,
           },
           {
             name: '待处理',
@@ -367,7 +389,7 @@ export default {
               },
             },
             type: 'line',
-            data: [3, 6, 8, 6, 8, 11, 9],
+            data: this.data.unfinish,
           },
         ],
       })
@@ -397,7 +419,7 @@ export default {
           },
         },
         xAxis: {
-          data: this.weekDate,
+          data: this.date,
           boundaryGap: false,
           splitLine: {
             show: false,
@@ -469,7 +491,7 @@ export default {
           },
         },
         xAxis: {
-          data: this.weekDate,
+          data: this.date,
           boundaryGap: false,
           splitLine: {
             show: false,

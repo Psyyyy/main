@@ -825,7 +825,6 @@ export default {
       title: '',
       content: '',
     },
-    weekDate: [],
   }),
   //   beforeMount() {
   //     this.fetchData((res) => {
@@ -847,7 +846,6 @@ export default {
     this.getProject()
     this.getTask()
     this.getNoticeList()
-    this.getWeekDate()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -878,13 +876,6 @@ export default {
   },
 
   methods: {
-    getWeekDate() {
-      this.weekDate = []
-      for (let i = 6; i > -1; i -= 1) {
-        this.weekDate.push(getDay(-i))
-      }
-      this.$store.commit('analysis/SET_WEEK_DATE', this.weekDate)
-    },
     percentCalc(done, all) {
       const tmp = done / all
       return tmp * 100

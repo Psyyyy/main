@@ -41,9 +41,6 @@ export default {
     },
   },
   computed: {
-    weekDate() {
-      return this.$store.state.analysis.weekDate
-    },
   },
   data: () => ({
     orderSummaryChartOptions: {
@@ -80,7 +77,7 @@ export default {
       },
       xaxis: {
         type: 'datetime',
-        categories: this.weekDate,
+        categories: [],
         labels: {
           show: true,
           style: {

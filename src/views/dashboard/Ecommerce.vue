@@ -104,7 +104,7 @@
               class="mt-auto"
             >
             <!-- <div id='myChart' style='width:500px;height:400px'></div> -->
-              <!-- <order-summary-chart :x-data="weekDate"/> -->
+
             </div>
           </div>
           <div class="w-1/3">
@@ -291,11 +291,7 @@ export default {
   name: 'Ecommerce',
 
   components: { MultiRadialChart, RevenueChart, OrderSummaryChart },
-  computed: {
-    weekDate() {
-      return this.$store.state.analysis.weekDate
-    },
-  },
+
   data() {
     return {
       tableColumns: [
@@ -385,7 +381,7 @@ export default {
           },
         },
         xAxis: {
-          data: this.weekDate,
+          data: [],
           boundaryGap: false,
         },
         toolbox: {
