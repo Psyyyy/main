@@ -55,7 +55,7 @@
     <div class="select-board px-2">
       <section class="col w-2/3">
         <!--我的项目 -->
-        <div class=" mb-3 px-1 ">
+        <div class="px-1 ">
           <div class="dashboard-card p-0">
             <div
               style="border-bottom: 1px solid #eee;"
@@ -65,33 +65,6 @@
                 我的项目（ {{ projectList.length }} ）
               </h3>
               <div class="ml-auto flex items-center">
-                <!-- <a-dropdown class="mr-3">
-                  <div class="flex items-center cursor-pointer">
-                    <feather class="mr-1" size="18" type="check-circle" />
-                    所有项目
-                    <feather
-                      class="ml-1 text-gray-500"
-                      size="18"
-                      type="chevron-down"
-                    />
-                  </div>
-                  <template #overlay>
-                    <a-menu>
-                      <a-menu-item>
-                        所有项目
-                      </a-menu-item>
-                      <a-menu-item>
-                        已完成
-                      </a-menu-item>
-                      <a-menu-item>
-                        进行中
-                      </a-menu-item>
-                      <a-menu-item>
-                        已丢弃
-                      </a-menu-item>
-                    </a-menu>
-                  </template>
-                </a-dropdown> -->
                 <a-dropdown class="mr-3">
                   <div class="flex items-center cursor-pointer">
                     <feather class="mr-1" size="18" type="list" />
@@ -129,7 +102,7 @@
             <!-- 项目列表 -->
             <div
               v-if="showProjectList"
-              style="height:450px"
+              style="height:550px"
               class="overflow-auto"
             >
               <ul>
@@ -210,7 +183,7 @@
             <!-- 项目图示 -->
             <div
               v-if="!showProjectList"
-              style="height:450px"
+              style="height:540px"
               class="overflow-auto p-2"
             >
               <a-list :grid="{ xs: 4 }" :data-source="projectList">
@@ -222,12 +195,10 @@
                     @click="enterProject(item.pro_id, item.pro_title)"
                   >
                     <a-avatar
-                      class="flex items-center justify-center mx-auto mt-0 py-2 max-w-full"
+                      class="flex items-center justify-center mx-auto mt-0 py-2 max-w-full bg-primary"
                       shape="square"
                       :size="200"
-                      :icon="info.avatar ? '' : 'user'"
-                      :src="info.avatar"
-                    />
+                    ><span class="text-3xl">{{item.pro_title}}</span></a-avatar>
                     <a-divider class="m-0" />
                     <div>
                       <span class="text-xl">{{ item.pro_title }}</span>
@@ -303,102 +274,8 @@
             </div>
           </div>
         </div>
-        <!-- 项目动态-vue滚动加载 -->
-        <div class=" mb-3 px-1">
-          <div class="dashboard-card p-0 ">
-            <!-- 动态标题 -->
-            <div
-              style="border-bottom: 1px solid #eee;"
-              class="mb-2 px-4 py-4 flex items-center"
-            >
-              <h3 class="dashboard-card-title">项目动态</h3>
-            </div>
-
-            <div
-              style="height:500px"
-              class="px-4 demo-infinite-container overflow-auto"
-            >
-              <a-list
-                class="comment-list"
-                :header="`最新${dialogList.length}条动态 `"
-                item-layout="horizontal"
-                :data-source="dialogList"
-              >
-                <a-list-item slot="renderItem" slot-scope="item">
-                  <a-comment :author="item.name">
-                     <a-avatar
-                     slot="avatar"
-                     @click="enterProject(item.d_pid, item.pro_title)"
-                            class="flex-wrap text-xs primary bg-primary-light"
-                            :size="40"
-                            >
-
-                            <a-tooltip placement="top">
-                              <template slot="title">
-          <span>点击进入项目页</span>
-        </template>
-                              {{
-                              item.pro_title
-                            }}
-                            </a-tooltip>
-                            </a-avatar
-                          >
-                          <template slot="actions">
-          <span>来自{{item.t_type===1?'需求':'缺陷'}}【{{ item.t_title }}】</span>
-        </template>
-                    <p slot="content">
-                      <span> {{ item.d_action }}<span class="warning" v-if="item.d_target!==''">「{{item.d_target}}」</span></span>
-                    </p>
-                      <span slot="datetime">{{ item.d_create_time|dateFormat }}</span>
-                  </a-comment>
-                </a-list-item>
-              </a-list>
-            </div>
-          </div>
-        </div>
       </section>
       <section class="col w-1/3">
-        <!-- 欢迎面板 -->
-        <div class="mb-3 px-1 ">
-          <div class="dashboard-card p-0">
-            <div
-              style="border-bottom: 1px solid #eee;"
-              class="flex mb-2 px-3 py-1 flex items-center"
-            >
-              <h3 class=" dashboard-card-title">
-                团队进度<span>（ {{ team.length }} ）</span>
-              </h3>
-            </div>
-            <div class="team">
-              <div
-                class="my-auto team-progress"
-                v-for="({ name, percent, state }, index) in team"
-                :key="index"
-              >
-                <a-progress
-                  :width="90"
-                  :height="90"
-                  :stroke-color="`rgba(var(--${state}), 1)`"
-                  type="circle"
-                  :percent="percent"
-                >
-                  <template #format="percent">
-                     <span style="color: red">{{ percent }}</span>
-                    <a-avatar
-                      :key="percent"
-                      slot="avatar"
-                      :size="50"
-                      src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    />
-                    <div class="mask">
-                      <h3>{{ name }}</h3>
-                    </div>
-                  </template>
-                </a-progress>
-              </div>
-            </div>
-          </div>
-        </div>
         <!-- 我的任务 -->
         <div class="mb-3 px-1 ">
           <div class="dashboard-card p-0">
@@ -413,7 +290,7 @@
                 <a-button @click.stop="viewAll()">查看所有任务</a-button>
               </div>
             </div>
-            <div style="height:380px" class="overflow-auto">
+            <div style="height:180px" class="overflow-auto">
               <ul>
                 <li
                   class="px-5 py-4 flex items-center hover:bg-gray-100 transition cursor-pointer"
@@ -474,81 +351,62 @@
             </div>
           </div>
         </div>
-        <!-- 文档动态 -->
-        <div class="mb-3 px-1 ">
-          <div class="dashboard-card p-0">
+        <!-- 项目动态-vue滚动加载 -->
+        <div class=" px-1">
+          <div class="dashboard-card p-0 ">
+            <!-- 动态标题 -->
             <div
               style="border-bottom: 1px solid #eee;"
-              class="flex mb-2 px-3 py-2 flex items-center"
+              class="mb-2 px-4 py-4 flex items-center"
             >
-              <h3 class=" dashboard-card-title">文档动态</h3>
-
-              <!-- <div
-                class="mr-4 ml-auto flex a items-center cursor-pointer"
-                @click="viewFiles"
-              >
-                <feather class="mr-1" size="18" type="folder" />
-                打开文库
-              </div> -->
+              <h3 class="dashboard-card-title">项目动态</h3>
             </div>
-            <div style="height:350px" class="overflow-auto">
-              <a-timeline class="timeline mt-3">
-                <a-timeline-item
-                  v-for="({ action, file, time, icon }, index) in [
-                    {
-                      action: '小明审核了您的文章投稿',
-                      file: '网页设计大赛开幕式流程.pdf',
-                      time: '5分钟前',
-                      icon: require('@img/pdf.png')
-                    },
-                    {
-                      action: '提交了一份 PDF 文件',
-                      file: '毕业设计论文终稿.pdf',
-                      time: '2小时前',
-                      icon: require('@img/pdf.png')
-                    },
-                    {
-                      action: '上传了网页设计原型图',
-                      file: 'Venus 系统设计图.psd',
-                      time: '1天前',
-                      icon: require('@img/psd.png')
-                    },
-                    {
-                      action: '提交了一份 PDF 文件',
-                      file: '毕业设计论文终稿.pdf',
-                      time: '2小时前',
-                      icon: require('@img/pdf.png')
-                    },
-                    {
-                      action: '提交了一份 PDF 文件',
-                      file: '毕业设计论文终稿.pdf',
-                      time: '2小时前',
-                      icon: require('@img/pdf.png')
-                    }
-                  ]"
-                  :key="index"
-                >
-                  <template #dot>
-                    <div
-                      style="box-shadow: 1px 2px 6px 0 rgba(25,42,70,.3);"
-                      class="relative w-4 h-4 rounded-full bg-white"
+
+            <div
+              style="height:250px"
+              class="px-4 demo-infinite-container overflow-auto"
+            >
+              <a-list
+                class="comment-list"
+                item-layout="horizontal"
+                :data-source="dialogList"
+              >
+                <a-list-item slot="renderItem" slot-scope="item">
+                  <a-comment :author="item.name">
+                    <a-avatar
+                      slot="avatar"
+                      @click="enterProject(item.d_pid, item.pro_title)"
+                      class="flex-wrap text-xs primary bg-primary-light"
+                      :size="40"
                     >
-                      <div
-                        style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
-                        class="absolute w-2 h-2 rounded-full bg-primary"
-                      ></div>
-                    </div>
-                  </template>
-                  <div>{{ action }}</div>
-                  <p class="mb-4 text-xs text-gray-500">{{ time }}</p>
-                  <div
-                    class="flex items-center text-sm text-black cursor-pointer hover:primary transition"
-                  >
-                    <img class="w-6 mr-3" alt="pdf" :src="icon" />
-                    <span>{{ file }}</span>
-                  </div>
-                </a-timeline-item>
-              </a-timeline>
+                      <a-tooltip placement="top">
+                        <template slot="title">
+                          <span>点击进入项目页</span>
+                        </template>
+                        {{ item.pro_title }}
+                      </a-tooltip>
+                    </a-avatar>
+                    <template slot="actions">
+                      <span
+                        >来自{{ item.t_type === 1 ? "需求" : "缺陷" }}【{{
+                          item.t_title
+                        }}】</span
+                      >
+                    </template>
+                    <p slot="content">
+                      <span>
+                        {{ item.d_action
+                        }}<span class="warning" v-if="item.d_target !== ''"
+                          >「{{ item.d_target }}」</span
+                        ></span
+                      >
+                    </p>
+                    <span slot="datetime">{{
+                      item.d_create_time | dateFormat
+                    }}</span>
+                  </a-comment>
+                </a-list-item>
+              </a-list>
             </div>
           </div>
         </div>
@@ -623,7 +481,7 @@ import { getMemberList } from '@/api/member'
 import { getUserTaskList } from '@/api/task'
 import { getNoticeList } from '@/api/notice'
 import { getStageList } from '@/api/stage'
-import { getDialog, newDialog } from '@/api/dialog'
+import { getDialog } from '@/api/dialog'
 import screenfull from 'screenfull'
 import infiniteScroll from 'vue-infinite-scroll'
 import HeaderNotice from '../../layouts/components/app-header/HeaderNotice.vue'
@@ -879,12 +737,19 @@ export default {
     todoList() {
       return this.$store.state.todo.todoList
     },
+    fileList() {
+      return this.$store.state.file.fileList
+    },
+    fileIcon() {
+      return this.$store.state.file.fileIcon
+    },
   },
   created() {
     this.getProject()
     this.getTask()
     this.getNoticeList()
     this.getDialog()
+    this.getFileList()
   },
   mounted() {
     if (screenfull.isEnabled) {

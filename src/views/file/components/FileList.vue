@@ -112,15 +112,15 @@ export default {
       1: { text: '需求', color: 'primary' },
       2: { text: '缺陷', color: 'danger' },
     },
-    fileList: [],
-    file: {
-      id: '',
-      name: '',
-      end: '',
-      uploadTime: '',
-      source: 'task',
-      sourceId: 0,
-    },
+    // fileList: [],
+    // file: {
+    //   id: '',
+    //   name: '',
+    //   end: '',
+    //   uploadTime: '',
+    //   source: 'task',
+    //   sourceId: 0,
+    // },
     dialogForm: {
       pid: '', // 决定在哪个项目页显示
       source: '', // this.currListType
