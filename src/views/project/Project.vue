@@ -65,7 +65,7 @@
                 我的项目（ {{ projectList.length }} ）
               </h3>
               <div class="ml-auto flex items-center">
-                <a-dropdown class="mr-3">
+                <!-- <a-dropdown class="mr-3">
                   <div class="flex items-center cursor-pointer">
                     <feather class="mr-1" size="18" type="check-circle" />
                     所有项目
@@ -91,7 +91,7 @@
                       </a-menu-item>
                     </a-menu>
                   </template>
-                </a-dropdown>
+                </a-dropdown> -->
                 <a-dropdown class="mr-3">
                   <div class="flex items-center cursor-pointer">
                     <feather class="mr-1" size="18" type="list" />
@@ -145,13 +145,14 @@
                   },
                   i) in projectList"
                   :key="pro_id"
-                   @click="enterProject(pro_id, pro_title)"
+                  @click="enterProject(pro_id, pro_title)"
                 >
                   <a-checkbox v-model="projectList[i].pro_done" />
                   <div class="mx-4 truncate text-gray-600">
-                    {{ pro_title
-                    }}
-                    <span class="ml-4 text-base text-gray-400">{{pro_content}}</span>
+                    {{ pro_title }}
+                    <span class="ml-4 text-base text-gray-400">{{
+                      pro_content
+                    }}</span>
                   </div>
                   <div class="flex-1 text-right">
                     <span class="ml-4 text-gray-400">项目进度：</span>
@@ -160,9 +161,10 @@
                       :stroke-width="4"
                       stroke-color="#6485ff"
                       :percent="percentCalc(finish_task_sum, all_task_sum)"
-                    /> <span class="flex-1 mr-2 text-right text-gray-400">{{
-                    pro_create_time | dateFormat
-                  }}</span>
+                    />
+                    <span class="flex-1 mr-2 text-right text-gray-400">{{
+                      pro_create_time | dateFormat
+                    }}</span>
                   </div>
 
                   <a-dropdown class="ml-auto">
@@ -179,13 +181,12 @@
                       <a-menu>
                         <a-menu-item
                           class="flex items-center"
-                          @click="openEditModal(pro_id,pro_title,pro_content)"
+                          @click="openEditModal(pro_id, pro_title, pro_content)"
                         >
                           <feather
                             class="mr-2 cursor-pointer"
                             size="16"
                             type="edit"
-
                           ></feather>
                           编辑
                         </a-menu-item>
@@ -197,7 +198,6 @@
                             class="mr-2 cursor-pointer"
                             size="16"
                             type="trash"
-
                           ></feather>
                           删除
                         </a-menu-item>
@@ -263,13 +263,18 @@
                             <a-menu>
                               <a-menu-item
                                 class="flex items-center"
-                                @click="openEditModal(item.pro_id,item.pro_title,item.pro_content)"
+                                @click="
+                                  openEditModal(
+                                    item.pro_id,
+                                    item.pro_title,
+                                    item.pro_content
+                                  )
+                                "
                               >
                                 <feather
                                   class="mr-2 cursor-pointer"
                                   size="16"
                                   type="edit"
-
                                 ></feather>
                                 编辑
                               </a-menu-item>
@@ -310,37 +315,50 @@
             </div>
 
             <div
-              v-infinite-scroll="handleInfiniteOnLoad"
               style="height:500px"
               class="px-4 demo-infinite-container overflow-auto"
-              :infinite-scroll-disabled="busy"
-              :infinite-scroll-distance="5"
             >
-              <a-list :data-source="todos">
-                <a-list-item
-                  slot="renderItem"
-                  slot-scope="item"
-                  style="height:100px"
-                >
-                  <a-list-item-meta :description="item.title">
-                    <a slot="title" :href="item.href">{{ item.title }}</a>
-                    <a-avatar
-                      slot="avatar"
-                      src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    />
-                  </a-list-item-meta>
-                  <div>任务链接（打开任务窗口）</div>
+              <a-list
+                class="comment-list"
+                :header="`最新${dialogList.length}条动态 `"
+                item-layout="horizontal"
+                :data-source="dialogList"
+              >
+                <a-list-item slot="renderItem" slot-scope="item">
+                  <a-comment :author="item.name">
+                     <a-avatar
+                     slot="avatar"
+                     @click="enterProject(item.d_pid, item.pro_title)"
+                            class="flex-wrap text-xs primary bg-primary-light"
+                            :size="40"
+                            >
+
+                            <a-tooltip placement="top">
+                              <template slot="title">
+          <span>点击进入项目页</span>
+        </template>
+                              {{
+                              item.pro_title
+                            }}
+                            </a-tooltip>
+                            </a-avatar
+                          >
+                          <template slot="actions">
+          <span>来自{{item.t_type===1?'需求':'缺陷'}}【{{ item.t_title }}】</span>
+        </template>
+                    <p slot="content">
+                      <span> {{ item.d_action }}<span class="warning" v-if="item.d_target!==''">「{{item.d_target}}」</span></span>
+                    </p>
+                      <span slot="datetime">{{ item.d_create_time|dateFormat }}</span>
+                  </a-comment>
                 </a-list-item>
-                <div v-if="loading && !busy" class="demo-loading-container">
-                  <a-spin />
-                </div>
               </a-list>
             </div>
           </div>
         </div>
       </section>
       <section class="col w-1/3">
-        <!-- 我的团队 -->
+        <!-- 欢迎面板 -->
         <div class="mb-3 px-1 ">
           <div class="dashboard-card p-0">
             <div
@@ -365,7 +383,7 @@
                   :percent="percent"
                 >
                   <template #format="percent">
-                    <!-- <span style="color: red">{{ percent }}</span> -->
+                     <span style="color: red">{{ percent }}</span>
                     <a-avatar
                       :key="percent"
                       slot="avatar"
@@ -392,40 +410,55 @@
                 我的任务（ {{ todoList.length }} ）
               </h3>
               <div class="ml-auto flex items-center">
-                <a-button  @click.stop="viewAll()">查看所有任务</a-button>
+                <a-button @click.stop="viewAll()">查看所有任务</a-button>
               </div>
             </div>
             <div style="height:380px" class="overflow-auto">
               <ul>
                 <li
                   class="px-5 py-4 flex items-center hover:bg-gray-100 transition cursor-pointer"
-                  v-for="({ id, t_title,t_rank,end_time,t_content }) in todoList"
+                  v-for="{
+                    id,
+                    t_title,
+                    t_rank,
+                    end_time,
+                    t_content
+                  } in todoList"
                   :key="id"
                 >
-
                   <div class="mx-4 truncate text-gray-600">
                     {{ t_title }}
                     <span class="ml-4 text-gray-400">
-                      {{t_content}}
+                      {{ t_content }}
                     </span>
                   </div>
                   <div
                     class="ml-auto flex items-center text-sm rounded-lg text-gray-400"
-                    :style="
-                      `padding: .1rem 1rem;`
+                    :style="`padding: .1rem 1rem;`"
+                  >
+                    {{ end_time | dateFormat }}
+                  </div>
+                  <a-tag
+                    class="ml-3"
+                    :color="
+                      t_rank === 3
+                        ? '#ff5b5c'
+                        : t_rank === 2
+                        ? '#fdac41'
+                        : '#28c175'
                     "
                   >
-                    {{ end_time|dateFormat}}
-                  </div>
-                   <a-tag
-                   class="ml-3"
-                  :color="
-                    t_rank === 3 ? '#ff5b5c' :t_rank === 2 ? '#fdac41' : '#28c175'
-                  "
-                >
-                 <span class="text-sm"> {{ t_rank === 3 ? "非常紧急" : t_rank === 2 ? "紧急" : "普通" }}</span>
-                </a-tag>
-                  <a-dropdown>
+                    <span class="text-sm">
+                      {{
+                        t_rank === 3
+                          ? "非常紧急"
+                          : t_rank === 2
+                          ? "紧急"
+                          : "普通"
+                      }}</span
+                    >
+                  </a-tag>
+                  <!-- <a-dropdown>
                     <div
                       class="flex items-center text-base text-gray-500 cursor-pointer"
                     >
@@ -435,7 +468,7 @@
                         type="more-vertical"
                       ></feather>
                     </div>
-                  </a-dropdown>
+                  </a-dropdown> -->
                 </li>
               </ul>
             </div>
@@ -450,13 +483,13 @@
             >
               <h3 class=" dashboard-card-title">文档动态</h3>
 
-              <div
+              <!-- <div
                 class="mr-4 ml-auto flex a items-center cursor-pointer"
-                @click="enterFolder"
+                @click="viewFiles"
               >
                 <feather class="mr-1" size="18" type="folder" />
                 打开文库
-              </div>
+              </div> -->
             </div>
             <div style="height:350px" class="overflow-auto">
               <a-timeline class="timeline mt-3">
@@ -547,11 +580,11 @@
         </div>
       </a-modal>
       <!-- 编辑项目 -->
-            <a-modal
+      <a-modal
         :visible.sync="isEditVisible"
         title="编辑项目信息"
         @ok="editProject('update')"
-        @cancel="isEditVisible=false"
+        @cancel="isEditVisible = false"
       >
         <div>
           <a-form-model
@@ -581,12 +614,16 @@ import _debounce from 'lodash.debounce'
 import { getDay, isValidUrl } from '@/utils/util'
 // import reqwest from 'reqwest'
 import {
-  getProjectList, newProject, updateProject, deleteProject,
+  getProjectList,
+  newProject,
+  updateProject,
+  deleteProject,
 } from '@/api/project'
 import { getMemberList } from '@/api/member'
 import { getUserTaskList } from '@/api/task'
 import { getNoticeList } from '@/api/notice'
 import { getStageList } from '@/api/stage'
+import { getDialog, newDialog } from '@/api/dialog'
 import screenfull from 'screenfull'
 import infiniteScroll from 'vue-infinite-scroll'
 import HeaderNotice from '../../layouts/components/app-header/HeaderNotice.vue'
@@ -599,6 +636,7 @@ export default {
     labelCol: { span: 5 },
     wrapperCol: { span: 14 },
     projectList: [],
+    dialogList: [],
     menuItems: [
       {
         label: '个人中心',
@@ -846,6 +884,7 @@ export default {
     this.getProject()
     this.getTask()
     this.getNoticeList()
+    this.getDialog()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -883,6 +922,9 @@ export default {
     viewAll() {
       this.$router.push({ name: 'Todo' })
     },
+    viewFiles() {
+      this.$router.push({ name: 'File' })
+    },
     async getProject() {
       const uid = window.sessionStorage.getItem('currUserID')
       const { data: res } = await getProjectList(uid)
@@ -918,7 +960,7 @@ export default {
       if (options === 'add') {
         // console.log(e)
         this.$refs.addFormRef.validate(async (valid, field) => {
-        // 有未校验通过的字段
+          // 有未校验通过的字段
           if (!valid) {
             return this.$message.error('存在错误字段，无法创建')
           }
@@ -940,7 +982,7 @@ export default {
         })
       } else {
         this.$refs.addFormRef.validate(async (valid, field) => {
-        // 有未校验通过的字段
+          // 有未校验通过的字段
           if (!valid) {
             return this.$message.error('存在错误字段，无法提交编辑')
           }
@@ -982,9 +1024,9 @@ export default {
       const that = this
       this.$confirm({
         title: (
-              <p>
-                此操作将删除<span class="warning">「{title}」</span>项目
-              </p>
+          <p>
+            此操作将删除<span class="warning">「{title}」</span>项目
+          </p>
         ),
         content: '您确定要删除该项目吗？',
         async onOk() {
@@ -1000,7 +1042,8 @@ export default {
         },
       })
     },
-    handleInfiniteOnLoad() { // 项目动态用的
+    handleInfiniteOnLoad() {
+      // 项目动态用的
       const { todos } = this
       this.loading = true
       if (todos.length > 6 && todos.length < 8) {
@@ -1022,11 +1065,11 @@ export default {
       this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
       window.localStorage.setItem('currProject', name)
       window.localStorage.setItem('currProjectID', id)
+      this.getStageList(id)
 
       this.$router.push('Ecommerce')
     },
-    async getStageList() {
-      const pid = this.currProjectID
+    async getStageList(pid) {
       const { data: res } = await getStageList(pid)
       console.log('stagelist', res.stagelist)
       this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
@@ -1061,6 +1104,14 @@ export default {
       console.log('noticelist', this.news)
       this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
+      return true
+    },
+    async getDialog() {
+      const obj = {}
+      console.log('com in')
+      const { data: res } = await getDialog(obj)
+      this.dialogList = res
+      console.log('项目dialog信息', res)
       return true
     },
   },
@@ -1191,13 +1242,13 @@ export default {
     transform: translateY(-20px);
   }
 }
-.project-list-item{
-          transition: $transition;
-    &:hover {
-        cursor:pointer;
-      background: rgba(247, 250, 252, 1);
-      box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
-      transform: translateY(-3px);
-    }
+.project-list-item {
+  transition: $transition;
+  &:hover {
+    cursor: pointer;
+    background: rgba(247, 250, 252, 1);
+    box-shadow: 0 15px 30px -5px rgba($secondary, 0.1);
+    transform: translateY(-3px);
+  }
 }
 </style>

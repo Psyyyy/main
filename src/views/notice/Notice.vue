@@ -10,7 +10,7 @@
       <div class="mt-2">
         <ul class="notice-list ">
           <div class="px-6" v-for="notice in noticeList" :key="notice.id">
-             <a-comment v-if="notice.uid!==1" class="notice-item" @click="showDetail(notice.sourceId,notice.id)">
+             <a-comment v-if="notice.uid!==currUserID" class="notice-item" @click="showDetail(notice.sourceId,notice.id)">
     <a slot="author" class="text-base"> {{notice.user}}</a>
     <a-avatar
       slot="avatar"
@@ -136,12 +136,12 @@ export default {
       let haveNew = false
       this.news = []
       for (let i = 0; i < res.length; i += 1) {
-        if (res[i].read === 0 && res[i].uid !== 1) {
+        if (res[i].read === 0 && res[i].uid !== this.currUserID) {
           haveNew = true
           this.news.push(res[i])
         }
       }
-      console.log('noticelist', this.newNotice)
+      console.log('noticelist', this.news)
       this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true

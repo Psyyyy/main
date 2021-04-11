@@ -1083,6 +1083,9 @@ export default {
     fileIcon() {
       return this.$store.state.file.fileIcon
     },
+    currAddType() {
+      return this.$store.state.add.currAddType
+    },
   },
   watch: {
     // $route(to, from) {
@@ -1312,7 +1315,7 @@ export default {
     },
     async newDialog(action, target) {
       this.dialogForm.pid = this.currProjectID
-      this.dialogForm.source = this.currListType
+      this.dialogForm.source = this.currAddType
       this.dialogForm.sourceId = this.task.detail.id
       this.dialogForm.action = action
       this.dialogForm.target = target
