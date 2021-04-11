@@ -16,3 +16,15 @@ export function getStageRecord(sid) {
     method: 'get',
   })
 }
+export function getProjectAnalysisData(pid) {
+  return request({
+    url: `/analysis/project/data/${pid}`,
+    method: 'get',
+  })
+}
+export function getStageAnalysisData(sid) {
+  return request({
+    url: `/analysis/stage/data/${sid}`,
+    method: 'get',
+  })
+}

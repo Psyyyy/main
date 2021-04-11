@@ -17,7 +17,7 @@
                     <feather type="layers"></feather>
                   </div>
                   <div>需求</div>
-                  <div class="text-2xl font-semibold">0/4</div>
+                  <div class="text-2xl font-semibold">{{analysisData.task.finish}}/{{analysisData.bug.finish+analysisData.task.unfinish}}</div>
                 </div>
               </a-card>
               <a-card class="card-box ">
@@ -26,7 +26,7 @@
                     <feather type="alert-octagon"></feather>
                   </div>
                   <div>缺陷</div>
-                  <div class="text-2xl font-semibold">0/0</div>
+                  <div class="text-2xl font-semibold">{{analysisData.bug.finish}}/{{analysisData.bug.finish+analysisData.bug.unfinish}}</div>
                 </div>
               </a-card>
             </div>
@@ -42,7 +42,7 @@
                 <a-card class="card-box">
                   <span class="card-item">待处理任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(119, 126, 241)">{{data.unfinish[dayNum-1]+data.delay[dayNum-1]}}</div>
+                    <div style="color:rgba(119, 126, 241)">{{analysisData.unfinish}}</div>
                   </div>
                 </a-card>
               </div>
@@ -50,7 +50,7 @@
                 <a-card class="card-box">
                   <span class="card-item">已延误任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(253, 68, 88)">{{data.delay[dayNum-1]}}</div>
+                    <div style="color:rgba(253, 68, 88)">{{analysisData.delay}}</div>
                   </div>
                 </a-card>
               </div>
@@ -59,7 +59,7 @@
                 <a-card class="card-box">
                   <span class="card-item">已完成任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(72, 214, 228)">{{data.finish[dayNum-1]}}</div>
+                    <div style="color:rgba(72, 214, 228)">{{analysisData.finish}}</div>
                   </div>
                 </a-card>
               </div>
@@ -74,11 +74,11 @@
                 <div>统计</div>
                 <div class="flex ml-10">
                   <div class="inline-block w-1/3">
-                    <a-progress type="dashboard" :stroke-width="9" :percent="75">
+                    <a-progress type="dashboard" :stroke-width="9" :percent="taskPercent">
                       <template #format="percent">
                         <span
                           style="fontSize:20px;fontWeight:bolder;color:#108ee9"
-                          >{{ percent }}%</span
+                          >{{percent}}%</span
                         >
                         <div class="mt-2">完成度</div>
                       </template>
@@ -86,7 +86,7 @@
                   </div>
                   <div class="mt-1 inline-block w-2/3">
                     <div style="text-align:center" class="sec-card-num">
-                      <div class="num">22</div>
+                      <div class="num">{{analysisData.task.finish+analysisData.task.unfinish}}</div>
                       <span>总计</span>
                     </div>
                     <!-- 自制竖线 -->
@@ -95,7 +95,7 @@
                       style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                     ></div>
                     <div class="sec-card-num">
-                      <div class="num">12</div>
+                      <div class="num">{{analysisData.task.unfinish}}</div>
                       <span>进行中</span>
                     </div>
                     <div
@@ -103,7 +103,7 @@
                       style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                     ></div>
                     <div class="sec-card-num">
-                      <div class="num">10</div>
+                      <div class="num">{{analysisData.task.finish}}</div>
                       <span>已完成</span>
                     </div>
                   </div>
@@ -130,7 +130,7 @@
                       <a-progress
                         type="dashboard"
                         :stroke-width="9"
-                        :percent="75"
+                        :percent="bugPercent"
                       >
                         <template #format="percent">
                           <span
@@ -143,7 +143,7 @@
                     </div>
                     <div class="mt-1 inline-block w-2/3">
                       <div style="text-align:center" class="sec-card-num">
-                        <div class="num">22</div>
+                        <div class="num">{{analysisData.bug.finish+analysisData.bug.unfinish}}</div>
                         <span>总计</span>
                       </div>
                       <!-- 自制竖线 -->
@@ -152,7 +152,7 @@
                         style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                       ></div>
                       <div class="sec-card-num">
-                        <div class="num">12</div>
+                        <div class="num">{{analysisData.bug.unfinish}}</div>
                         <span>进行中</span>
                       </div>
                       <div
@@ -160,7 +160,7 @@
                         style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                       ></div>
                       <div class="sec-card-num">
-                        <div class="num">10</div>
+                        <div class="num">{{analysisData.bug.finish}}</div>
                         <span>已完成</span>
                       </div>
                     </div>
@@ -187,7 +187,7 @@
 import { getDay } from '@/utils/util'
 import _ from 'lodash'
 import {
-  getStageRecord,
+  getStageRecord, getStageAnalysisData,
 } from '@/api/analysis'
 
 export default {
@@ -201,18 +201,20 @@ export default {
         unfinish: [],
         delay: [],
       },
+      analysisData: {},
       week: [],
       dayNum: 0,
     }
   },
   watch: {},
   created() {
-    this.getStageRecord()
+    // this.getStageRecord()
+    this.getStageAnalysisData()
     this.getWeekDate()
   },
   mounted() {
+    this.getStageRecord()
     // this.drawLine()
-    this.drawBurnLine()
     window.onresize = () => { // 自适应
       // 基于准备好的dom，初始化echarts实例
       const myChart = this.$echarts.init(document.getElementById('myChart'))
@@ -244,6 +246,17 @@ export default {
       // _.reverse(this.data)
       console.log('图数据', this.data)
       this.drawLine()
+      this.drawBurnLine()
+      return true
+    },
+    async getStageAnalysisData() {
+      const res = await getStageAnalysisData(this.currStageId)
+      console.log('stage data', res)
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取数据失败')
+      }
+      this.analysisData = res.data
       return true
     },
     // 项目进度，面积堆叠图
@@ -421,7 +434,7 @@ export default {
           },
         },
         xAxis: {
-          data: this.date,
+          data: this.week,
           boundaryGap: false,
           splitLine: {
             show: false,
@@ -493,7 +506,7 @@ export default {
           },
         },
         xAxis: {
-          data: this.date,
+          data: this.week,
           boundaryGap: false,
           splitLine: {
             show: false,
@@ -560,6 +573,12 @@ export default {
     },
     isAddModalOpened() {
       return this.$store.state.add.isAddModalOpened
+    },
+    taskPercent() {
+      return Math.trunc((this.analysisData.task.finish / (this.analysisData.task.finish + this.analysisData.task.unfinish)) * 100)
+    },
+    bugPercent() {
+      return Math.trunc((this.analysisData.bug.finish / (this.analysisData.bug.finish + this.analysisData.bug.unfinish)) * 100)
     },
   },
 }
