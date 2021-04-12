@@ -25,6 +25,7 @@
     "core-js": "^3.6.4",
     "dayjs": "^1.8.27",
     "echarts": "^5.0.2",
+    "element-resize-detector": "^1.2.2",
     "feather-icons": "^4.28.0",
     "jquery": "^3.6.0",
     "lodash.clonedeep": "^4.5.0",

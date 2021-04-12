@@ -972,8 +972,9 @@ export default {
       return true
     },
     async getDialog() {
-      const obj = {}
-      console.log('com in')
+      const obj = {
+        uid: window.sessionStorage.getItem('currUserID'),
+      }
       const { data: res } = await getDialog(obj)
       this.dialogList = res
       console.log('项目dialog信息', res)

@@ -8,9 +8,8 @@
             <div
               class="flex flex-col justify-center items-center"
               v-for="({ label, percent, value, icon, color }) in [
-                { label: '用户流量', percent: 34, value: '61K', icon: 'user', color: 'success' },
-                { label: '访问次数', percent: 82, value: '92K', icon: 'trending-up', color: 'warning' },
-                { label: '留存率', percent: 52, value: '72.6%', icon: 'pie-chart', color: 'danger' },
+                { label: '需求', percent: 34, value: '14.6%', icon: 'layers', color: 'success' },
+                { label: '缺陷', percent: 52, value: '72.6%', icon: 'alert-octagon', color: 'danger' },
               ]"
               :key="label"
             >
@@ -42,19 +41,33 @@
         </div>
       </div>
       <div class="w-1/2 pl-3">
-        <div class="mb-6 flex">
+        <div class="mb-6 h-56 flex">
+          <!-- 右上1 -->
           <div class="pr-3 flex-1">
-            <div class="dashboard-card pt-6 pb-0 flex flex-col items-center">
-              <div class="text-3xl font-semibold">￥32,690</div>
-              <div class="text-gray-500">转换率 40%</div>
-              <success-line-chart></success-line-chart>
+            <div class="dashboard-card flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-xl">任务总数</div>
+                  <div class="flex items-center">
+                    60%
+                    <feather
+                      class="success ml-1"
+                      size="14"
+                      type="trending-up"
+                    />
+                  </div>
+                </div>
+                <div class="text-3xl font-semibold">89k</div>
+              </div>
+              <bar-negative-chart></bar-negative-chart>
             </div>
           </div>
+          <!-- 右上2 -->
           <div class="pl-3 flex-1">
             <div class="dashboard-card flex flex-col justify-between">
               <div class="flex items-center justify-between">
                 <div>
-                  <div class="font-bold">转换情况</div>
+                  <div class="font-bold text-xl">延误任务</div>
                   <div class="flex items-center">
                     60%
                     <feather
@@ -70,37 +83,31 @@
             </div>
           </div>
         </div>
-        <div class="flex">
+        <!-- 右下 -->
+        <div class="flex h-56">
+          <!-- 右下1 -->
           <div class="w-1/2 pr-3">
-            <div class="dashboard-card">
-              <donut-chart></donut-chart>
-              <ul class="my-1 flex justify-around">
-                <li class="flex items-center">
-                  <span
-                    style="margin: 3px 5px 0 0;"
-                    class="inline-block w-2 h-2 rounded-full bg-warning"
-                  ></span>
-                  搜索
-                </li>
-                <li class="flex items-center">
-                  <span
-                    style="margin: 3px 5px 0 0;"
-                    class="inline-block w-2 h-2 rounded-full bg-primary"
-                  ></span>
-                  社交
-                </li>
-                <li class="flex items-center">
-                  <span
-                    style="margin: 3px 5px 0 0; background-color: #00cfdd;"
-                    class="inline-block w-2 h-2 rounded-full"
-                  ></span>
-                  邮件
-                </li>
-              </ul>
+            <div class="dashboard-card flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-xl">待处理任务</div>
+                  <div class="flex items-center">
+                    60%
+                    <feather
+                      class="success ml-1"
+                      size="14"
+                      type="trending-up"
+                    />
+                  </div>
+                </div>
+                <div class="text-3xl font-semibold">89k</div>
+              </div>
+              <bar-negative-chart></bar-negative-chart>
             </div>
           </div>
+          <!-- 右下2 -->
           <div class="w-1/2 pl-3 flex flex-col">
-            <div class="dashboard-card mb-6 flex-1 flex items-center">
+            <!-- <div class="dashboard-card mb-6 flex-1 flex items-center">
               <div
                 style="min-width: 2.5rem; background: rgba(var(--primary), .18);"
                 class="h-10 flex items-center justify-center primary rounded-full"
@@ -135,6 +142,15 @@
               <div style="min-width: 6rem;">
                 <warning-line-chart></warning-line-chart>
               </div>
+            </div> -->
+            <div class="dashboard-card flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-xl">已完成任务</div>
+                </div>
+                <div class="text-3xl font-semibold">89k</div>
+              </div>
+              <bar-negative-chart></bar-negative-chart>
             </div>
           </div>
         </div>

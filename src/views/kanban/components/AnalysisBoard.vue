@@ -9,7 +9,7 @@
         <a-card :bordered="false">
           <!-- 第一行 -->
           <div class="flex">
-              <!-- 第一列 -->
+            <!-- 第一列 -->
             <div class="w-1/5 ml-6">
               <a-card class="card-box ">
                 <div class="dashboard-card dashboard-card-icon">
@@ -17,7 +17,11 @@
                     <feather type="layers"></feather>
                   </div>
                   <div>需求</div>
-                  <div class="text-2xl font-semibold">{{analysisData.task.finish}}/{{analysisData.bug.finish+analysisData.task.unfinish}}</div>
+                  <div class="text-2xl font-semibold">
+                    {{ taskData.finish }}/{{
+                      bugData.finish + taskData.unfinish
+                    }}
+                  </div>
                 </div>
               </a-card>
               <a-card class="card-box ">
@@ -26,23 +30,32 @@
                     <feather type="alert-octagon"></feather>
                   </div>
                   <div>缺陷</div>
-                  <div class="text-2xl font-semibold">{{analysisData.bug.finish}}/{{analysisData.bug.finish+analysisData.bug.unfinish}}</div>
+                  <div class="text-2xl font-semibold">
+                    {{ bugData.finish }}/{{
+                      bugData.finish + bugData.unfinish
+                    }}
+                  </div>
                 </div>
               </a-card>
             </div>
             <!-- 第二列 -->
-            <div
-              class="w-3/5 display:inline "
-              id="myChart"
-              style="width:800px;height:450px"
-            ></div>
+            <div class="w-3/5 inline-block" style="height:450px">
+              <!-- <div  style="height:100%;width:100%;" id="myChart"></div> -->
+              <task-log-chart :series-data="data"/>
+            </div>
+
             <!-- 第三列 -->
-            <div class="w-1/5 ml-4 px-4 mr-4 display:inline" style="height:200px">
+            <div
+              class="w-1/5 ml-4 px-4 mr-4 display:inline"
+              style="height:200px"
+            >
               <div class="card-box ">
                 <a-card class="card-box">
                   <span class="card-item">待处理任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(119, 126, 241)">{{analysisData.unfinish}}</div>
+                    <div style="color:rgba(119, 126, 241)">
+                      {{ unfinishData }}
+                    </div>
                   </div>
                 </a-card>
               </div>
@@ -50,7 +63,9 @@
                 <a-card class="card-box">
                   <span class="card-item">已延误任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(253, 68, 88)">{{analysisData.delay}}</div>
+                    <div style="color:rgba(253, 68, 88)">
+                      {{ delayData }}
+                    </div>
                   </div>
                 </a-card>
               </div>
@@ -59,7 +74,9 @@
                 <a-card class="card-box">
                   <span class="card-item">已完成任务</span>
                   <div class="card-num">
-                    <div style="color:rgba(72, 214, 228)">{{analysisData.finish}}</div>
+                    <div style="color:rgba(72, 214, 228)">
+                      {{ finishData }}
+                    </div>
                   </div>
                 </a-card>
               </div>
@@ -67,18 +84,22 @@
           </div>
           <!-- 第二行 -->
           <div class="flex -mt-10 mr-6">
-              <!-- 需求卡片 -->
+            <!-- 需求卡片 -->
             <div class="w-1/2  ml-6">
               <a-card title="需求" class="card-box ">
                 <!-- 卡片第一行 -->
                 <div>统计</div>
                 <div class="flex ml-10">
                   <div class="inline-block w-1/3">
-                    <a-progress type="dashboard" :stroke-width="9" :percent="taskPercent">
+                    <a-progress
+                      type="dashboard"
+                      :stroke-width="9"
+                      :percent="taskPercent"
+                    >
                       <template #format="percent">
                         <span
                           style="fontSize:20px;fontWeight:bolder;color:#108ee9"
-                          >{{percent}}%</span
+                          >{{ percent }}%</span
                         >
                         <div class="mt-2">完成度</div>
                       </template>
@@ -86,7 +107,11 @@
                   </div>
                   <div class="mt-1 inline-block w-2/3">
                     <div style="text-align:center" class="sec-card-num">
-                      <div class="num">{{analysisData.task.finish+analysisData.task.unfinish}}</div>
+                      <div class="num">
+                        {{
+                          taskData.finish + taskData.unfinish
+                        }}
+                      </div>
                       <span>总计</span>
                     </div>
                     <!-- 自制竖线 -->
@@ -95,7 +120,7 @@
                       style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                     ></div>
                     <div class="sec-card-num">
-                      <div class="num">{{analysisData.task.unfinish}}</div>
+                      <div class="num">{{ taskData.unfinish }}</div>
                       <span>进行中</span>
                     </div>
                     <div
@@ -103,7 +128,7 @@
                       style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                     ></div>
                     <div class="sec-card-num">
-                      <div class="num">{{analysisData.task.finish}}</div>
+                      <div class="num">{{ taskData.finish }}</div>
                       <span>已完成</span>
                     </div>
                   </div>
@@ -143,7 +168,11 @@
                     </div>
                     <div class="mt-1 inline-block w-2/3">
                       <div style="text-align:center" class="sec-card-num">
-                        <div class="num">{{analysisData.bug.finish+analysisData.bug.unfinish}}</div>
+                        <div class="num">
+                          {{
+                            bugData.finish + bugData.unfinish
+                          }}
+                        </div>
                         <span>总计</span>
                       </div>
                       <!-- 自制竖线 -->
@@ -152,7 +181,7 @@
                         style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                       ></div>
                       <div class="sec-card-num">
-                        <div class="num">{{analysisData.bug.unfinish}}</div>
+                        <div class="num">{{ bugData.unfinish }}</div>
                         <span>进行中</span>
                       </div>
                       <div
@@ -160,7 +189,7 @@
                         style="display:inline-block;width: 1px;height: 60px; background: #ddd;"
                       ></div>
                       <div class="sec-card-num">
-                        <div class="num">{{analysisData.bug.finish}}</div>
+                        <div class="num">{{ bugData.finish }}</div>
                         <span>已完成</span>
                       </div>
                     </div>
@@ -186,12 +215,11 @@
 <script>
 import { getDay } from '@/utils/util'
 import _ from 'lodash'
-import {
-  getStageRecord, getStageAnalysisData,
-} from '@/api/analysis'
+import { getStageRecord, getStageAnalysisData } from '@/api/analysis'
+import TaskLogChart from '@/components/charts/TaskLogChart.vue'
 
 export default {
-  components: {},
+  components: { TaskLogChart },
 
   data() {
     return {
@@ -201,7 +229,11 @@ export default {
         unfinish: [],
         delay: [],
       },
-      analysisData: {},
+      taskData: {},
+      bugData: {},
+      finishData: 0,
+      unfinishData: 0,
+      delayData: 0,
       week: [],
       dayNum: 0,
     }
@@ -215,11 +247,12 @@ export default {
   mounted() {
     this.getStageRecord()
     // this.drawLine()
-    window.onresize = () => { // 自适应
-      // 基于准备好的dom，初始化echarts实例
-      const myChart = this.$echarts.init(document.getElementById('myChart'))
-      myChart.resize()
-    }
+    // window.onresize = () => {
+    //   // 自适应
+    //   // 基于准备好的dom，初始化echarts实例
+    //   const myChart = this.$echarts.init(document.getElementById('myChart'))
+    //   myChart.resize()
+    // }
   },
   methods: {
     getWeekDate() {
@@ -239,13 +272,14 @@ export default {
       this.dayNum = res.data.finish.length
       this.data.finish = res.data.finish
       this.data.delay = res.data.delay
-      this.date = res.data.date
-      for (let i = 0; i < res.data.unfinish.length; i += 1) { // 考虑到时间顺序，这里可能要倒置
+      this.data.date = res.data.date
+      for (let i = 0; i < res.data.unfinish.length; i += 1) {
+        // 考虑到时间顺序，这里可能要倒置
         this.data.unfinish.push(res.data.unfinish[i] - res.data.delay[i])
       }
       // _.reverse(this.data)
       console.log('图数据', this.data)
-      this.drawLine()
+      // this.drawLine()
       this.drawBurnLine()
       return true
     },
@@ -257,158 +291,163 @@ export default {
         return this.$message.error('获取数据失败')
       }
       this.analysisData = res.data
+      this.taskData = res.data.task
+      this.bugData = res.data.bug
+      this.finishData = res.data.finish
+      this.unfinishData = res.data.unfinish
+      this.delayData = res.data.delay
       return true
     },
     // 项目进度，面积堆叠图
-    drawLine() {
-      // 基于准备好的dom，初始化echarts实例
-      const myChart = this.$echarts.init(document.getElementById('myChart'))
-      // 绘制图表
-      myChart.setOption({
-        title: {
-          text: '迭代进展',
-          left: '43%',
-          top: 5,
-          textStyle: {
-            fontSize: 24,
-            color: '#475f7b',
-          },
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'line',
-            label: {
-              backgroundColor: '#6a7985',
-            },
-          },
-        },
-        xAxis: {
-          data: this.date,
-          boundaryGap: false,
-        },
-        grid: {
-          right: '4%',
-          top: '30',
-          bottom: '22%',
-          left: '6%',
-        },
-        legend: {
-          type: 'scroll',
-          orient: 'vertical',
-          left: 70,
-          top: 25,
-          bottom: 20,
-          icon: 'rect',
-          borderColor: '#ddd',
-          borderRadius: 5,
-          shadowColor: 'rgba(0, 0, 0, 0.2)',
-          shadowBlur: 10,
-          textStyle: {
-            fontSize: '16',
-          },
-          // sdata: ['已完成', '已延误', '待处理'],
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {
-              IconStyle: {
-                marginLeft: '-100px',
-              },
-            },
-          },
-        },
-        yAxis: {
-          show: false,
-          max: '100',
-        },
-        // legend: {
-        //   data: ['已完成', '已延误', '待处理'],
-        // },
-        series: [
-          {
-            name: '已完成',
-            stack: '任务数', // 保证是堆叠的而不是覆盖的
-            showSymbol: false,
-            lineStyle: {
-              width: 0,
-            },
-            itemStyle: {
-              color: '#39da8a',
-            },
-            areaStyle: {
-              opacity: 0.8,
-              color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: 'rgba(128, 255, 165)',
-                },
-                {
-                  offset: 1,
-                  color: 'rgba(1, 191, 236)',
-                },
-              ]),
-            },
-            type: 'line',
-            data: this.data.finish,
-          },
-          {
-            name: '已延误',
-            lineStyle: {
-              width: 0,
-            },
-            stack: '任务数',
-            showSymbol: false,
-            itemStyle: {
-              color: '#ff5b5c',
-            },
-            areaStyle: {
-              opacity: 0.8,
-              color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: 'rgba(255, 0, 34)',
-                },
-                {
-                  offset: 1,
-                  color: 'rgba(247, 81, 81)',
-                },
-              ]),
-            },
-            type: 'line',
-            data: this.data.delay,
-          },
-          {
-            name: '待处理',
-            showSymbol: false,
-            lineStyle: {
-              width: 0,
-            },
-            stack: '任务数',
-            areaStyle: {
-              opacity: 0.8,
-              color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: 'rgba(55, 162, 255)',
-                },
-                {
-                  offset: 1,
-                  color: 'rgba(116, 21, 219)',
-                },
-              ]),
-            },
-            itemStyle: {
-              normal: {
-                color: '#6485ff',
-              },
-            },
-            type: 'line',
-            data: this.data.unfinish,
-          },
-        ],
-      })
-    },
+    // drawLine() {
+    //   // 基于准备好的dom，初始化echarts实例
+    //   const myChart = this.$echarts.init(document.getElementById('myChart'))
+    //   // 绘制图表
+    //   myChart.setOption({
+    //     title: {
+    //       text: '迭代进展',
+    //       left: '43%',
+    //       top: 5,
+    //       textStyle: {
+    //         fontSize: 24,
+    //         color: '#475f7b',
+    //       },
+    //     },
+    //     tooltip: {
+    //       trigger: 'axis',
+    //       axisPointer: {
+    //         type: 'line',
+    //         label: {
+    //           backgroundColor: '#6a7985',
+    //         },
+    //       },
+    //     },
+    //     xAxis: {
+    //       data: this.date,
+    //       boundaryGap: false,
+    //     },
+    //     grid: {
+    //       right: '4%',
+    //       top: '30',
+    //       bottom: '22%',
+    //       left: '6%',
+    //     },
+    //     legend: {
+    //       type: 'scroll',
+    //       orient: 'vertical',
+    //       left: 70,
+    //       top: 25,
+    //       bottom: 20,
+    //       icon: 'rect',
+    //       borderColor: '#ddd',
+    //       borderRadius: 5,
+    //       shadowColor: 'rgba(0, 0, 0, 0.2)',
+    //       shadowBlur: 10,
+    //       textStyle: {
+    //         fontSize: '16',
+    //       },
+    //       // sdata: ['已完成', '已延误', '待处理'],
+    //     },
+    //     toolbox: {
+    //       feature: {
+    //         saveAsImage: {
+    //           IconStyle: {
+    //             marginLeft: '-100px',
+    //           },
+    //         },
+    //       },
+    //     },
+    //     yAxis: {
+    //       show: false,
+    //       max: '100',
+    //     },
+    //     // legend: {
+    //     //   data: ['已完成', '已延误', '待处理'],
+    //     // },
+    //     series: [
+    //       {
+    //         name: '已完成',
+    //         stack: '任务数', // 保证是堆叠的而不是覆盖的
+    //         showSymbol: false,
+    //         lineStyle: {
+    //           width: 0,
+    //         },
+    //         itemStyle: {
+    //           color: '#39da8a',
+    //         },
+    //         areaStyle: {
+    //           opacity: 0.8,
+    //           color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+    //             {
+    //               offset: 0,
+    //               color: 'rgba(128, 255, 165)',
+    //             },
+    //             {
+    //               offset: 1,
+    //               color: 'rgba(1, 191, 236)',
+    //             },
+    //           ]),
+    //         },
+    //         type: 'line',
+    //         data: this.data.finish,
+    //       },
+    //       {
+    //         name: '已延误',
+    //         lineStyle: {
+    //           width: 0,
+    //         },
+    //         stack: '任务数',
+    //         showSymbol: false,
+    //         itemStyle: {
+    //           color: '#ff5b5c',
+    //         },
+    //         areaStyle: {
+    //           opacity: 0.8,
+    //           color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+    //             {
+    //               offset: 0,
+    //               color: 'rgba(255, 0, 34)',
+    //             },
+    //             {
+    //               offset: 1,
+    //               color: 'rgba(247, 81, 81)',
+    //             },
+    //           ]),
+    //         },
+    //         type: 'line',
+    //         data: this.data.delay,
+    //       },
+    //       {
+    //         name: '待处理',
+    //         showSymbol: false,
+    //         lineStyle: {
+    //           width: 0,
+    //         },
+    //         stack: '任务数',
+    //         areaStyle: {
+    //           opacity: 0.8,
+    //           color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+    //             {
+    //               offset: 0,
+    //               color: 'rgba(55, 162, 255)',
+    //             },
+    //             {
+    //               offset: 1,
+    //               color: 'rgba(116, 21, 219)',
+    //             },
+    //           ]),
+    //         },
+    //         itemStyle: {
+    //           normal: {
+    //             color: '#6485ff',
+    //           },
+    //         },
+    //         type: 'line',
+    //         data: this.data.unfinish,
+    //       },
+    //     ],
+    //   })
+    // },
     drawBurnLine() {
       // 基于准备好的dom，初始化echarts实例
       const burnChart = this.$echarts.init(
@@ -575,10 +614,18 @@ export default {
       return this.$store.state.add.isAddModalOpened
     },
     taskPercent() {
-      return Math.trunc((this.analysisData.task.finish / (this.analysisData.task.finish + this.analysisData.task.unfinish)) * 100)
+      return Math.trunc(
+        (this.taskData.finish
+          / (this.taskData.finish + this.taskData.unfinish))
+          * 100,
+      )
     },
     bugPercent() {
-      return Math.trunc((this.analysisData.bug.finish / (this.analysisData.bug.finish + this.analysisData.bug.unfinish)) * 100)
+      return Math.trunc(
+        (this.bugData.finish
+          / (this.bugData.finish + this.bugData.unfinish))
+          * 100,
+      )
     },
   },
 }
