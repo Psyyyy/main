@@ -416,18 +416,6 @@
                           <a v-show="showMoreDesc">收起备注</a>
                         </div>
                         <div v-show="showTaskDescriptionEdit">
-                          <!-- <editor
-                            ref="vueWangeditor"
-                            id="editor"
-                            :upload-img-server="editorConfig.uploadImgServer"
-                            :upload-img-headers="editorConfig.uploadImgHeaders"
-                            :menus="editorConfig.menus"
-                          ></editor> -->
-                          <editor
-                            ref="vueWangeditor"
-                            id="editor"
-                            :menus="editorConfig.menus"
-                          ></editor>
                           <div class="action-btn float-right mt-2 ">
                             <a-button
                               class="mr-2"
@@ -798,14 +786,9 @@
 <script>
 import { mapState } from 'vuex'
 import $ from 'jquery'
-import editor from '../../components/editor.vue'
 
 export default {
   name: 'task-detail',
-  components: {
-    editor,
-  },
-
   props: {
     taskCode: {
       type: [String],
@@ -996,24 +979,6 @@ export default {
       showTaskDescriptionEdit: false,
       showMoreDesc: false,
       hasMoreDesc: false,
-      editorConfig: {
-        uploadImgHeaders: {
-          // Authorization: authorization,
-        },
-        menus: [
-          'head', // 标题
-          'bold', // 粗体
-          'italic', // 斜体
-          'justify', // 居中
-          'image', // 图片
-          'link', // 链接
-          'list', // 无序列表
-          'quote', // 引用
-          'table', // 表格
-          '|',
-          'fullscreen', // 全屏
-        ],
-      },
 
       departmentMemberInfo: null,
 
@@ -1176,7 +1141,6 @@ export default {
         return false
       }
       this.showTaskDescriptionEdit = true
-      // this.initContent(this.task.description)
       return true
     },
     // 更新数据库 修改优先级
@@ -1213,39 +1177,6 @@ export default {
     //   })
     // },
 
-    /* 任务备注 */
-    initContent(value) {
-      if (value) {
-        this.$refs.vueWangeditor.setHtml(value) // 富文本编辑器
-      } else {
-        this.$refs.vueWangeditor.setHtml('')
-      }
-      this.$nextTick(() => {
-        this.checkShowMoreDesc(false, true)
-      })
-    },
-    checkShowMoreDesc(show = false, init = false) {
-      const dom = $('.description-txt')
-      if (!init) {
-        if (show) {
-          this.showMoreDesc = true
-          dom.css('max-height', () => '100%')
-        } else {
-          this.showMoreDesc = false
-          dom.css('max-height', () => '300px')
-        }
-      }
-      if (init) {
-        const height = dom.height()
-        if (height >= 300) {
-          this.hasMoreDesc = true
-          return true
-        }
-        this.hasMoreDesc = false
-        return false
-      }
-      return false
-    },
 
     /* 任务紧急程度 */
     priColor(pri) {

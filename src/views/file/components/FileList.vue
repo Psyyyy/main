@@ -1,18 +1,5 @@
 <template>
   <div class="relative">
-    <div>
-      <a-input
-        class="search-input"
-        size="large"
-        :placeholder="searchInputText"
-        @focus="searchInputText = '请输入文件关键字...'"
-        @blur="searchInputText = '搜索文件...'"
-      >
-        <template #prefix>
-          <feather size="20" type="search" />
-        </template>
-      </a-input>
-    </div>
 
     <perfect-scrollbar
       class="team-list"
@@ -176,14 +163,12 @@ export default {
     },
 
     async downloadFile(file) {
-      const uid = window.sessionStorage.getItem('currUserID')
       const fileName = `${file.name}.${file.end}`
       window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
       return false
     },
     async deleteFile(file) {
       console.log('文件', file)
-      const uid = window.sessionStorage.getItem('currUserID')
       const fileName = `${file.name}.${file.end}`
       const params = {
         file_name: fileName,

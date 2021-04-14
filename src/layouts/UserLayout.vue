@@ -2,12 +2,13 @@
   <main class="user-layout">
     <section class="user-layout-section">
       <div class="mb-8 flex justify-center items-center select-none">
-        <img
+        <!-- <img
           class="w-10"
           src="@img/logo.png"
+          loading="lazy"
           alt="LOGO"
-        >
-        <span class="ml-3 text-3xl font-bold">Venus</span>
+        > -->
+        <span class="ml-3 text-3xl font-bold">软件项目管理系统</span>
       </div>
       <div class="user-layout-content">
         <a-tabs
@@ -44,7 +45,7 @@ export default {
     activeKey: 'login',
   }),
 
-  watch: {
+  watch: { // 复用组件时，想对路由参数的变化作出响应的话，你可以简单地 watch (监测变化) $route 对象：
     '$route.name': {
       handler(name) { this.activeKey = name },
       immediate: true,
@@ -62,7 +63,7 @@ export default {
 <style lang="scss" scoped>
 .user-layout {
   @apply min-h-screen flex flex-col items-center justify-center;
-  background: center no-repeat url(~@/assets/images/user_layout_bg.svg);
+  //background: center no-repeat url(~@/assets/images/user_layout_bg.svg);
 
   &-section {
     @apply mt-4 mb-6;

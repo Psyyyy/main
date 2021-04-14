@@ -23,7 +23,8 @@
       <!-- 内容区域 -->
       <main class="the-main">
         <Breadcrumb class="mb-4" />
-
+        <!-- 过渡动画封装组件 -->
+        <!-- out-in：当前元素先进行过渡，完成之后新元素过渡进入。 -->
         <transition
           name="sale-fade"
           mode="out-in"

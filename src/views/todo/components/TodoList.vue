@@ -1,18 +1,5 @@
 <template>
   <div class="relative">
-    <div>
-      <a-input
-        class="search-input"
-        size="large"
-        :placeholder="searchInputText"
-        @focus="searchInputText = '请输入任务关键字...'"
-        @blur="searchInputText = '搜索任务...'"
-      >
-        <template #prefix>
-          <feather size="20" type="search" />
-        </template>
-      </a-input>
-    </div>
 
     <perfect-scrollbar
       class="todo-list"
@@ -45,6 +32,7 @@
             <span class="ml-4 text-base" style="color:#b7b8bb">{{todo.t_content}}</span>
             </div>
             <div class="ml-auto flex items-center flex-wrap" style="color:#b7b8bb">
+              <div><a-tag  :color="stateColor(todo.t_state)" >{{todo.t_state}}</a-tag></div>
               截止日期：{{todo.end_time|dateFormat}}
             </div>
         </li>
@@ -125,7 +113,6 @@ export default {
     async getTask() {
       const uid = this.currUserID
       const { data: res } = await getUserTaskList(uid)
-      console.log('todo', res)
       this.$store.commit('todo/SET_TODO_LIST', res)
       console.log('todo Task', res)
       return true
@@ -188,6 +175,31 @@ export default {
       // this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
       return true
+    },
+    stateColor(state) {
+      switch (state) {
+        case '规划中':
+          return 'pink'
+        case '实现中':
+          return 'blue'
+        case '已实现':
+          return 'cyan'
+        case '已拒绝':
+          return 'purple'
+        case '已验收':
+          return 'green'
+        case '已关闭':
+          return '#626262'
+          // 缺陷
+        case '新':
+          return 'orange'
+        case '处理中':
+          return 'blue'
+        case '已解决':
+          return 'green'
+        default:
+          return '#626262'
+      }
     },
   },
 }

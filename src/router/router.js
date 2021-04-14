@@ -11,7 +11,6 @@ export const constantRoutes = [// 所有权限都能访问的页面
     path: '/',
     redirect: '/project',
   },
-
   // 登录注册
   {
     path: '/user',
@@ -23,7 +22,9 @@ export const constantRoutes = [// 所有权限都能访问的页面
         path: 'login',
         name: 'Login',
         components: {
-          login: () => import('@/views/user/Login.vue'),
+          // login: () => import('@/views/user/Login.vue'),
+          login: () => import(/* webpackChunkName: 'Login' */ '@/views/user/Login.vue'),
+
         },
         meta: { title: '登录' },
       },
@@ -31,7 +32,7 @@ export const constantRoutes = [// 所有权限都能访问的页面
         path: 'register',
         name: 'Register',
         components: {
-          register: () => import('@/views/user/Register.vue'),
+          register: () => import(/* webpackChunkName: 'Register' */'@/views/user/Register.vue'),
         },
         meta: { title: '注册' },
       },
@@ -56,7 +57,7 @@ export const constantRoutes = [// 所有权限都能访问的页面
   {
     path: '/project',
     name: 'Project',
-    component: () => import('@/views/project/Project.vue'),
+    component: () => import(/* webpackChunkName: 'Project' */ '@/views/project/Project.vue'),
     meta: { title: '项目选择' },
 
   },
@@ -64,7 +65,7 @@ export const constantRoutes = [// 所有权限都能访问的页面
   // 404 路由缺失页面
   {
     path: '/not-found',
-    component: () => import('@/views/pages/NotFound.vue'),
+    component: () => import(/* webpackChunkName: 'NotFound' */'@/views/pages/NotFound.vue'),
     meta: { title: '404 NotFound' },
   },
 ]
@@ -87,7 +88,7 @@ export const asyncRoutes = [
       {
         path: 'analytics',
         name: 'Analytics',
-        component: () => import('@/views/dashboard/Analytics.vue'),
+        component: () => import(/* webpackChunkName: 'Analysis' */'@/views/dashboard/Analytics.vue'), // 路由懒加载
         meta: { permission: ['admin'], title: '数据分析', openKey: 'dashboard' },
       },
     ],
@@ -103,7 +104,7 @@ export const asyncRoutes = [
       {
         path: '/kanban',
         name: 'Kanban',
-        component: () => import('@/views/kanban/Kanban.vue'),
+        component: () => import(/* webpackChunkName: 'Kanban' */'@/views/kanban/Kanban.vue'),
         meta: { permission: ['normal', 'admin'], title: '迭代管理', icon: 'trello' },
       },
     ],
@@ -118,7 +119,7 @@ export const asyncRoutes = [
       {
         path: '/task',
         name: 'Task',
-        component: () => import('@/views/task/TaskList'),
+        component: () => import(/* webpackChunkName: 'TaskList' */'@/views/task/TaskList'),
         meta: { permission: ['normal', 'admin'], title: '需求管理', icon: 'check-circle' },
       },
     ],
@@ -133,7 +134,7 @@ export const asyncRoutes = [
       {
         path: '/bug',
         name: 'Bug',
-        component: () => import('@/views/task/TaskList.vue'),
+        component: () => import(/* webpackChunkName: 'TaskList' */'@/views/task/TaskList.vue'),
         meta: { permission: ['normal', 'admin'], title: '缺陷管理', icon: 'alert-circle' },
       },
     ],
@@ -148,7 +149,7 @@ export const asyncRoutes = [
       {
         path: '/file',
         name: 'File',
-        component: () => import('@/views/file/File.vue'),
+        component: () => import(/* webpackChunkName: 'File' */'@/views/file/File.vue'),
         meta: { permission: ['normal', 'admin'], title: '文件管理', icon: 'folder' },
       },
     ],
@@ -163,7 +164,7 @@ export const asyncRoutes = [
       {
         path: '/team',
         name: 'Team',
-        component: () => import('@/views/team/Team.vue'),
+        component: () => import(/* webpackChunkName: 'Team' */'@/views/team/Team.vue'),
         meta: { permission: ['admin'], title: '团队管理', icon: 'users' },
       },
     ],
@@ -181,18 +182,18 @@ export const asyncRoutes = [
         name: 'Profile',
         redirect: '/profile/account',
         meta: { permission: ['normal', 'admin'] },
-        component: () => import('@/layouts/ProfileLayout.vue'),
+        component: () => import(/* webpackChunkName: 'ProfileLayout' */'@/layouts/ProfileLayout.vue'),
         children: [
           {
             path: 'account',
             name: 'Account',
-            component: () => import('@/views/profile/Account.vue'),
+            component: () => import(/* webpackChunkName: 'Account' */'@/views/profile/Account.vue'),
             meta: { permission: ['normal', 'admin'], title: '账号设置', breadcrumb: ['个人中心', '账号设置'] },
           },
           {
             path: 'security',
             name: 'Security',
-            component: () => import('@/views/profile/Security.vue'),
+            component: () => import(/* webpackChunkName: 'Security' */'@/views/profile/Security.vue'),
             meta: { permission: ['normal', 'admin'], title: '安全设置', breadcrumb: ['个人中心', '安全设置'] },
           },
         ],
@@ -210,7 +211,7 @@ export const asyncRoutes = [
       {
         path: '/todo',
         name: 'Todo',
-        component: () => import('@/views/todo/Todo.vue'),
+        component: () => import(/* webpackChunkName: 'Todo' */'@/views/todo/Todo.vue'),
         meta: { permission: ['normal', 'admin'] },
       },
     ],
@@ -226,7 +227,7 @@ export const asyncRoutes = [
       {
         path: '/notice',
         name: 'Notice',
-        component: () => import('@/views/notice/Notice.vue'),
+        component: () => import(/* webpackChunkName: 'Notice' */'@/views/notice/Notice.vue'),
         meta: { permission: ['normal', 'admin'] },
       },
     ],

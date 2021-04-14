@@ -901,7 +901,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import $ from 'jquery'
 import { getTimestamp } from '@/utils/util'
 import {
   getTaskDetail,
@@ -923,7 +922,6 @@ import {
 import _ from 'lodash'
 import _clonedeep from 'lodash.clonedeep'
 import { Keyboard } from '@icon-park/vue'
-import editor from '../../components/editor.vue'
 
 export default {
   name: 'task-detail',
@@ -1693,38 +1691,6 @@ export default {
     // },
 
     /* 任务备注 */
-    initContent(value) {
-      if (value) {
-        this.$refs.vueWangeditor.setHtml(value) // 富文本编辑器
-      } else {
-        this.$refs.vueWangeditor.setHtml('')
-      }
-      this.$nextTick(() => {
-        this.checkShowMoreDesc(false, true)
-      })
-    },
-    checkShowMoreDesc(show = false, init = false) {
-      const dom = $('.description-txt')
-      if (!init) {
-        if (show) {
-          this.showMoreDesc = true
-          dom.css('max-height', () => '100%')
-        } else {
-          this.showMoreDesc = false
-          dom.css('max-height', () => '300px')
-        }
-      }
-      if (init) {
-        const height = dom.height()
-        if (height >= 300) {
-          this.hasMoreDesc = true
-          return true
-        }
-        this.hasMoreDesc = false
-        return false
-      }
-      return false
-    },
 
     /* 任务紧急程度 */
     priColor(pri) {

@@ -41,7 +41,7 @@
             <!-- 第二列 -->
             <div class="w-3/5 inline-block" style="height:450px">
               <!-- <div  style="height:100%;width:100%;" id="myChart"></div> -->
-              <task-log-chart :series-data="data"/>
+              <task-log-chart :id="'stage'" :show-title="true" :series-data="data"/>
             </div>
 
             <!-- 第三列 -->
@@ -88,7 +88,6 @@
             <div class="w-1/2  ml-6">
               <a-card title="需求" class="card-box ">
                 <!-- 卡片第一行 -->
-                <div>统计</div>
                 <div class="flex ml-10">
                   <div class="inline-block w-1/3">
                     <a-progress
@@ -134,14 +133,10 @@
                   </div>
                 </div>
                 <!-- 卡片第二行 -->
-                <div class="mt-4">需求个数燃烧图</div>
-                <div>
-                  <div
-                    class="display:inline -ml-12"
-                    id="burnChart"
-                    style="width:550px;height:250px"
-                  ></div>
-                </div>
+                <!-- <div class="mt-4">需求个数燃烧图</div>
+  <div class="display:inline -ml-12" style="width:550px;height:250px">
+    <burn-chart :task-sum=" taskData.finish+ taskData.unfinish" :day-sum="days" :finish="data.finish" :id="'task'"></burn-chart>
+    </div> -->
               </a-card>
             </div>
             <!-- 缺陷卡片 -->
@@ -149,7 +144,6 @@
               <div class="card-box ">
                 <a-card title="缺陷" class="card-box ">
                   <!-- 卡片第一行 -->
-                  <div>统计</div>
                   <div class="flex ml-10">
                     <div class="inline-block w-1/3">
                       <a-progress
@@ -195,14 +189,10 @@
                     </div>
                   </div>
                   <!-- 卡片第二行 -->
-                  <div class="mt-4">缺陷个数燃烧图</div>
-                  <div>
-                    <div
-                      class="display:inline -ml-12"
-                      id="bugBurnChart"
-                      style="width:550px;height:250px"
-                    ></div>
-                  </div>
+                  <!-- <div class="mt-4">缺陷个数燃烧图</div>
+                 <div class="display:inline -ml-12" style="width:550px;height:250px">
+                   <burn-chart :task-sum="bugData.finish +bugData.unfinish" :day-sum="days" :finish="data.finish" :id="'task'"></burn-chart>
+                   </div> -->
                 </a-card>
               </div>
             </div>
@@ -216,10 +206,11 @@
 import { getDay } from '@/utils/util'
 import _ from 'lodash'
 import { getStageRecord, getStageAnalysisData } from '@/api/analysis'
-import TaskLogChart from '@/components/charts/TaskLogChart.vue'
+import TaskLogChart from '@/components/charts/TaskLogAreaChart.vue'
+import BurnChart from '@/components/charts/BurnChart.vue'
 
 export default {
-  components: { TaskLogChart },
+  components: { TaskLogChart, BurnChart },
 
   data() {
     return {
@@ -229,13 +220,13 @@ export default {
         unfinish: [],
         delay: [],
       },
-      taskData: {},
-      bugData: {},
+      taskData: 0,
+      bugData: 0,
       finishData: 0,
       unfinishData: 0,
       delayData: 0,
       week: [],
-      dayNum: 0,
+      days: 0,
     }
   },
   watch: {},
@@ -264,12 +255,10 @@ export default {
     },
     async getStageRecord() {
       const res = await getStageRecord(this.currStageId)
-      console.log('project', res)
       // 创建项目失败
       if (res.meta.status !== 200) {
         return this.$message.error('获取数据失败')
       }
-      this.dayNum = res.data.finish.length
       this.data.finish = res.data.finish
       this.data.delay = res.data.delay
       this.data.date = res.data.date
@@ -277,15 +266,11 @@ export default {
         // 考虑到时间顺序，这里可能要倒置
         this.data.unfinish.push(res.data.unfinish[i] - res.data.delay[i])
       }
-      // _.reverse(this.data)
-      console.log('图数据', this.data)
-      // this.drawLine()
       this.drawBurnLine()
       return true
     },
     async getStageAnalysisData() {
       const res = await getStageAnalysisData(this.currStageId)
-      console.log('stage data', res)
       // 创建项目失败
       if (res.meta.status !== 200) {
         return this.$message.error('获取数据失败')
@@ -296,305 +281,8 @@ export default {
       this.finishData = res.data.finish
       this.unfinishData = res.data.unfinish
       this.delayData = res.data.delay
+      this.days = res.data.days
       return true
-    },
-    // 项目进度，面积堆叠图
-    // drawLine() {
-    //   // 基于准备好的dom，初始化echarts实例
-    //   const myChart = this.$echarts.init(document.getElementById('myChart'))
-    //   // 绘制图表
-    //   myChart.setOption({
-    //     title: {
-    //       text: '迭代进展',
-    //       left: '43%',
-    //       top: 5,
-    //       textStyle: {
-    //         fontSize: 24,
-    //         color: '#475f7b',
-    //       },
-    //     },
-    //     tooltip: {
-    //       trigger: 'axis',
-    //       axisPointer: {
-    //         type: 'line',
-    //         label: {
-    //           backgroundColor: '#6a7985',
-    //         },
-    //       },
-    //     },
-    //     xAxis: {
-    //       data: this.date,
-    //       boundaryGap: false,
-    //     },
-    //     grid: {
-    //       right: '4%',
-    //       top: '30',
-    //       bottom: '22%',
-    //       left: '6%',
-    //     },
-    //     legend: {
-    //       type: 'scroll',
-    //       orient: 'vertical',
-    //       left: 70,
-    //       top: 25,
-    //       bottom: 20,
-    //       icon: 'rect',
-    //       borderColor: '#ddd',
-    //       borderRadius: 5,
-    //       shadowColor: 'rgba(0, 0, 0, 0.2)',
-    //       shadowBlur: 10,
-    //       textStyle: {
-    //         fontSize: '16',
-    //       },
-    //       // sdata: ['已完成', '已延误', '待处理'],
-    //     },
-    //     toolbox: {
-    //       feature: {
-    //         saveAsImage: {
-    //           IconStyle: {
-    //             marginLeft: '-100px',
-    //           },
-    //         },
-    //       },
-    //     },
-    //     yAxis: {
-    //       show: false,
-    //       max: '100',
-    //     },
-    //     // legend: {
-    //     //   data: ['已完成', '已延误', '待处理'],
-    //     // },
-    //     series: [
-    //       {
-    //         name: '已完成',
-    //         stack: '任务数', // 保证是堆叠的而不是覆盖的
-    //         showSymbol: false,
-    //         lineStyle: {
-    //           width: 0,
-    //         },
-    //         itemStyle: {
-    //           color: '#39da8a',
-    //         },
-    //         areaStyle: {
-    //           opacity: 0.8,
-    //           color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-    //             {
-    //               offset: 0,
-    //               color: 'rgba(128, 255, 165)',
-    //             },
-    //             {
-    //               offset: 1,
-    //               color: 'rgba(1, 191, 236)',
-    //             },
-    //           ]),
-    //         },
-    //         type: 'line',
-    //         data: this.data.finish,
-    //       },
-    //       {
-    //         name: '已延误',
-    //         lineStyle: {
-    //           width: 0,
-    //         },
-    //         stack: '任务数',
-    //         showSymbol: false,
-    //         itemStyle: {
-    //           color: '#ff5b5c',
-    //         },
-    //         areaStyle: {
-    //           opacity: 0.8,
-    //           color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-    //             {
-    //               offset: 0,
-    //               color: 'rgba(255, 0, 34)',
-    //             },
-    //             {
-    //               offset: 1,
-    //               color: 'rgba(247, 81, 81)',
-    //             },
-    //           ]),
-    //         },
-    //         type: 'line',
-    //         data: this.data.delay,
-    //       },
-    //       {
-    //         name: '待处理',
-    //         showSymbol: false,
-    //         lineStyle: {
-    //           width: 0,
-    //         },
-    //         stack: '任务数',
-    //         areaStyle: {
-    //           opacity: 0.8,
-    //           color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-    //             {
-    //               offset: 0,
-    //               color: 'rgba(55, 162, 255)',
-    //             },
-    //             {
-    //               offset: 1,
-    //               color: 'rgba(116, 21, 219)',
-    //             },
-    //           ]),
-    //         },
-    //         itemStyle: {
-    //           normal: {
-    //             color: '#6485ff',
-    //           },
-    //         },
-    //         type: 'line',
-    //         data: this.data.unfinish,
-    //       },
-    //     ],
-    //   })
-    // },
-    drawBurnLine() {
-      // 基于准备好的dom，初始化echarts实例
-      const burnChart = this.$echarts.init(
-        document.getElementById('burnChart'),
-      )
-      const bugBurnChart = this.$echarts.init(
-        document.getElementById('bugBurnChart'),
-      )
-      // 绘制图表
-      burnChart.setOption({
-        title: {},
-        grid: {
-          left: '20%',
-          top: '20',
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'line',
-            label: {
-              backgroundColor: '#6a7985',
-            },
-          },
-        },
-        xAxis: {
-          data: this.week,
-          boundaryGap: false,
-          splitLine: {
-            show: false,
-          },
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {
-              IconStyle: {
-                marginLeft: '-100px',
-              },
-            },
-          },
-        },
-        yAxis: {
-          show: true,
-          splitLine: {
-            show: false,
-          },
-          axisline: {
-            lineStyle: {
-              width: 2,
-              color: '#475f7b',
-            },
-          },
-        },
-        legend: {
-          data: ['基线', '未关闭'],
-        },
-        series: [
-          {
-            name: '未关闭',
-            data: [230, 218, 224, 150, 135, 147, 135],
-            type: 'line',
-            lineStyle: {
-              color: '#e84343',
-            },
-            itemStyle: {
-              color: '#e84343',
-            },
-          },
-          {
-            name: '基线',
-            data: [150, 230, 224, 218, 135, 147, 260],
-            type: 'line',
-            lineStyle: {
-              color: '#108ee9',
-              type: 'dashed',
-            },
-            itemStyle: {
-              color: '#108ee9',
-            },
-          },
-        ],
-      })
-      bugBurnChart.setOption({
-        title: {},
-        grid: {
-          left: '20%',
-          top: '20',
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'line',
-            label: {
-              backgroundColor: '#6a7985',
-            },
-          },
-        },
-        xAxis: {
-          data: this.week,
-          boundaryGap: false,
-          splitLine: {
-            show: false,
-          },
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {
-              IconStyle: {
-                marginLeft: '-100px',
-              },
-            },
-          },
-        },
-        yAxis: {
-          splitLine: {
-            show: false,
-          },
-          axisline: {},
-        },
-        legend: {
-          data: ['基线', '未关闭'],
-        },
-        series: [
-          {
-            name: '未关闭',
-            data: [230, 218, 224, 150, 135, 147, 135],
-            type: 'line',
-            lineStyle: {
-              color: '#e84343',
-            },
-            itemStyle: {
-              color: '#e84343',
-            },
-          },
-          {
-            name: '基线',
-            data: [150, 230, 224, 218, 135, 147, 260],
-            type: 'line',
-            lineStyle: {
-              color: '#108ee9',
-              type: 'dashed',
-            },
-            itemStyle: {
-              color: '#108ee9',
-            },
-          },
-        ],
-      })
     },
   },
   computed: {

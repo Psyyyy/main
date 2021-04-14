@@ -9,6 +9,7 @@ const state = {
   currFatherTask: '',
   currFatherTaskName: '',
   currListType: 'task', // 'task':需求/缺陷，stage：迭代
+
 }
 
 const mutations = {
@@ -45,7 +46,8 @@ const mutations = {
 const actions = {
 
 }
-const getters = {}
+const getters = {
+}
 export default {
   namespaced: true,
   state,

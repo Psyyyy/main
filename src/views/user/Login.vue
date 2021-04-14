@@ -41,9 +41,6 @@
       </a-form-item>
       <a-form-item style="margin: -15px 0 5px 0;">
         <div class="flex justify-between">
-          <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">
-            保持登录状态
-          </a-checkbox>
           <span class="transition hover:primary cursor-pointer">忘记密码？</span>
         </div>
       </a-form-item>
@@ -58,21 +55,6 @@
           立即登录
         </a-button>
       </a-form-item>
-      <a-divider class="text-gray-500">或使用以下方式登录</a-divider>
-      <div class="flex justify-center items-center">
-        <img
-          class="app-icon"
-          v-for="({ src, name }) in [
-          { name: '微信', src: require('@img/wechat.svg') },
-          { name: '新浪微博', src: require('@img/weibo.svg') },
-          { name: 'GitHub', src: require('@img/github.svg') },
-        ]"
-          :key="name"
-          :src="src"
-          :alt="name"
-          :title="name"
-        >
-      </div>
     </a-form>
   </div>
 </template>
@@ -135,12 +117,12 @@ export default {
               console.log('login', data)
               if (data) {
                 this.$message.success('登录成功')
-                const { redirectPath } = this.$store.state
+                const { redirectPath } = this.$store.state// 获取之前重定向到登陆页面前存的要去的界面
                 if (redirectPath) {
                 // 通过记录重定向路径，前往授权前想要访问的页面
                   this.$router.replace(redirectPath)
                 } else {
-                  this.$router.replace('/project').catch(() => {})
+                  this.$router.replace('/project').catch(() => {})// 之前没有要去的，直接跳转到project
                 }
               } else {
                 this.loading = false

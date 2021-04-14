@@ -6,11 +6,13 @@ const path = require('path')
 const IS_PROD = process.env.NODE_ENV === 'production'
 
 const assetsCDN = {
-  externals: {
+  externals: { // 把库文件单独拿出来加载，不要参与打包。
     vue: 'Vue',
     'vue-router': 'VueRouter',
     vuex: 'Vuex',
     axios: 'axios',
+    'vue-echarts': 'VueECharts',
+    echarts: 'echarts',
   },
   css: [],
   js: [
@@ -18,6 +20,8 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/vue-router@3.1.6/dist/vue-router.min.js',
     '//cdn.jsdelivr.net/npm/vuex@3.1.3/dist/vuex.min.js',
     '//cdn.jsdelivr.net/npm/axios@0.19.2/dist/axios.min.js',
+    '//cdn.bootcdn.net/ajax/libs/echarts/5.0.2/echarts.min.js',
+
   ],
 }
 

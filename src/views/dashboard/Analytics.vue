@@ -3,10 +3,10 @@
     <section class="row">
       <div class="w-1/2 pr-3">
         <div class="dashboard-card">
-          <h3 class="dashboard-card-title mb-6">网站分析</h3>
+          <h3 class="dashboard-card-title mb-6">项目进展</h3>
           <div class="mb-4 flex items-center justify-around">
             <div
-              class="flex flex-col justify-center items-center"
+              class="flex flex-col justify-center items-center -mt-4"
               v-for="({ label, percent, value, icon, color }) in [
                 { label: '需求', percent: 34, value: '14.6%', icon: 'layers', color: 'success' },
                 { label: '缺陷', percent: 52, value: '72.6%', icon: 'alert-octagon', color: 'danger' },
@@ -33,11 +33,15 @@
                   }"
                   :percent="percent"
                 />
-                <div class="mb-1 ml-3 text-3xl">{{ value }}</div>
+                <div class="mb-1 ml-3 text-2xl">{{ value }}</div>
               </div>
             </div>
           </div>
-          <analytics-bar-chart></analytics-bar-chart>
+         <a-divider />
+                   <div class="-mt-12 -mb-8 w-full inline-block" style="height:350px">
+              <!-- <div  style="height:100%;width:100%;" id="myChart"></div> -->
+              <task-log-chart :id="'project'" :show-title="false" :series-data="data"/>
+            </div>
         </div>
       </div>
       <div class="w-1/2 pl-3">
@@ -48,18 +52,11 @@
               <div class="flex items-center justify-between">
                 <div>
                   <div class="font-bold text-xl">任务总数</div>
-                  <div class="flex items-center">
-                    60%
-                    <feather
-                      class="success ml-1"
-                      size="14"
-                      type="trending-up"
-                    />
-                  </div>
                 </div>
-                <div class="text-3xl font-semibold">89k</div>
+                <div class="text-3xl font-semibold">{{finishData+unfinishData}}<span class="text-xl">个</span></div>
               </div>
-              <bar-negative-chart></bar-negative-chart>
+              <line-chart :id="'all'" :series-data="data.all" :date="data.date" :series-name="'任务总数'"></line-chart>
+              <!-- <bar-negative-chart></bar-negative-chart> -->
             </div>
           </div>
           <!-- 右上2 -->
@@ -68,18 +65,10 @@
               <div class="flex items-center justify-between">
                 <div>
                   <div class="font-bold text-xl">延误任务</div>
-                  <div class="flex items-center">
-                    60%
-                    <feather
-                      class="success ml-1"
-                      size="14"
-                      type="trending-up"
-                    />
-                  </div>
                 </div>
-                <div class="text-3xl font-semibold">89k</div>
+                 <div class="text-3xl font-semibold">{{delayData}}<span class="text-xl">个</span></div>
               </div>
-              <bar-negative-chart></bar-negative-chart>
+              <line-chart :id="'delay'" :series-data="data.delay" :date="data.date" :series-name="'延误任务'"></line-chart>
             </div>
           </div>
         </div>
@@ -91,18 +80,11 @@
               <div class="flex items-center justify-between">
                 <div>
                   <div class="font-bold text-xl">待处理任务</div>
-                  <div class="flex items-center">
-                    60%
-                    <feather
-                      class="success ml-1"
-                      size="14"
-                      type="trending-up"
-                    />
-                  </div>
+
                 </div>
-                <div class="text-3xl font-semibold">89k</div>
+<div class="text-3xl font-semibold">{{unfinishData}}<span class="text-xl">个</span></div>
               </div>
-              <bar-negative-chart></bar-negative-chart>
+               <line-chart :id="'unfinish'" :series-data="data.unfinish" :date="data.date" :series-name="'待处理任务'"></line-chart>
             </div>
           </div>
           <!-- 右下2 -->
@@ -148,9 +130,9 @@
                 <div>
                   <div class="font-bold text-xl">已完成任务</div>
                 </div>
-                <div class="text-3xl font-semibold">89k</div>
+                <div class="text-3xl font-semibold">{{finishData}}<span class="text-xl">个</span></div>
               </div>
-              <bar-negative-chart></bar-negative-chart>
+             <line-chart :id="'finish'" :series-data="data.finish" :date="data.date" :series-name="'已完成任务'"></line-chart>
             </div>
           </div>
         </div>
@@ -324,7 +306,7 @@
 
     <section class="row">
       <div class="w-3/5 pr-3">
-        <div class="dashboard-card p-0">
+        <!-- <div class="dashboard-card p-0">
           <div
             style="border-bottom: 1px solid #eee;"
             class="mb-2 px-6 py-4 flex items-center"
@@ -445,7 +427,7 @@
               </a-dropdown>
             </li>
           </ul>
-        </div>
+        </div> -->
       </div>
       <div class="w-2/5 pl-3">
         <div class="dashboard-card">
@@ -490,45 +472,74 @@
 
 <script>
 import AnalyticsBarChart from '@comp/charts/AnalyticsBarChart.vue'
-import SuccessLineChart from '@comp/charts/SuccessLineChart.vue'
-import BarNegativeChart from '@comp/charts/BarNegativeChart.vue'
-import DonutChart from '@comp/charts/DonutChart.vue'
-import PrimaryLineChart from '@comp/charts/PrimaryLineChart.vue'
-import WarningLineChart from '@comp/charts/WarningLineChart.vue'
 import RegistrationChart from '@comp/charts/RegistrationChart.vue'
 import SalesChart from '@comp/charts/SalesChart.vue'
 import GrowthChart from '@comp/charts/GrowthChart.vue'
+
+import { getProjectRecord, getProjectAnalysisData } from '@/api/analysis'
+import LineChart from '@/components/charts/LineChart.vue'
+import TaskLogChart from '@/components/charts/TaskLogAreaChart.vue'
 
 export default {
   name: 'Analytics',
 
   components: {
-    AnalyticsBarChart, SuccessLineChart, BarNegativeChart, DonutChart, PrimaryLineChart, WarningLineChart, RegistrationChart, SalesChart, GrowthChart,
+    LineChart, TaskLogChart, AnalyticsBarChart, RegistrationChart, SalesChart, GrowthChart,
   },
 
   data: () => ({
-    todos: [
-      {
-        id: '1', title: '白日依山尽，黄河入海流。', tag: '前端', tagColor: 'success', avatar: 'A', done: false,
-      },
-      {
-        id: '2', title: '故人西辞黄鹤楼，烟花三月下扬州。', tag: '后端', tagColor: 'danger', avatar: 'B', done: false,
-      },
-      {
-        id: '3', title: '两岸猿声啼不住，轻舟已过万重山。', tag: 'UI/UX', tagColor: 'primary', avatar: 'C', done: true,
-      },
-      {
-        id: '4', title: '红颜未老恩先断，斜倚薰笼坐到明。', tag: '界面设计', tagColor: 'info', avatar: 'D', done: false,
-      },
-      {
-        id: '5', title: '嫦娥应悔偷灵药，碧海青天夜夜心。', tag: 'JAVASCRIPT', tagColor: 'warning', avatar: 'E', done: false,
-      },
-    ],
+    data: {
+      finish: [],
+      unfinish: [],
+      delay: [],
+      all: [],
+    },
+    taskData: 0,
+    bugData: 0,
+    finishData: 0,
+    unfinishData: 0,
+    delayData: 0,
   }),
-
+  computed: {
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
+  },
+  created() {
+    this.getProjectRecord()
+    this.getProjectAnalysisData()
+  },
   methods: {
-    editTodo(id) {
-      this.$message.success(`您点击了 ID 为 ${id} 的任务`)
+    async getProjectRecord() {
+      const res = await getProjectRecord(this.currProjectID)
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取数据失败')
+      }
+      this.dayNum = res.data.finish.length
+      this.data.finish = res.data.finish
+      this.data.delay = res.data.delay
+      this.data.date = res.data.date
+      this.data.all = res.data.all
+      for (let i = 0; i < res.data.unfinish.length; i += 1) {
+        // 考虑到时间顺序，这里可能要倒置
+        this.data.unfinish.push(res.data.unfinish[i] - res.data.delay[i])
+      }
+      return true
+    },
+    async getProjectAnalysisData() {
+      const res = await getProjectAnalysisData(this.currProjectID)
+      // 创建项目失败
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取数据失败')
+      }
+      // this.analysisData = res.data
+      this.taskData = res.data.task
+      this.bugData = res.data.bug
+      this.finishData = res.data.finish
+      this.unfinishData = res.data.unfinish
+      this.delayData = res.data.delay
+      return true
     },
   },
 }

@@ -3,15 +3,15 @@
 
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible"
-        content="IE=edge">
-  <meta name="viewport"
-        content="width=device-width,initial-scale=1.0">
-  <meta name="author"
-        content="LeoKu">
-  <link rel="icon"
-        href="<%= BASE_URL %>favicon.png">
-  <title><%= htmlWebpackPlugin.options.title %></title>
+  <link rel="icon" href="<%= BASE_URL %>favicon.png">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <!-- <link rel="dns-prefetch" href="//main/#/user/login"> -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="author" content="LeoKu">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
   <style>
     #app {
       min-height: 100vh;
@@ -42,16 +42,15 @@
 <body>
   <noscript>
     <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
-      Please enable it to continue.</strong>
+        Please enable it to continue.</strong>
   </noscript>
-  <div id="app"
-       v-cloak></div>
+  <div id="app" v-cloak></div>
   <!-- require cdn assets js -->
-  <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
-  <script type="text/javascript"
-          src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
-  <% } %>
   <!-- built files will be auto injected -->
+  <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
+
+    <% } %>
 </body>
 
 </html>

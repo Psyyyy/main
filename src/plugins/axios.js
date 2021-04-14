@@ -16,7 +16,7 @@ const service = axios.create({
   baseURL: 'http://127.0.0.1:8888/api/private/v1/',
   timeout: 20000,
   responseType: 'json',
-  withCredentials: true,
+  // withCredentials: true,
 })
 
 service.interceptors.request.use(
@@ -24,7 +24,7 @@ service.interceptors.request.use(
     const token = getToken()
     if (token) {
       config.headers.Authorization = `${token}`
-      config.userInfo = 'test'
+      config.userInfo = 'test'// ？
     }
     return config
   },

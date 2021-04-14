@@ -85,13 +85,13 @@
                 selectedKeys,
                 confirm,
                 clearFilters,
-                column
+                column,
               }"
               style="padding: 8px"
             >
               <a-input
                 v-ant-ref="c => (searchInput = c)"
-                :placeholder="`查找${column.t_title}`"
+                :placeholder="`查找`"
                 :value="selectedKeys[0]"
                 style="width: 188px; margin-bottom: 8px; display: block;"
                 @change="

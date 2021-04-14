@@ -22,11 +22,11 @@ router.beforeEach(async (to, from, next) => {
       // 如果已经有了 token 再访问登录页的话，将会被重定向到首页
       next('/project')
     } else {
-      const isAuthorized = isArray(store.state.user.permissions)
+      const isAuthorized = isArray(store.state.user.permissions)// array标名存在权限，否则{}表示还没获取到权限信息
 
       if (isAuthorized) {
         next()// 无参数，默认to地址
-      } else { // 有token但没有权限
+      } else { // 有token但没有权限，获取权限（登录后第一次跳转会出现的情况）
         try {
           console.log('try')
           resetRouter()

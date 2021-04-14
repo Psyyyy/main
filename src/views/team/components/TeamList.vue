@@ -1,18 +1,5 @@
 <template>
   <div class="relative">
-    <div>
-      <a-input
-        class="search-input"
-        size="large"
-        :placeholder="searchInputText"
-        @focus="searchInputText = '请输入成员关键字...'"
-        @blur="searchInputText = '搜索成员...'"
-      >
-        <template #prefix>
-          <feather size="20" type="search" />
-        </template>
-      </a-input>
-    </div>
 
     <perfect-scrollbar
       class="team-list"

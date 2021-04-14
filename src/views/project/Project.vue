@@ -749,7 +749,6 @@ export default {
     this.getTask()
     this.getNoticeList()
     this.getDialog()
-    this.getFileList()
   },
   mounted() {
     if (screenfull.isEnabled) {
@@ -987,7 +986,7 @@ export default {
 <style lang="scss" scoped>
 .user-layout {
   @apply min-h-screen flex flex-col items-center justify-center;
-  background: center no-repeat url(~@/assets/images/user_layout_bg.svg);
+  //background: center no-repeat url(~@/assets/images/user_layout_bg.svg);
 
   &-section {
     @apply mt-4 mb-6;
