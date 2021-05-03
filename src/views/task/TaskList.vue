@@ -553,30 +553,23 @@ export default {
     },
 
     expandAllRow() {
-      this.isExpandAll = true
+      this.isExpandAll = true// 设置当前为展开所有的状态
 
       const expandRowKeys = []
       const rows = [...this.data]
 
       for (let i = 0; i < rows.length; i += 1) {
         const row = rows[i] // row是一行数据
-        // const { rowKey } = this
 
         if (row.children !== undefined) {
-          expandRowKeys.push(`${row.id}`)
+          expandRowKeys.push(`${row.id}`)// 将有子任务的任务id放入可展开数组中
           for (let k = 0; k < row.children.length; k += 1) {
             const childRow = row.children[k]
-            if (childRow.children !== undefined) expandRowKeys.push(`${childRow.id}`)
+            if (childRow.children !== undefined) expandRowKeys.push(`${childRow.id}`)// 将有子任务的子任务id放入可展开数组中
           }
         }
-        // const key = typeof rowKey === 'function' ? rowKey(row, i) : row[rowKey]
-        // if (key === undefined) {
-        //   expandRowKeys.push(`${i}`)
-        // } else {
-        //   expandRowKeys.push(`${key}`)
-        // }
       }
-      this.expandRows = expandRowKeys
+      this.expandRows = expandRowKeys// 赋值给可展开数组
     },
     closeAllRow() {
       this.isExpandAll = false
@@ -595,10 +588,8 @@ export default {
             <div
               class="expand-icon"
               onClick={() => {
-                // _.pull(this.expandRows, `${id}`)
-                // this.expandRows.pop()
                 for (let i = 0; i < this.expandRows.length; i += 1) {
-                  if (`${id}` === this.expandRows[i]) this.expandRows.splice(i, 1)
+                  if (`${id}` === this.expandRows[i]) this.expandRows.splice(i, 1)// 把收缩的行从展开数组中去掉
                 }
               }}
             >
@@ -610,7 +601,7 @@ export default {
           <div
             class="expand-icon"
             onClick={() => {
-              this.expandRows.push(`${id}`)
+              this.expandRows.push(`${id}`)// 将展开的行加入展开数组
             }}
           >
             +

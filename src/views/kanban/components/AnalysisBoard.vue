@@ -4,6 +4,8 @@
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
         <h3 class="section-card__title">统计图</h3>
         <div class="flex ml-auto"></div>
+                <span v-if="!showBurnChart" class="float-right mr-8 cursor-pointer" @click="showBurnChart=true">点击查看<span style="color:blue">任务燃烧图</span></span>
+                 <span v-if="showBurnChart" class="float-right mr-8 cursor-pointer" @click="showBurnChart=false">点击查看<span style="color:blue">任务进展图</span></span>
       </div>
       <div>
         <a-card :bordered="false">
@@ -39,9 +41,11 @@
               </a-card>
             </div>
             <!-- 第二列 -->
-            <div class="w-3/5 inline-block" style="height:450px">
+            <div class="w-3/5 inlinev-if=-block" style="height:450px">
               <!-- <div  style="height:100%;width:100%;" id="myChart"></div> -->
-              <task-log-chart :id="'stage'" :show-title="true" :series-data="data"/>
+
+              <task-log-chart v-if="!showBurnChart" :id="'stage'" :show-title="true" :series-data="data"/>
+                 <burn-chart v-if="showBurnChart"  :task-sum=" taskData.finish+ taskData.unfinish" :day-sum="days" :unfinish="data.unfinishForBurn" :id="'task'"></burn-chart>
             </div>
 
             <!-- 第三列 -->
@@ -134,8 +138,8 @@
                 </div>
                 <!-- 卡片第二行 -->
                 <!-- <div class="mt-4">需求个数燃烧图</div>
-  <div class="display:inline -ml-12" style="width:550px;height:250px">
-    <burn-chart :task-sum=" taskData.finish+ taskData.unfinish" :day-sum="days" :finish="data.finish" :id="'task'"></burn-chart>
+  <div v-if="showBurnChart" class="display:inline -ml-12" style="width:550px;height:250px">
+    <burn-chart :task-sum=" taskData.finish+ taskData.unfinish" :day-sum="days" :unfinish="data.unfinishForBurn" :id="'task'"></burn-chart>
     </div> -->
               </a-card>
             </div>
@@ -218,6 +222,7 @@ export default {
       data: {
         finish: [],
         unfinish: [],
+        unfinishForBurn: [],
         delay: [],
       },
       taskData: 0,
@@ -227,16 +232,18 @@ export default {
       delayData: 0,
       week: [],
       days: 0,
+      showBurnChart: false,
+      visible: false,
     }
   },
   watch: {},
   created() {
     // this.getStageRecord()
-    this.getStageAnalysisData()
     this.getWeekDate()
   },
   mounted() {
     this.getStageRecord()
+    this.getStageAnalysisData()
     // this.drawLine()
     // window.onresize = () => {
     //   // 自适应
@@ -259,14 +266,15 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取数据失败')
       }
+      console.log('任务数据', res.data)
       this.data.finish = res.data.finish
       this.data.delay = res.data.delay
       this.data.date = res.data.date
+      this.data.unfinishForBurn = res.data.unfinish
       for (let i = 0; i < res.data.unfinish.length; i += 1) {
         // 考虑到时间顺序，这里可能要倒置
         this.data.unfinish.push(res.data.unfinish[i] - res.data.delay[i])
       }
-      this.drawBurnLine()
       return true
     },
     async getStageAnalysisData() {

@@ -140,7 +140,7 @@ export default {
     async uploadFile(data) {
       const formData = new FormData()
       formData.append('file', data.file)
-      formData.append('token', window.sessionStorage.getItem('token'))// 随便写一个token示例
+      formData.append('token', window.sessionStorage.getItem('token'))// 随便写一个token示例 好像无效
       const uid = window.sessionStorage.getItem('currUserID')
       const pid = this.currProjectID
       console.log('上传uid', uid)

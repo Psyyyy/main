@@ -34,7 +34,6 @@ router.beforeEach(async (to, from, next) => {
           const accessedRoutes = await store.dispatch('auth/generateRoutes', permissions)
           // 动态添加路由
           router.addRoutes(accessedRoutes)
-          console.log('router', to)
           next({ ...to, replace: true })
         } catch (e) {
           console.log('catch')

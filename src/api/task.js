@@ -23,6 +23,12 @@ export function getStageTaskList(pid, sid) { // 迭代用的
     method: 'get',
   })
 }
+export function getGanttTaskList(pid, sid) { // 迭代用的
+  return request({
+    url: `/task/ganttlist?pid=${pid}&sid=${sid}`,
+    method: 'get',
+  })
+}
 export function getBoardList(pid, sid, type) { // 迭代用的
   return request({
     url: `/task/board?pid=${pid}&sid=${sid}&type=${type}`,

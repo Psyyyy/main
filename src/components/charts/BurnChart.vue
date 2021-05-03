@@ -23,7 +23,7 @@ export default {
       required: true,
       default: () => 0,
     },
-    finish: {
+    unfinish: {
       type: Array,
       required: true,
       default: () => [],
@@ -47,6 +47,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
+      this.getOptionData()
       this.loadChart()
     })
   },
@@ -75,8 +76,9 @@ export default {
       })
     },
     getOptionData() {
+      console.log('days', this.daySum)
       // x轴
-      for (let i = 0; i < this.daySum; i += 1) {
+      for (let i = this.daySum - 1; i > 0; i -= 1) {
         this.xAxis.push(i)
       }
       // 基线
@@ -91,10 +93,20 @@ export default {
       if (!this.chart) return
       // const fullOption = this.assembleDataToOption()
       this.chart.setOption({
-        title: {},
+        title: {
+          text: '任务燃烧图',
+          left: '43%',
+          top: 5,
+          textStyle: {
+            fontSize: 24,
+            color: '#475f7b',
+          },
+        },
         grid: {
-          left: '20%',
-          top: '20',
+          right: '4%',
+          top: '60',
+          bottom: '22%',
+          left: '6%',
         },
         tooltip: {
           trigger: 'axis',
@@ -106,6 +118,9 @@ export default {
           },
         },
         xAxis: {
+          name: '剩余天数',
+          nameLocation: 'center',
+          nameGap: 23,
           data: this.xAxis,
           boundaryGap: false,
           splitLine: {
@@ -135,11 +150,13 @@ export default {
         },
         legend: {
           data: ['基线', '未关闭'],
+          top: 45,
+          left: '42%',
         },
         series: [
           {
             name: '未关闭',
-            data: this.finish,
+            data: this.unfinish,
             type: 'line',
             lineStyle: {
               color: '#e84343',

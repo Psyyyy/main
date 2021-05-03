@@ -4,15 +4,21 @@ import vuescroll from 'vuescroll'
 import axios from 'axios'
 import moment from 'moment'
 import * as echarts from 'echarts' // 引入组件
+import wlGantt from 'wl-gantt'
+import ElementUI from 'element-ui'
 import App from './App.vue'
 import router from './router/router'
 import store from './store/store'
+import 'wl-gantt/lib/wl-gantt.css'
 
 import './router/control'
 import './plugins'
 import '@/assets/scss/reset.scss'
 import '@/assets/scss/common.scss'
 import './directives'
+
+Vue.use(ElementUI)
+Vue.use(wlGantt)
 
 Vue.config.errorHandler = errorHandler
 Vue.config.productionTip = false

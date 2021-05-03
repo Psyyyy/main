@@ -96,6 +96,9 @@
               <a-radio-button value="board"
                 >统计图</a-radio-button
               >
+                    <a-radio-button value="gantt"
+                >甘特图</a-radio-button
+              >
               <a-radio-button value="member">成员</a-radio-button>
             </a-radio-group>
           </div>
@@ -222,6 +225,10 @@
            <analysis-board></analysis-board>
 
     </div>
+        <div v-if="showGantt" class="mt-10">
+           <gantt></gantt>
+
+    </div>
     <filter-modal />
     <add-modal />
     <task
@@ -343,6 +350,7 @@ import Task from '@/views/task/Task.vue'
 import FilterModal from './components/FilterModal.vue'
 import MemberList from './components/MemberRes.vue'
 import AnalysisBoard from './components/AnalysisBoard.vue'
+import Gantt from './components/Gantt.vue'
 
 import TaskList from '../task/TaskList.vue'
 
@@ -357,6 +365,7 @@ export default {
     AnalysisBoard,
     MemberList,
     AddModal,
+    Gantt,
   },
 
   data: () => ({
@@ -381,6 +390,7 @@ export default {
     showMember: false,
     showList: false,
     showAnalysis: false,
+    showGantt: false,
     isTaskShow: true,
     isKbShow: true,
     isEditStageVisible: false,
@@ -555,6 +565,7 @@ export default {
       this.showList = false
       this.showMember = false
       this.showAnalysis = false
+      this.showGantt = false
       switch (target.value) {
         case 'kanban':
           this.isKbShow = true
@@ -569,7 +580,9 @@ export default {
           break
         case 'member':
           this.showMember = true
-          console.log('啊啊啊啊', this.showMember)
+          break
+        case 'gantt':
+          this.showGantt = true
           break
         default:
           return true

@@ -104,7 +104,7 @@ export default {
         },
         legend: {
           type: 'scroll',
-          top: this.showTitle === true ? 45 : 45,
+          top: 45,
           icon: 'rect',
           borderColor: '#ddd',
           borderRadius: 5,

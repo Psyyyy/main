@@ -13,6 +13,7 @@ const assetsCDN = {
     axios: 'axios',
     'vue-echarts': 'VueECharts',
     echarts: 'echarts',
+    'element-ui': 'ELEMENT',
   },
   css: [],
   js: [
