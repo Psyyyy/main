@@ -1084,6 +1084,9 @@ export default {
     currAddType() {
       return this.$store.state.add.currAddType
     },
+    submitAdd() {
+      return this.$store.state.add.submit
+    },
   },
   watch: {
     // $route(to, from) {
@@ -1091,6 +1094,11 @@ export default {
     //   //     this.init();
     //   // }
     // },
+    submitAdd() {
+      if (this.submitAdd === true) {
+        this.newDialog('添加了子任务', '')
+      }
+    },
     updateFinisih() {
       this.getTaskDetail()
     },
@@ -1099,9 +1107,6 @@ export default {
     },
     isAddModalOpened() {
       this.getTaskDetail()
-      if (this.isAddModalOpened === false) {
-        this.newDialog('添加了子任务', '')
-      }
     },
     showInviteMember(val) {
       if (!val) {
@@ -1248,7 +1253,7 @@ export default {
       }
       await deleteFile(params).then(() => {
         this.$message.success('删除成功')
-        this.newDialog('删除了了文件', fileName)
+        this.newDialog('删除了文件', fileName)
         this.getFileList()
       }).catch(() => {
         this.$message.warning('删除成功')
@@ -1331,7 +1336,7 @@ export default {
       return true
     },
     onOpenAdd() {
-      console.log('level in detail', this.task.detail.t_level + 1)
+      this.$store.commit('add/SET_SUBMIT', false)
       this.$store.commit(
         'task/SET_CURR_EDIT_TASK_LEVEL',
         this.task.detail.t_level + 1,

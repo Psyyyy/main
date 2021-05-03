@@ -289,10 +289,10 @@ export default {
         this.formatForm.t_state = '新'
       } else this.formatForm.t_type = 1
       // this.formatForm.t_stage_id = this.currStageId
-      console.log('currTask', this.currEditTask)
-      console.log('pid', this.formatForm.t_pid)
-      console.log('level', this.formatForm.t_level)
-      console.log('add内容', this.formatForm)
+      // console.log('currTask', this.currEditTask)
+      // console.log('pid', this.formatForm.t_pid)
+      // console.log('level', this.formatForm.t_level)
+      // console.log('add内容', this.formatForm)
       try {
         const { data: res } = await addTask(this.formatForm)
         console.log('add结果', res)
@@ -300,6 +300,7 @@ export default {
         this.$message.success('成功新增需求！')
 
         this.closeAdd()
+        this.$store.commit('add/SET_SUBMIT', true)
         this.form = {
           t_pid: '', // 这里要根据是在哪里打开新增窗口判断，默认pid=0
           t_level: '', // 这个也要判断，默认0

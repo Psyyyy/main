@@ -1,39 +1,67 @@
 <template>
   <div class="member">
     <div>
-      <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
-        <h3 class="section-card__title">统计图</h3>
-        <div class="flex ml-auto"></div>
-                </div>
       <div>
         <a-card :bordered="false">
             <div class="wl-gantt-demo">
-        <wlGantt :edit="false" :data="ganttTask" start-date="2021-3-01" end-date="2021-7-24"></wlGantt>
+        <wlGantt :edit="false" :data="ganttTask" start-date="2021-2-15" end-date="2021-7-24"  @row-click="handleRowClick">
+<el-table-column fixed width="55" label="级别">
+              <template slot-scope="scope">
+                   <a-tag
+                  :color="
+                    scope.row.rank === 3 ? '#ff5b5c' : scope.row.rank === 2 ? '#fdac41' : '#28c175'
+                  "
+                >
+                  {{ scope.row.rank === 3 ? "很急" : scope.row.rank === 2 ? "紧急" : "普通" }}
+                </a-tag>
+               </template>
+          </el-table-column>
+        </wlGantt>
     </div>
         </a-card>
+            <task
+      :pop-visible="showTask"
+      detail="detailTaskId"
+      @close="showTask = false"
+    />
       </div>
     </div>
   </div>
 </template>
 <script>
 import _clonedeep from 'lodash.clonedeep'
-import { getGanttTaskList } from '@/api/task'
+import { getGanttTaskList, getTaskDetail } from '@/api/task'
+import { getComment } from '@/api/comment'
+import { getDialog } from '@/api/dialog'
+// import STable from '../../components/Table'
+import { getMemberList } from '@/api/member'
+import Task from '@/views/task/Task.vue'
 
 export default {
-  components: { },
+  components: { Task },
 
   data() {
     return {
       ganttTask: [],
+      showTask: false,
     }
   },
-  watch: {},
+  watch: {
+    showTask() {
+      if (this.showTask === false) {
+        this.getGanttTask()
+      }
+    },
+  },
   created() {
     this.getGanttTask()
   },
   mounted() {
   },
   methods: {
+    handleRowClick(row) {
+      this.showDetail(row.id)
+    },
     async getGanttTask() {
       const pid = this.currProjectID
       const sid = this.currStageId
@@ -44,6 +72,52 @@ export default {
       console.log('甘特图任务', res.data)
       this.ganttTask = res.data
       return true
+    },
+    async getTaskDetail(id) {
+      const pid = this.currProjectID
+
+      const { data: res } = await getTaskDetail(pid, id)
+      this.$store.commit('task/SET_TASK_DETAIL', res)
+      if (res.detail.t_level !== 0) {
+        console.log('当前任务的father', res.parent[0])
+        this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
+      }
+      return true
+    },
+    async getDialog(id) {
+      const obj = {
+        pid: this.currProjectID,
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getDialog(obj)
+      this.$store.commit('task/SET_TASK_DIALOG', res)
+      return true
+    },
+    async showDetail(id) {
+      this.$store.commit('task/SET_CURR_EDIT_TASK', id)
+      await this.getTaskDetail(id)
+      await this.getDialog(id)
+      await this.getComment(id)
+      this.showTask = true
+      // this.detailTaskId = id
+    },
+    async getComment(id) {
+      const params = {
+        source: 'task',
+        sid: id,
+      }
+      const { data: res } = await getComment(params)
+      // this.dialogList = res
+      this.$store.commit('task/SET_TASK_COMMENT', res)
+      return true
+    },
+
+    async getMemberList() {
+      const id = this.currProjectID
+      const { data: res } = await getMemberList(id)
+      console.log('memberlist', res)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
   },
   computed: {
