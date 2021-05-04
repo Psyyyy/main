@@ -244,6 +244,19 @@ export default {
       return this.$store.state.project.currProjectId
     },
   },
+  watch: {
+
+    currProjectID: {
+      immediate: true,
+      handler() {
+        this.getProjectRecord()
+        this.getDialog()
+        this.getProjectAnalysisData()
+        this.getTaskRank()
+      },
+
+    },
+  },
   created() {
     this.getProjectRecord()
     this.getDialog()
