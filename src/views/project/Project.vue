@@ -792,7 +792,7 @@ export default {
     async getProject() {
       const uid = window.sessionStorage.getItem('currUserID')
       const { data: res } = await getProjectList(uid)
-      // console.log('project', res)
+      console.log('项目列表', res)
       this.projectList = res
       return true
     },
@@ -821,8 +821,7 @@ export default {
       }
     },
     editProject(options) {
-      if (options === 'add') {
-        // console.log(e)
+      if (options === 'add') { // 创建项目
         this.$refs.addFormRef.validate(async (valid, field) => {
           // 有未校验通过的字段
           if (!valid) {
@@ -831,7 +830,6 @@ export default {
           this.newProject.founder = this.info.id
           this.newProject.createTime = Date.parse(new Date()) / 1000
           const res = await newProject(this.newProject)
-          console.log('project', res)
           // 创建项目失败
           if (res.meta.status !== 200) {
             return this.$message.error('创建项目失败')
@@ -886,7 +884,7 @@ export default {
     },
     openDeleteModal(title) {
       const that = this
-      this.$confirm({
+      this.$antdConfirm({
         title: (
           <p>
             此操作将删除<span class="warning">「{title}」</span>项目

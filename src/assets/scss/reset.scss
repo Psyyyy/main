@@ -79,3 +79,11 @@
 .ant-list-item-meta-avatar {
   margin-right: 2px;
 }
+.ant-comment-actions > li > span {
+  padding-right: 10px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  /* cursor: pointer; */
+  /* transition: color 0.3s; */
+  /* user-select: none; */
+}

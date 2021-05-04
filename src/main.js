@@ -17,6 +17,8 @@ import '@/assets/scss/reset.scss'
 import '@/assets/scss/common.scss'
 import './directives'
 
+Vue.prototype.$antdMessage = Vue.prototype.$message
+Vue.prototype.$antdConfirm = Vue.prototype.$confirm
 Vue.use(ElementUI)
 Vue.use(wlGantt)
 
