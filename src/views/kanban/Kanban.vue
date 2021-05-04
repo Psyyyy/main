@@ -29,7 +29,7 @@
                     class="mr-2"
                   /> -->
                   <h3 class="section-card__title">
-                    {{ stage.s_title }}
+                    {{ currStageInfo.s_title }}
                   </h3>
 
                   <feather
@@ -66,8 +66,8 @@
                 class=" flex-no-wrap inline-block "
                 style="color:#bdc0c9;white-space:nowrap;width:30px;margin-top:7px"
               >
-                {{ stage.s_start_time | dateFormat }}~{{
-                  stage.s_end_time | dateFormat
+                {{ currStageInfo.s_start_time | dateFormat }}~{{
+                  currStageInfo.s_end_time | dateFormat
                 }}
               </div>
             </div>
@@ -306,15 +306,17 @@
           </a-form-model-item>
           <a-form-model-item label="起止日期" prop="date">
             <a-date-picker
+                          :format="'YYYY/MM/DD'"
               v-model="currEditStage.s_start_time"
-              :format="'YYYY/MM/DD'"
+              :default-value="currEditStage.s_start_time"
               type="date"
               placeholder="开始日期"
               style="width: 100%"
             />
             <a-date-picker
+            :format="'YYYY/MM/DD'"
               v-model="currEditStage.s_end_time"
-              :format="'YYYY/MM/DD'"
+              :default-value="currEditStage.s_end_time"
               type="date"
               placeholder="截止日期"
               style="width: 100%"
@@ -378,7 +380,7 @@ export default {
   data: () => ({
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
-    state: {}, // 当前stage
+    stage: {}, // 当前stage
     dragOptions: {
       animation: 200,
       group: 'description',
@@ -419,7 +421,7 @@ export default {
     },
     isAddStageVisible: false,
     showEmpty: false,
-    showLastStage: false,
+    showLastStage: 0,
   }),
 
   created() {
@@ -433,6 +435,10 @@ export default {
     currStage() {
       return this.$store.state.stage.currStage
     },
+    currStageInfo() {
+      return this.$store.state.stage.currStageInfo
+    },
+
     currStageId() {
       return this.$store.state.stage.currStageId
     },
@@ -507,28 +513,26 @@ export default {
       const { data: res } = await getStage(this.currStageId)
       console.log('stage', res)
       this.$store.commit('stage/SET_CURR_STAGE', res)
-      this.currEditStage = res
+      this.stage = res
       return true
     },
     async getStageList() {
       const pid = this.currProjectID
       const { data: res } = await getStageList(pid)
       console.log('stagelist', res.stagelist)
+      this.showEmpty = 0
       if (!res.stagelist.length) {
         this.showEmpty = true
       }
       // 判断当前迭代列表是否包括上次浏览的迭代
-      res.stagelist.forEach((item) => {
+      res.stagelist.forEach((item, index) => {
         if (item.s_title === this.currStage) {
-          this.showLastStage = true
+          this.showLastStage = index
         }
       })
-      // 不包括，取列表第一项
-      if (this.showLastStage !== true) {
-        this.$store.commit('stage/SET_CURR_STAGE', res.stagelist[0])
-        this.$store.commit('stage/SET_CURR_STAGE_ID', res.stagelist[0].s_id)
-        this.$store.commit('stage/SET_CURR_STAGE_NAME', res.stagelist[0].s_title)
-      }
+      this.$store.commit('stage/SET_CURR_STAGE', res.stagelist[this.showLastStage])
+      this.$store.commit('stage/SET_CURR_STAGE_ID', res.stagelist[this.showLastStage].s_id)
+      this.$store.commit('stage/SET_CURR_STAGE_NAME', res.stagelist[this.showLastStage].s_title)
       // 包括，直接按默认处理，取缓存里的迭代
       this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
 
@@ -550,27 +554,6 @@ export default {
           return false
         })
       }
-    },
-
-    deleteBoard(boardTitle) {
-      this.$confirm({
-        title: (
-          <p>
-            此操作将删除<span class="warning">「{boardTitle}」</span>看板
-          </p>
-        ),
-        content: '请点击确定按钮以删除',
-        onOk: () => {
-          // MOCK: 模拟删除一个看板
-          this.taskList.some((el, i, self) => {
-            if (el.title === boardTitle) {
-              self.splice(i, 1)
-              return true
-            }
-            return false
-          })
-        },
-      })
     },
 
     orderList() {
@@ -714,12 +697,12 @@ export default {
 
     // 编辑/删除迭代
     openEditModal() {
-      this.currEditStage.s_id = this.stage.s_id
-      this.currEditStage.s_title = this.stage.s_title
-      this.currEditStage.s_target = this.stage.s_target
-      this.currEditStage.start = dateformat(this.stage.s_start_time)
-      console.log(this.stage.start_time)
-      this.currEditStage.end = dateformat(this.stage.s_end_time)
+      this.currEditStage = __clonedeep(this.currStageInfo)
+      this.currEditStage.s_start_time = dateformat(this.currStageInfo.s_start_time)
+      this.currEditStage.s_end_time = dateformat(this.currStageInfo.s_end_time)
+      console.log(this.currEditStage)
+      // this.currEditStage.start = dateformat(this.currStageInfo.s_start_time)
+      // this.currEditStage.end = dateformat(this.currStageInfo.s_end_time)
       this.isEditStageVisible = true
     },
     openDeleteModal(title) {
