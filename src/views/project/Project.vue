@@ -201,7 +201,7 @@
                     ><span class="text-3xl">{{item.pro_title}}</span></a-avatar>
                     <a-divider class="m-0" />
                     <div>
-                      <span class="text-xl">{{ item.pro_title }}</span>
+                      <span class="text-xl"><div class="single-row">{{item.pro_title}}</div></span>
                       <div style="color:#C7C7C7">
                         <div class="project-content">
                           {{ item.pro_content }}

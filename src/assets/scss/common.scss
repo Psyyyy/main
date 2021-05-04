@@ -84,3 +84,8 @@ img {
 .pull-right {
   float: right;
 }
+.single-row {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
