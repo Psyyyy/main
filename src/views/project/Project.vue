@@ -364,7 +364,7 @@
 
             <div
               style="height:250px"
-              class="px-4 demo-infinite-container overflow-auto"
+              class="px-4 overflow-auto"
             >
               <a-list
                 class="comment-list"
@@ -931,7 +931,7 @@ export default {
       window.localStorage.setItem('currProjectID', id)
       this.getStageList(id)
 
-      this.$router.push('Ecommerce')
+      this.$router.push('Analytics')
     },
     async getStageList(pid) {
       const { data: res } = await getStageList(pid)

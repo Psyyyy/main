@@ -17,6 +17,12 @@ export function getUserTaskList(id) { // 区分缺陷和需求
   })
 }
 
+export function getTaskRank(pid) { // 不区分缺陷和需求
+  return request({
+    url: `/task/rank/${pid}`,
+    method: 'get',
+  })
+}
 export function getStageTaskList(pid, sid) { // 迭代用的
   return request({
     url: `/task/list?pid=${pid}&sid=${sid}`,

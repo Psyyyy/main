@@ -5,15 +5,9 @@
         <a-card :bordered="false">
             <div class="wl-gantt-demo">
         <wlGantt :edit="false" :data="ganttTask" start-date="2021-2-15" end-date="2021-7-24"  @row-click="handleRowClick">
-<el-table-column fixed width="55" label="级别">
+<el-table-column fixed width="65" label="成员">
               <template slot-scope="scope">
-                   <a-tag
-                  :color="
-                    scope.row.rank === 3 ? '#ff5b5c' : scope.row.rank === 2 ? '#fdac41' : '#28c175'
-                  "
-                >
-                  {{ scope.row.rank === 3 ? "很急" : scope.row.rank === 2 ? "紧急" : "普通" }}
-                </a-tag>
+{{scope.row.header}}
                </template>
           </el-table-column>
         </wlGantt>

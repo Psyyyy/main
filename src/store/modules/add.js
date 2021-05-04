@@ -4,7 +4,8 @@ const state = {
   currAddType: '', // task or bug?
   currEditAdd: {},
   isFromDetail: false,
-  submit: false,
+  isSubmit: false,
+  submitName: '',
   stateAdd: {
     task: ['规划中', '实现中', '已实现', '已拒绝'],
     bug: ['新', '处理中', '已解决', '已验收', '已拒绝', '已关闭'],
@@ -84,8 +85,11 @@ const mutations = {
   SET_CURR_EDIT_ADD(state, addItem) {
     state.currEditAdd = addItem
   },
-  SET_SUBMIT(type) {
-    state.submit = type
+  SET_SUBMIT(state, isSubmit) {
+    state.isSubmit = isSubmit
+  },
+  SET_SUBMIT_NAME(state, name) {
+    state.submitName = name
   },
 }
 const actions = {

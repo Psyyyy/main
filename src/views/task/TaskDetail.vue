@@ -1085,7 +1085,10 @@ export default {
       return this.$store.state.add.currAddType
     },
     submitAdd() {
-      return this.$store.state.add.submit
+      return this.$store.state.add.isSubmit
+    },
+    submitName() {
+      return this.$store.state.add.submitName
     },
   },
   watch: {
@@ -1094,11 +1097,6 @@ export default {
     //   //     this.init();
     //   // }
     // },
-    submitAdd() {
-      if (this.submitAdd === true) {
-        this.newDialog('添加了子任务', '')
-      }
-    },
     updateFinisih() {
       this.getTaskDetail()
     },
@@ -1107,6 +1105,12 @@ export default {
     },
     isAddModalOpened() {
       this.getTaskDetail()
+      if (this.isAddModalOpened === false) {
+        console.log('submitAdd', this.submitAdd)
+        if (this.submitAdd === true) {
+          this.newDialog('添加了子任务', this.submitName)
+        }
+      }
     },
     showInviteMember(val) {
       if (!val) {

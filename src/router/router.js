@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
 import UserLayout from '@/layouts/UserLayout.vue'
-import Ecommerce from '@/views/dashboard/Ecommerce.vue'
+import Analytics from '@/views/dashboard/Analytics.vue'
 
 Vue.use(VueRouter)
 
@@ -74,22 +74,15 @@ export const asyncRoutes = [
   // 仪表盘
   {
     path: '',
-    meta: {
-      permission: ['normal', 'admin'], title: '仪表盘', icon: 'monitor', openKey: 'dashboard',
-    },
     component: MainLayout,
+    single: true,
+    meta: { permission: ['normal', 'admin'] },
     children: [
       {
-        path: 'ecommerce',
-        name: 'Ecommerce',
-        component: Ecommerce,
-        meta: { permission: ['normal', 'admin'], title: '统计面板', openKey: 'dashboard' },
-      },
-      {
-        path: 'analytics',
+        path: '/analytics',
         name: 'Analytics',
-        component: () => import(/* webpackChunkName: 'Analysis' */'@/views/dashboard/Analytics.vue'), // 路由懒加载
-        meta: { permission: ['admin'], title: '数据分析', openKey: 'dashboard' },
+        component: Analytics, // 路由懒加载
+        meta: { permission: ['admin'], title: '数据分析', icon: 'monitor' },
       },
     ],
   },
