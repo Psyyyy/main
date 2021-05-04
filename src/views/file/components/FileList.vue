@@ -136,6 +136,15 @@ export default {
     },
 
   },
+  watch: {
+    currProjectID: {
+      immediate: true,
+      handler() {
+        this.getFileList()
+      },
+
+    },
+  },
   created() {
     this.getFileList()
   },

@@ -1,7 +1,14 @@
 <template>
   <div class="kanban">
+    <div v-if="showEmpty">  <a-empty>
+          <span slot="description"> 当前项目尚未创建迭代</span>
+    <a-button type="primary" @click="isAddStageVisible=true">
+      创建迭代
+    </a-button>
+      </a-empty>
+    </div>
     <!-- 第一行 -->
-    <div class=" -mt-8 w-full pr-3">
+    <div v-if="!showEmpty" class=" -mt-8 w-full pr-3">
       <div class=" no-scroll w-full p-2 title-card">
         <div class="wl">
           <div class="wl">
@@ -108,7 +115,7 @@
         </div>
       </div>
     </div>
-    <div v-if="isKbShow">
+    <div v-if="!showEmpty&&isKbShow">
       <!-- 第二行 -->
       <div>
         <a-button
@@ -411,11 +418,48 @@ export default {
       s_end_time: null,
     },
     isAddStageVisible: false,
+    showEmpty: false,
+    showLastStage: false,
   }),
 
   created() {
     this.init()
     console.log('tasklist', this.taskList)
+  },
+  computed: {
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
+    currStage() {
+      return this.$store.state.stage.currStage
+    },
+    currStageId() {
+      return this.$store.state.stage.currStageId
+    },
+    stage() {
+      return this.$store.state.stage.currStageInfo
+    },
+    stageList() {
+      return this.$store.state.stage.stageList
+    },
+    isFilterModalOpened() {
+      return this.$store.state.filter.isFilterModalOpened
+    },
+    isAddModalOpened() {
+      return this.$store.state.add.isAddModalOpened
+    },
+    currFilterType() {
+      return this.$store.state.filter.currFilterType
+    },
+    taskList() {
+      return this.$store.state.task.taskList
+    },
+    boardList() {
+      return this.$store.state.task.boardList
+    },
+    board() {
+      return this.$store.getters['add/boardInit']
+    },
   },
   watch: {
     currStage() {
@@ -463,8 +507,6 @@ export default {
       const { data: res } = await getStage(this.currStageId)
       console.log('stage', res)
       this.$store.commit('stage/SET_CURR_STAGE', res)
-      this.$store.commit('stage/SET_CURR_STAGE_ID', res.s_id)
-      this.$store.commit('stage/SET_CURR_STAGE_NAME', res.s_title)
       this.currEditStage = res
       return true
     },
@@ -472,6 +514,22 @@ export default {
       const pid = this.currProjectID
       const { data: res } = await getStageList(pid)
       console.log('stagelist', res.stagelist)
+      if (!res.stagelist.length) {
+        this.showEmpty = true
+      }
+      // 判断当前迭代列表是否包括上次浏览的迭代
+      res.stagelist.forEach((item) => {
+        if (item.s_title === this.currStage) {
+          this.showLastStage = true
+        }
+      })
+      // 不包括，取列表第一项
+      if (this.showLastStage !== true) {
+        this.$store.commit('stage/SET_CURR_STAGE', res.stagelist[0])
+        this.$store.commit('stage/SET_CURR_STAGE_ID', res.stagelist[0].s_id)
+        this.$store.commit('stage/SET_CURR_STAGE_NAME', res.stagelist[0].s_title)
+      }
+      // 包括，直接按默认处理，取缓存里的迭代
       this.$store.commit('stage/SET_STAGE_LIST', res.stagelist)
 
       return true
@@ -716,12 +774,15 @@ export default {
           console.log('newStage', res)
           // 创建项目失败
           if (res.meta.status !== 200) {
-            return this.$message.error('创建项目失败')
+            return this.$message.error('创建迭代失败')
           }
-          this.$message.success('创建项目成功！')
+          this.$message.success('创建迭代成功！')
           // 隐藏 dialog对话框
           this.$refs.addFormRef.resetFields()
           this.isAddStageVisible = false
+          this.$store.commit('stage/SET_CURR_STAGE', res.data)
+          this.$store.commit('stage/SET_CURR_STAGE_ID', res.data.id)
+          this.$store.commit('stage/SET_CURR_STAGE_NAME', res.data.name)
           // 重新获取列表数据
           this.init()
           return true
@@ -889,41 +950,6 @@ export default {
         default:
           return ''
       }
-    },
-  },
-  computed: {
-    currProjectID() {
-      return this.$store.state.project.currProjectId
-    },
-    currStage() {
-      return this.$store.state.stage.currStage
-    },
-    currStageId() {
-      return this.$store.state.stage.currStageId
-    },
-    stage() {
-      return this.$store.state.stage.currStageInfo
-    },
-    stageList() {
-      return this.$store.state.stage.stageList
-    },
-    isFilterModalOpened() {
-      return this.$store.state.filter.isFilterModalOpened
-    },
-    isAddModalOpened() {
-      return this.$store.state.add.isAddModalOpened
-    },
-    currFilterType() {
-      return this.$store.state.filter.currFilterType
-    },
-    taskList() {
-      return this.$store.state.task.taskList
-    },
-    boardList() {
-      return this.$store.state.task.boardList
-    },
-    board() {
-      return this.$store.getters['add/boardInit']
     },
   },
 }
