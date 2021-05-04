@@ -72,7 +72,7 @@ export default {
           placeholder: '登录账号',
           decorator: [
             'username',
-            { rules: [{ required: true, message: '请输入账号' }] },
+            { rules: [{ required: true, message: '请输入手机号' }] },
           ],
         },
         {
