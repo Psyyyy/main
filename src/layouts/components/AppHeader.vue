@@ -40,8 +40,8 @@
 
     <div class="setting">
       <div class="flex items-center">
-        <header-search ref="headerSearch" />
-        <feather type="search" @click="$refs.headerSearch.onOpenSearch()" />
+        <!-- <header-search ref="headerSearch" /> -->
+        <!-- <feather type="search" @click="$refs.headerSearch.onOpenSearch()" /> -->
         <feather
           class="mx-4"
           :type="isFullScreen ? 'minimize' : 'maximize'"

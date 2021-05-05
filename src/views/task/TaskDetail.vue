@@ -1494,7 +1494,7 @@ export default {
           break
         }
         case 'undone':
-          this.$confirm({
+          this.$antdConfirm({
             title: (
               <p>
                 将<span class="warning">「{this.task.detail.t_title}」</span>

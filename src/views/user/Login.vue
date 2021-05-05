@@ -94,7 +94,7 @@ export default {
   mounted() {
     // MOCK: 模拟登录，页面加载时自动填写账号
     this.form.setFieldsValue({
-      username: 'psy',
+      username: '18019160023',
       password: '123456',
     })
   },

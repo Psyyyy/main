@@ -123,7 +123,7 @@ export default {
               }
               this.$message.success('密码修改成功,请重新登录')
               removeToken()
-              this.$router.replace('/login')
+              this.$router.replace({ name: 'Login' })
             } else {
               this.$message.error('密码修改失败')
             }

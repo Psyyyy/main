@@ -23,11 +23,12 @@
     </template>
     <div style="display:flex;flex:1;align-items:flex-start; ">
       <a-avatar
-        class="ml-1 mb-2 "
+        class="ml-1 mb-2 primary bg-primary-light"
         :size="64"
         slot="avatar"
-        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-      />
+      >
+      {{currEditMember.name}}
+      </a-avatar>
       <div class="ml-4 mt-1 ">
         <div class="text-2xl">{{ currEditMember.name }} <a-tag>{{currEditMember.role}}</a-tag></div>
         <div style="color:rgb(181, 186, 192);">{{ currEditMember.email }}</div>
@@ -99,8 +100,8 @@
         <a-avatar
         :size="64"
           slot="avatar"
-          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        />
+          class="primary bg-primary-light"
+        >{{ item.pro_title }}</a-avatar>
       </a-list-item-meta>
     </a-list-item>
   </a-list></div>

@@ -10,24 +10,26 @@
             class="ml-1 w-30 flex "
             type="primary"
             @click="onOpenAdd()"
+            v-if="currListType!=='stage'"
 
           >
             <feather class="mr-1 mt-1" size="20" type="plus" />
-            新增{{currListType==='task'?'需求':currListType==='stage'?'需求':'缺陷'}}
+           <span  class="mt-1"> 新增{{currListType==='task'?'需求':currListType==='stage'?'需求':'缺陷'}}</span>
           </a-button>
           <a-button
             class="ml-1 mr-4 flex"
             @click="onOpenFilter()"
           >
-            <feather class="mr-1" size="18" type="search" />
-            筛选</a-button
+            <!-- <feather class="mr-1" size="18" type="search" /> -->
+             <span class="mt-1">筛选</span></a-button
           >
            <a-button
             class="ml-1 mr-4 flex"
             @click="resetTable()"
           >
-            <feather class="mr-1 " size="18" type="refresh-cw" />
-            清除筛选</a-button
+            <!-- <feather class="mr-1 " size="18" type="refresh-cw" /> -->
+            <span class="mt-1">清除筛选</span>
+            </a-button
           >
         </div>
         <div class="mr-4">

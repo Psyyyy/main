@@ -33,21 +33,16 @@
           class="p-5"
         >
           <div class="flex items-center">
-            <h2 class="text-lg font-bold text-gray-600">今日任务</h2>
-            <div class="ml-2 p-1 flex justify-center items-center primary bg-primary-light rounded cursor-pointer">
-              <feather
-                type="plus"
-                size="16"
-              />
-            </div>
+            <h2 class="text-lg font-bold mb-2 text-gray-600">今日任务</h2>
+
           </div>
           <perfect-scrollbar
             tag="ul"
-            style="height: 313px;"
+            style="height: 420px;"
             class="overflow-hidden"
             :options="{
                 suppressScrollX: true,
-                maxScrollbarLength: 160,
+                maxScrollbarLength: 420,
                 wheelSpeed: 0.60,
               }"
           >
@@ -56,11 +51,8 @@
               v-for="({ t_id,t_title, t_content,t_rank }) in todoList"
               :key="t_id"
             >
-              <div class="w-8 h-10 mr-2 flex justify-center items-center rounded-full">
-                <a-checkbox />
-              </div>
 
-              <div class="flex flex-1 overflow-hidden">
+              <div class="flex flex-1 ml-4 overflow-hidden">
                 <div>{{ t_title }}</div>
                 <div class="truncate text-gray-400 ml-3">{{ t_content }}</div>
               </div>
@@ -144,6 +136,21 @@ export default {
     viewAll() {
       this.$router.push({ name: 'Todo' })
       this.isTaskOpen = false
+    },
+    finishTask(id, type, done) {
+      const msg = {
+        id,
+        type,
+        done: !done,
+      }
+      this.$store.dispatch('task/finishTask', msg).then((result) => {
+        if (result) {
+          this.getTask()
+          this.$message.success('修改完成状态成功')
+        } else {
+          this.$message.error('修改完成状态失败')
+        }
+      }).catch(() => {})
     },
     async getTask() {
       const uid = this.currUserID

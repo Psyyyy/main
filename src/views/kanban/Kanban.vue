@@ -430,6 +430,8 @@ export default {
       'add/SET_ADD_MODAL_TYPE',
       'task',
     )
+    this.isTaskShow = 1
+    this.$store.commit('stage/SET_CURR_STAGE_VIEW', 'kanban')
     // console.log('tasklist', this.taskList)
   },
   computed: {
@@ -531,6 +533,7 @@ export default {
       if (!res.stagelist.length) {
         this.showEmpty = true
       }
+      this.showLastStage = 0
       // 判断当前迭代列表是否包括上次浏览的迭代
       res.stagelist.forEach((item, index) => {
         if (item.s_title === this.currStage) {
@@ -618,7 +621,7 @@ export default {
       switch (target.value) {
         case 'kanban':
           this.isKbShow = true
-          this.showKbBoard()
+          this.showKbBoard('task')
           break
         case 'list':
           this.showList = true
@@ -686,7 +689,7 @@ export default {
           this.openEditModal()
           break
         case 'delete':
-          this.opendeleteModal()
+          this.openDeleteModal()
           break
         default:
           return false
@@ -713,24 +716,25 @@ export default {
       // this.currEditStage.end = dateformat(this.currStageInfo.s_end_time)
       this.isEditStageVisible = true
     },
-    openDeleteModal(title) {
+    openDeleteModal() {
       const that = this
-      this.$confirm({
+      const title = this.currStage
+      this.$antdConfirm({
         title: (
           <p>
-            此操作将删除<span class="warning">「{title}」</span>项目
+            此操作将删除<span class="warning">「{title}」</span>迭代
           </p>
         ),
-        content: '您确定要删除该项目吗？',
+        content: '您确定要删除该迭代吗？',
         async onOk() {
           const res = await deleteStage({ title })
           // 更新项目失败
           if (res.meta.status !== 200) {
-            return that.$message.error('删除项目失败')
+            return that.$message.error('删除迭代失败')
           }
-          that.$message.success('删除项目成功！')
+          that.$message.success('删除迭代成功！')
           // 重新获取列表数据
-          that.getStage()
+          that.getStageList()
           return true
         },
       })

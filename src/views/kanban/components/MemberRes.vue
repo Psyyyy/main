@@ -14,7 +14,7 @@
         <a-card :bordered="false">
           <a-table :columns="columns" :data-source="data" bordered  :scroll="{ x: 1200, y: 400 }" :pagination="false">
             <template slot="name" slot-scope="text">
-                                         <div style="text-align:center;margin:auto">
+                                         <div  style="text-align:center;margin:auto">
                                               <a-avatar
                             class="flex-wrap text-xs primary bg-primary-light"
                             :size="60"

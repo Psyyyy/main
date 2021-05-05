@@ -25,27 +25,26 @@
               </a-popconfirm>
             </a-tooltip>
           </a>
-          <a class="ml-1 mr-2" slot="actions">
+          <!-- <a class="ml-1 mr-2" slot="actions">
             <a-tooltip placement="bottom">
               <template slot="title">
                 {{item.is_active===1?'停用账号':'重新启用'}}
               </template>
               <a-popconfirm placement="topRight" :title="item.is_active===1?'确定停用该成员帐号？':'确定重新启用该成员帐号？'"  @confirm="updateUser('active',!item.is_active,item.uid)">
                 <feather size="20" type="slash" />
-                <!-- <a-button type="danger" icon="delete" size="small" /> -->
+                 <a-button type="danger" icon="delete" size="small" />
               </a-popconfirm>
             </a-tooltip>
-          </a>
+          </a> -->
 
           <!-- 角色头像资料 -->
           <a-list-item-meta :description="item.email">
             <a slot="title" @click="onOpenDrawer(item)">{{ item.name }}</a>
             <a-avatar
-              class="ml-6"
+              class="ml-6 mr-3 primary bg-primary-light"
               slot="avatar"
               :size="42"
-              src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-            />
+            >{{ item.name }}</a-avatar>
           </a-list-item-meta>
           <div>
             <!-- 角色标签 -->

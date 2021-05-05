@@ -14,9 +14,9 @@
           v-for="(todo,index) in filterItems"
           :key="index"
           :class="{ 'todo-list__item-active': todo.id === currEditItem.id }"
-          @click="showDetail(todo.id)"
+
         >
-          <a-checkbox class="mr-4" v-model="todo.is_done" @click.stop />
+          <a-checkbox class="mr-4" v-model="todo.is_done" @click="finishTask(todo.id,todo.t_type,todo.is_done)" />
                     <div class="mr-auto flex items-center flex-wrap">
             <div class="flex-1 flex items-center select-none">
                <a-tag
@@ -28,7 +28,7 @@
                 </a-tag>
             </div>
           </div>
-          <div class="flex-1 truncate todoItem" :class="{ done: todo.is_done }">{{ todo.t_title }}
+          <div class="flex-1 truncate todoItem" :class="{ done: todo.is_done }" @click="showDetail(todo.id)">{{ todo.t_title }}
             <span class="ml-4 text-base" style="color:#b7b8bb">{{todo.t_content}}</span>
             </div>
             <div class="ml-auto flex items-center flex-wrap" style="color:#b7b8bb">
@@ -110,6 +110,21 @@ export default {
     this.getTask()
   },
   methods: {
+    finishTask(id, type, done) {
+      const msg = {
+        id,
+        type,
+        done: !done,
+      }
+      this.$store.dispatch('task/finishTask', msg).then((result) => {
+        if (result) {
+          this.getTask()
+          this.$message.success('修改完成状态成功')
+        } else {
+          this.$message.error('修改完成状态失败')
+        }
+      }).catch(() => {})
+    },
     async getTask() {
       const uid = this.currUserID
       const { data: res } = await getUserTaskList(uid)

@@ -76,7 +76,7 @@
                   :value="item.uid"
                 >
                   <a-avatar
-                    class="ml-1 mb-2 "
+                    class="ml-1 mb-2 primary bg-primary-light"
                     :size="20"
                     slot="avatar"
                     src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -106,7 +106,7 @@ export default {
   data: () => ({
     filters: [
       { id: '1', label: '所有成员', icon: 'users' },
-      { id: '2', label: '已停用成员', icon: 'user-x' },
+      // { id: '2', label: '已停用成员', icon: 'user-x' },
     ],
     tags: [
       { id: '3', label: '管理员', color: 'warning' },

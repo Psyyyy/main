@@ -137,12 +137,12 @@ export default {
       let haveNew = false
       this.news = []
       for (let i = 0; i < res.length; i += 1) {
-        if (res[i].read === 0 && res[i].uid !== this.currUserID) {
+        if (res[i].read === 0) {
           haveNew = true
           this.news.push(res[i])
         }
       }
-      console.log('noticelist', this.news)
+      console.log('新消息', this.news)
       this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true

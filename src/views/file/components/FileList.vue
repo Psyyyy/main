@@ -62,13 +62,14 @@
           <div>
             <!-- 角色标签 -->
             <div
+            v-if="item.source!==''"
               class="ml-2 px-2 py-1 rounded-lg text-sm"
               :class="[
                 item.source === 'task' ? 'primary' : 'danger',
                 `bg-${item.source === 'task' ? 'primary' : 'danger'}-light`
               ]"
             >
-              {{ item.source === "task" ? "需求" : "缺陷" }}
+              {{ item.sourceName }}
             </div>
           </div>
         </a-list-item>
@@ -157,17 +158,32 @@ export default {
       if (res.meta.status !== 200) {
         this.$store.commit('file/SET_FILE_LIST', files)
       }
+      console.log('文件列表', res.data)
       res.data.forEach((item, index) => {
+        let source = ''
+        switch (item.file_source_type) {
+          case null:
+            source = ''
+            break
+          case 1:
+            source = 'task'
+            break
+          case 0:
+            source = 'bug'
+            break
+          default: source = ''
+        }
         files.push({
           id: item.id,
           name: item.file_name.split('.')[0],
           end: item.file_name.split('.')[1],
           uploadTime: item.file_latest_ch,
-          source: 'task',
+          source,
           sourceId: item.tid,
+          sourceName: item.file_source_name,
         })
       })
-      console.log('文件列表', files)
+      console.log('文件列表123', files)
       this.$store.commit('file/SET_FILE_LIST', files)
     },
 
@@ -177,7 +193,7 @@ export default {
       return false
     },
     async deleteFile(file) {
-      console.log('文件', file)
+      // console.log('文件', file)
       const fileName = `${file.name}.${file.end}`
       const params = {
         file_name: fileName,
@@ -185,7 +201,7 @@ export default {
       await deleteFile(params).then(() => {
         this.$message.success('删除成功')
         this.getFileList()
-        console.log('删除', file)
+        // console.log('删除', file)
         if (file.sourceId) {
           this.newDialog(file, '删除了文件', fileName)
         }
@@ -201,7 +217,7 @@ export default {
       this.dialogForm.action = action
       this.dialogForm.target = target
       const res = await newDialog(this.dialogForm)
-      console.log('新增Dialog', res)
+      // console.log('新增Dialog', res)
       this.dialogForm = {
         pid: this.currProjectID, // 决定在哪个项目页显示
         source: '', // this.currListType

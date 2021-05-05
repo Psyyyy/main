@@ -101,7 +101,7 @@ const getters = {
     console.log('add的type', state.currAddType)
     if (state.currAddType === 'task') { return state.stateAdd.task }
     if (state.currAddType === 'bug') { return state.stateAdd.bug }
-    if (state.currAddType === 'stage') {
+    if (state.currAddType === 'stage') { // 这个目前不会触发，改用task的setListType标识了
       return state.stateAdd.stage
     }
     return []

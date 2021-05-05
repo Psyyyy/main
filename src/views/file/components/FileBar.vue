@@ -160,18 +160,29 @@ export default {
       const { data: res } = await getProjectFileList(id)
       this.fileList = []
       res.forEach((item, index) => {
-        this.fileList.push(
-          {
-            id: index,
-            name: item.file_name.split('.')[0],
-            end: item.file_name.split('.')[1],
-            uploadTime: item.file_latest_ch,
-            source: 'task',
-            sourceId: 0,
-          },
-        )
+        let source = ''
+        switch (item.file_source_type) {
+          case null:
+            source = ''
+            break
+          case 1:
+            source = 'task'
+            break
+          case 0:
+            source = 'bug'
+            break
+          default: source = ''
+        }
+        this.fileList.push({
+          id: item.id,
+          name: item.file_name.split('.')[0],
+          end: item.file_name.split('.')[1],
+          uploadTime: item.file_latest_ch,
+          source,
+          sourceId: item.tid,
+          sourceName: item.file_source_name,
+        })
       })
-      console.log('文件列表', this.fileList)
 
       this.$store.commit('file/SET_FILE_LIST', this.fileList)
     },
