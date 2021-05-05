@@ -671,6 +671,7 @@ export default {
     onOpenAdd() {
       console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_SUBMIT', false)
       // this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
     },

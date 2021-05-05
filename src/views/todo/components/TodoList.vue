@@ -165,13 +165,13 @@ export default {
       return true
     },
     onOpenAdd() {
-      console.log('level in detail', this.task.detail.t_level + 1)
       this.$store.commit(
         'task/SET_CURR_EDIT_TASK_LEVEL',
         this.task.detail.t_level + 1,
       )
       if (this.task.detail.is_del || this.task.detail.is_done) return false
       this.$store.commit('add/SET_ADD_FROM_DETAIL', true)
+      this.$store.commit('add/SET_SUBMIT', false)
       // this.$store.commit('add/SET_ADD_MODAL_TYPE', 'task')
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
       return true

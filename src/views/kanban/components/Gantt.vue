@@ -3,21 +3,27 @@
     <div>
       <div>
         <a-card :bordered="false">
-            <div class="wl-gantt-demo">
-        <wlGantt :edit="false" :data="ganttTask" start-date="2021-2-15" end-date="2021-7-24"  @row-click="handleRowClick">
-<el-table-column fixed width="65" label="成员">
-              <template slot-scope="scope">
-{{scope.row.header}}
-               </template>
-          </el-table-column>
-        </wlGantt>
-    </div>
+          <div class="wl-gantt-demo">
+            <wlGantt
+              :edit="false"
+              :data="ganttTask"
+              start-date="2021-2-15"
+              end-date="2021-7-24"
+              @row-click="handleRowClick"
+            >
+              <el-table-column fixed width="65" label="成员">
+                <template slot-scope="scope">
+                  {{ scope.row.header }}
+                </template>
+              </el-table-column>
+            </wlGantt>
+          </div>
         </a-card>
-            <task
-      :pop-visible="showTask"
-      detail="detailTaskId"
-      @close="showTask = false"
-    />
+        <task
+          :pop-visible="showTask"
+          detail="detailTaskId"
+          @close="showTask = false"
+        />
       </div>
     </div>
   </div>
@@ -46,12 +52,17 @@ export default {
         this.getGanttTask()
       }
     },
+    currStageId() {
+      this.getGanttTask()
+    },
+    currProjectID() {
+      this.getGanttTask()
+    },
   },
   created() {
     this.getGanttTask()
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     handleRowClick(row) {
       this.showDetail(row.id)

@@ -4,6 +4,7 @@ const state = {
   stageList: [],
   currStageInfo: {},
   currBoardType: '',
+  currStageView: '',
   board: {
     task: [
       {
@@ -72,6 +73,9 @@ const mutations = {
   },
   SET_CURR_STAGE(state, stage) {
     state.currStageInfo = stage
+  },
+  SET_CURR_STAGE_VIEW(state, view) {
+    state.currStageView = view
   },
 
 }

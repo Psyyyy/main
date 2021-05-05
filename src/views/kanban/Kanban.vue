@@ -93,7 +93,7 @@
             <!-- <a-button type="primary" class="mr-4" v-if="!isKbShow" @click="onOpenFilter('task')"
               >筛选</a-button
             > -->
-            <a-radio-group default-value="kanban" @change="onChange">
+            <a-radio-group :default-value="currStageView" @change="onChange">
               <a-radio-button value="kanban"
                 >看板</a-radio-button
               >
@@ -426,7 +426,11 @@ export default {
 
   created() {
     this.init()
-    console.log('tasklist', this.taskList)
+    this.$store.commit(// 为了显示空白看板用的！！！
+      'add/SET_ADD_MODAL_TYPE',
+      'task',
+    )
+    // console.log('tasklist', this.taskList)
   },
   computed: {
     currProjectID() {
@@ -442,8 +446,8 @@ export default {
     currStageId() {
       return this.$store.state.stage.currStageId
     },
-    stage() {
-      return this.$store.state.stage.currStageInfo
+    currStageView() {
+      return this.$store.state.stage.currStageView
     },
     stageList() {
       return this.$store.state.stage.stageList
@@ -466,6 +470,9 @@ export default {
     board() {
       return this.$store.getters['add/boardInit']
     },
+    submitAdd() {
+      return this.$store.state.add.isSubmit
+    },
   },
   watch: {
     currStage() {
@@ -484,7 +491,11 @@ export default {
       this.init()
     },
     isAddModalOpened() {
-      this.init()
+      if (this.isAddModalOpened === false) {
+        if (this.submitAdd === true) {
+          this.init()
+        }
+      }
     },
     currListType() {
       this.init()
@@ -493,8 +504,8 @@ export default {
 
   methods: {
     consoleBoard() {
-      console.log('boardlist', !this.boardList)
-      console.log('board', this.board)
+      // console.log('boardlist', !this.boardList)
+      // console.log('board', this.board)
     },
     moment,
     dateformat,
@@ -503,15 +514,11 @@ export default {
       this.getStage()
       this.getBoardList()
       this.getMemberList()
-      this.$store.commit(// 为了显示空白看板用的！！！
-        'add/SET_ADD_MODAL_TYPE',
-        'task',
-      )
     },
     // 获取数据
     async getStage() {
       const { data: res } = await getStage(this.currStageId)
-      console.log('stage', res)
+      // console.log('stage', res)
       this.$store.commit('stage/SET_CURR_STAGE', res)
       this.stage = res
       return true
@@ -519,7 +526,7 @@ export default {
     async getStageList() {
       const pid = this.currProjectID
       const { data: res } = await getStageList(pid)
-      console.log('stagelist', res.stagelist)
+      // console.log('stagelist', res.stagelist)
       this.showEmpty = 0
       if (!res.stagelist.length) {
         this.showEmpty = true
@@ -575,15 +582,15 @@ export default {
       this.dragList.splice(index, 1)
     },
     changeStageTo(id, name) {
-      console.log(id)
-      console.log(name)
+      // console.log(id)
+      // console.log(name)
       this.$store.commit('stage/SET_CURR_STAGE_NAME', name)
       this.$store.commit('stage/SET_CURR_STAGE_ID', id)
       window.localStorage.setItem('currStageId', id)
       window.localStorage.setItem('currStage', name)
       window.localStorage.setItem('currStageId', id)
 
-      console.log(this.$store.state.stage.currStage)
+      // console.log(this.$store.state.stage.currStage)
       this.init()
       // 这里需要向后台提交id拿项目数据，拿回来后重新渲染当前界面
       // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目
@@ -602,6 +609,7 @@ export default {
       })
     },
     onChange({ target }) {
+      this.$store.commit('stage/SET_CURR_STAGE_VIEW', target.value)
       this.isKbShow = false
       this.showList = false
       this.showMember = false
@@ -666,7 +674,7 @@ export default {
 
     // 创建迭代
     addStage() {
-      console.log(this.newStage)
+      // console.log(this.newStage)
       this.$store.commit('stage/SET_STAGE_List', this.newStage) // 后面就是commit去数据库了，很多这些commit到store的搭前后端后都要移到数据库
       this.isAddStageVisible = false
       this.init()
@@ -700,7 +708,7 @@ export default {
       this.currEditStage = __clonedeep(this.currStageInfo)
       this.currEditStage.s_start_time = dateformat(this.currStageInfo.s_start_time)
       this.currEditStage.s_end_time = dateformat(this.currStageInfo.s_end_time)
-      console.log(this.currEditStage)
+      // console.log(this.currEditStage)
       // this.currEditStage.start = dateformat(this.currStageInfo.s_start_time)
       // this.currEditStage.end = dateformat(this.currStageInfo.s_end_time)
       this.isEditStageVisible = true
@@ -752,9 +760,9 @@ export default {
             )
           }
           this.newStage.pro_id = this.currProjectID
-          console.log('要new的信息', this.newStage)
+          // console.log('要new的信息', this.newStage)
           const res = await newStage(this.newStage)
-          console.log('newStage', res)
+          // console.log('newStage', res)
           // 创建项目失败
           if (res.meta.status !== 200) {
             return this.$message.error('创建迭代失败')
@@ -771,7 +779,7 @@ export default {
           return true
         })
       } else {
-        console.log('edit', this.currEditStage)
+        // console.log('edit', this.currEditStage)
         if (this.currEditStage.s_start_time && this.currEditStage.s_end_time) {
           if (
             this.currEditStage.s_start_time - this.currEditStage.s_end_time
@@ -820,10 +828,10 @@ export default {
       const pid = this.currProjectID
       const sid = this.currStageId
       const type = this.isTaskShow === true ? 1 : 0
-      console.log('board type', pid)
+      // console.log('board type', pid)
       const { data: res } = await getBoardList(pid, sid, type)
       this.$store.commit('task/SET_BOARD_LIST', res)
-      console.log('boardList', res)
+      // console.log('boardList', res)
       // this.boardList = res
       return true
     },
@@ -833,7 +841,7 @@ export default {
       const { data: res } = await getTaskDetail(pid, id)
       this.$store.commit('task/SET_TASK_DETAIL', res)
       if (res.detail.t_level !== 0) {
-        console.log('当前任务的father', res.parent[0])
+        // console.log('当前任务的father', res.parent[0])
         this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
       }
       return true
@@ -849,7 +857,7 @@ export default {
       return true
     },
     async showDetail(id) {
-      console.log('id', id)
+      // console.log('id', id)
       this.$store.commit('task/SET_CURR_EDIT_TASK', id)
       await this.getTaskDetail(id)
       await this.getDialog(id)
@@ -871,7 +879,7 @@ export default {
     async getMemberList() {
       const id = this.currProjectID
       const { data: res } = await getMemberList(id)
-      console.log('memberlist', res)
+      // console.log('memberlist', res)
       this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
     },
     // async getTask() {
@@ -910,8 +918,9 @@ export default {
 
     // 新建需求
     onOpenAdd() {
-      console.log('add')
+      // console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_SUBMIT', false)
       this.$store.commit(
         'add/SET_ADD_MODAL_TYPE',
         this.isTaskShow === 1 ? 'task' : 'bug',

@@ -228,7 +228,7 @@ export default {
 
   created() {
     console.log('add type', this.currAddType)
-    console.log('lst type', this.currListType)
+    console.log('list type', this.currListType)
     this.getStageList()
     this.getMemberList()
   },

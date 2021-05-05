@@ -3,9 +3,9 @@
     <div>
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
         <h3 class="section-card__title">成员任务跟踪</h3>
-                 <a-button class="ml-1 w-30 flex " type="primary" @click="onOpenAdd()" >
-            <feather class="mr-1 " size="20" type="plus" />
-            新增
+                 <a-button class="ml-2 w-30 flex " type="primary" @click="onOpenAdd()" >
+            <feather class="mr-1 mt-1 " size="20" type="plus" />
+            <span class="mt-1">新增</span>
           </a-button>
         <div class="flex ml-auto">
         </div>
@@ -364,14 +364,20 @@ export default {
     isAddModalOpened() {
       this.init()
     },
+    currStageId() {
+      this.init()
+    },
+    currProjectID() {
+      this.init()
+    },
   },
   created() {
     this.init()
   },
   methods: {
     onOpenAdd() {
-      console.log('add')
       this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
+      this.$store.commit('add/SET_SUBMIT', false)
       this.$store.commit(
         'add/SET_ADD_MODAL_TYPE',
         'task',
