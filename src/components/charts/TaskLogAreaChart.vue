@@ -70,7 +70,7 @@ export default {
     loadChart() {
       this.chart = this.$echarts.init(document.getElementById(this.id))
       if (!this.chart) return
-
+      console.log('任务面积图', this.seriesData)
       // const fullOption = this.assembleDataToOption()
       this.chart.setOption({
         title: {

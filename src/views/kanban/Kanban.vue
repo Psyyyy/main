@@ -221,18 +221,18 @@
       </div>
     </div>
     <!-- 列表 -->
-    <div v-if="showList" class="mt-10">
+    <div v-if="!showEmpty&&showList" class="mt-10">
       <task-list></task-list>
     </div>
-       <div v-if="showMember" class="mt-10">
+       <div v-if="!showEmpty&&showMember" class="mt-10">
            <member-list></member-list>
 
     </div>
-    <div v-if="showAnalysis" class="mt-10">
+    <div v-if="!showEmpty&&showAnalysis" class="mt-10">
            <analysis-board></analysis-board>
 
     </div>
-        <div v-if="showGantt" class="mt-10">
+        <div v-if="!showEmpty&&showGantt" class="mt-10">
            <gantt></gantt>
 
     </div>

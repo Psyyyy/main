@@ -236,7 +236,16 @@ export default {
       visible: false,
     }
   },
-  watch: {},
+  watch: {
+    currStageId() {
+      this.getStageRecord()
+      this.getStageAnalysisData()
+    },
+    currProjectID() {
+      this.getStageRecord()
+      this.getStageAnalysisData()
+    },
+  },
   created() {
     // this.getStageRecord()
     this.getWeekDate()
@@ -271,6 +280,7 @@ export default {
       this.data.delay = res.data.delay
       this.data.date = res.data.date
       this.data.unfinishForBurn = res.data.unfinish
+      this.data.unfinish = []
       for (let i = 0; i < res.data.unfinish.length; i += 1) {
         // 考虑到时间顺序，这里可能要倒置
         this.data.unfinish.push(res.data.unfinish[i] - res.data.delay[i])

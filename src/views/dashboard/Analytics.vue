@@ -8,8 +8,8 @@
             <div
               class="flex flex-col justify-center items-center -mt-4"
               v-for="({ label, percent, value, icon, color }) in [
-                { label: '需求', percent: 34, value: '14.6%', icon: 'layers', color: 'success' },
-                { label: '缺陷', percent: 52, value: '72.6%', icon: 'alert-octagon', color: 'danger' },
+                { label: '需求', percent: taskRate, value: taskRate+'%', icon: 'layers', color: 'success' },
+                { label: '缺陷', percent: bugRate, value: bugRate+'%', icon: 'alert-octagon', color: 'danger' },
               ]"
               :key="label"
             >
@@ -243,6 +243,18 @@ export default {
     currProjectID() {
       return this.$store.state.project.currProjectId
     },
+    taskRate() {
+      if (this.taskData.finish + this.taskData.unfinish) {
+        return Math.floor(((this.taskData.finish / (this.taskData.finish + this.taskData.unfinish)) * 100) * 10) / 10
+      }
+      return 0
+    },
+    bugRate() {
+      if (this.bugData.finish + this.bugData.unfinish) {
+        return Math.floor(((this.bugData.finish / (this.bugData.finish + this.bugData.unfinish)) * 100) * 10) / 10
+      }
+      return 0
+    },
   },
   watch: {
 
@@ -287,6 +299,12 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取数据失败')
       }
+      this.data = {
+        finish: [],
+        unfinish: [],
+        delay: [],
+        all: [],
+      }
       this.dayNum = res.data.finish.length
       this.data.finish = res.data.finish
       this.data.delay = res.data.delay
@@ -304,6 +322,7 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取数据失败')
       }
+      console.log('分析数据', res.data)
       // this.analysisData = res.data
       this.taskData = res.data.task
       this.bugData = res.data.bug

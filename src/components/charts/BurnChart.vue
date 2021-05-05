@@ -38,9 +38,24 @@ export default {
     }
   },
   watch: {
-    seriesData: {
+    taskSum: {
       deep: true,
       handler() {
+        this.getOptionData()
+        this.loadChart()
+      },
+    },
+    daySum: {
+      deep: true,
+      handler() {
+        this.getOptionData()
+        this.loadChart()
+      },
+    },
+    unfinish: {
+      deep: true,
+      handler() {
+        this.getOptionData()
         this.loadChart()
       },
     },
@@ -76,6 +91,8 @@ export default {
       })
     },
     getOptionData() {
+      this.xAxis = []
+      this.baseline = []
       console.log('days', this.daySum)
       // x轴
       for (let i = this.daySum - 1; i > 0; i -= 1) {
