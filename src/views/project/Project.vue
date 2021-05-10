@@ -3,7 +3,7 @@
     <!-- 顶部header -->
     <div class="app-header" :class="[{ 'fixed-top': isHeaderFixed }]">
       <img class="w-10" src="@img/logo.png" alt="LOGO" />
-      <span class="ml-3 text-3xl font-bold">Venus</span>
+      <span class="ml-3 text-2xl font-bold">软件项目管理系统</span>
       <div class="setting">
         <div class="flex items-center">
           <feather

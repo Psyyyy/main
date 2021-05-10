@@ -430,7 +430,7 @@ export default {
       'add/SET_ADD_MODAL_TYPE',
       'task',
     )
-    this.isTaskShow = 1
+    this.isTaskShow = true
     this.$store.commit('stage/SET_CURR_STAGE_VIEW', 'kanban')
     // console.log('tasklist', this.taskList)
   },
@@ -927,7 +927,7 @@ export default {
       this.$store.commit('add/SET_SUBMIT', false)
       this.$store.commit(
         'add/SET_ADD_MODAL_TYPE',
-        this.isTaskShow === 1 ? 'task' : 'bug',
+        this.isTaskShow === true ? 'task' : 'bug',
       )
       this.$store.commit('add/SET_ADD_MODAL_STATUS', true)
     },

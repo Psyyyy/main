@@ -69,10 +69,6 @@
             :data-source="data"
             :loading="loading"
             show-pagination="auto"
-            :row-selection="{
-              selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChange
-            }"
             :expanded-row-keys="expandRows"
             :expand-icon="props => expandRowIcon(props)"
             :custom-row="customRow"
@@ -135,7 +131,8 @@
               <!-- 搜索结果展示 -->
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
-                class="task-pointer"
+                class="task-pointer taskItem"
+                :class="{ done: record.is_done }"
                 @click="showDetail(record.id)"
               >
                 <template
@@ -156,7 +153,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer" @click="showDetail(record.id)">
+                <span class="task-pointer taskItem" :class="{ done: record.is_done }" @click="showDetail(record.id)">
                   <a-tag v-if="currListType==='stage'" :color="record.t_type===1?'blue':'red'">
        {{record.t_type===1?'需求':'缺陷'}}
       </a-tag>
@@ -755,6 +752,12 @@ button {
   cursor: pointer; //变小手
   &:hover {
     color: #108ee9; //变色
+  }
+}
+.taskItem{
+  &.done {
+    color: #b7b8bb;
+    text-decoration: line-through;
   }
 }
 .expand-icon {

@@ -16,7 +16,7 @@
           :class="{ 'todo-list__item-active': todo.id === currEditItem.id }"
 
         >
-          <a-checkbox class="mr-4" v-model="todo.is_done" @click="finishTask(todo.id,todo.t_type,todo.is_done)" />
+          <a-checkbox class="mr-4" v-model="todo.is_done" @click="finishCheck(todo)" />
                     <div class="mr-auto flex items-center flex-wrap">
             <div class="flex-1 flex items-center select-none">
                <a-tag
@@ -54,7 +54,7 @@
 
 <script>
 import FlipList from '@/components/animation/FlipList.vue'
-import { getUserTaskList, getTaskDetail } from '@/api/task'
+import { getUserTaskList, getTaskDetail, getUndoneChild } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
 // import STable from '../../components/Table'
@@ -110,11 +110,50 @@ export default {
     this.getTask()
   },
   methods: {
+    async finishCheck(task) { // todo.id,todo.t_type,todo.is_done
+      console.log('tasktask', task)
+      if (task.is_done === 0 || task.is_done === false) {
+        if (task.t_level === 2) {
+          this.finishTask(task.id, task.t_type, 1)
+        } else {
+          const pid = this.currProjectID
+          const tid = task.id
+          const haveUndone = await getUndoneChild(pid, tid)
+          if (haveUndone.data.length) {
+            this.$info({
+              title: (
+                  <p>
+                    <span class="warning">「{task.t_title}」</span>
+                    仍存在尚未完成的子任务
+                  </p>
+              ),
+              content: '请先将子任务完成再完成父任务',
+              onOk: () => { this.getTask() },
+            })
+          } else {
+            this.finishTask(task.id, task.t_type, 1)
+          }
+        }
+      } else if (task.is_done === 1 || task.is_done === true) {
+        this.$antdConfirm({
+          title: (
+              <p>
+                将<span class="warning">「{task.t_title}」</span>
+                任务设为未完成状态
+              </p>
+          ),
+          content: '您确定要取消完成该任务吗？',
+          onOk: () => {
+            this.finishTask(task.id, task.t_type, 0)
+          },
+        })
+      }
+    },
     finishTask(id, type, done) {
       const msg = {
         id,
         type,
-        done: !done,
+        done,
       }
       this.$store.dispatch('task/finishTask', msg).then((result) => {
         if (result) {
