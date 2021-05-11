@@ -543,7 +543,7 @@
                       </div>
                     </div>
                   </div>
-                  <div v-show="task.detail.t_level !== 2" key="1">
+                  <div v-show="task.detail.t_level !== 2&&task.detail.t_type===1" key="1">
                     <!-- 子任务 -->
                     <div class="component-mount">
                       <div class="field">
@@ -1037,7 +1037,7 @@ export default {
         pid: '',
         uid: window.sessionStorage.getItem('currUserID'),
         sid: '',
-        source: 'task',
+        source: '',
         content: '',
       },
       dialogForm: {
@@ -1261,11 +1261,13 @@ export default {
       return true
     },
     async getComment() {
+      const type = this.task.detail.t_type === 1 ? 'task' : 'bug'
       const params = {
-        source: 'task',
+        source: type,
         sid: this.task.detail.id,
       }
       const res = await getComment(params)
+      console.log('评论列表', res.data)
       // this.dialogList = res
       if (res.meta.status !== 200) {
         return this.$antdMessage.error('获取评论失败')
@@ -1358,6 +1360,7 @@ export default {
       if (this.commentForm.content === '') return false
       this.commentForm.sid = this.task.detail.id
       this.commentForm.pid = this.currProjectID
+      this.commentForm.source = this.task.detail.t_type === 1 ? 'task' : 'bug'
       const res = await newComment(this.commentForm)
       console.log('评论', res)
       if (res.meta.status !== 200) {
