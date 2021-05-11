@@ -82,7 +82,7 @@ export const asyncRoutes = [
         path: '/analytics',
         name: 'Analytics',
         component: Analytics, // 路由懒加载
-        meta: { permission: ['admin'], title: '数据分析', icon: 'monitor' },
+        meta: { permission: ['admin', 'normal'], title: '数据分析', icon: 'monitor' },
       },
     ],
   },

@@ -218,6 +218,57 @@
                       </div>
                     </div>
                   </div>
+                 <!-- 所属迭代 -->
+                  <div class="component-mount">
+                    <div class="field">
+                      <div class="field-left">
+                        <a-icon type="user" />
+                        <span class="field-name">所属迭代</span>
+                      </div>
+                      <div class="field-right">
+                        <a-dropdown
+                          :trigger="['click']"
+                          :disabled="!!task.detail.is_del"
+                          placement="bottomLeft"
+                        >
+                          <a-tooltip
+                            :mouse-enter-delay="0.5"
+                            v-if="!task.detail.is_del"
+                          >
+                            <template slot="title">
+                              <span>点击修改迭代</span>
+                            </template>
+                            <div class="field-flex">
+                              <template v-if="task.detail.s_title">
+                                <a class="muted name">{{
+                                  task.detail.s_title
+                                }}</a>
+                              </template>
+                              <template v-else>
+                                <a class="muted name">
+                                  点击修改迭代
+                                </a>
+                              </template>
+                            </div>
+                          </a-tooltip>
+                          <a-menu slot="overlay">
+                            <a-menu-item
+                              style="width:80px"
+                              v-for="stage in stageList"
+                              :key="stage.s_id"
+                              @click="editTaskItem('stage', stage)"
+                            >
+                              <div class="field-flex">
+                                <template>
+                                  <a class="muted name">{{ stage.s_title }}</a>
+                                </template>
+                              </div>
+                            </a-menu-item>
+                          </a-menu>
+                        </a-dropdown>
+                      </div>
+                    </div>
+                  </div>
                   <!-- 执行者 -->
                   <div class="component-mount">
                     <div class="field">
@@ -1060,6 +1111,9 @@ export default {
     memberList() {
       return this.$store.state.team.currProjectMemberList
     },
+    stageList() {
+      return this.$store.state.stage.stageList
+    },
     currProjectID() {
       return this.$store.state.project.currProjectId
     },
@@ -1379,6 +1433,9 @@ export default {
       } else if (item === 'done') {
         this.form.is_done = content
         action = '修改了任务完成状态'
+      } else if (item === 'stage') {
+        action = '修改了任务所属迭代为'
+        this.form.t_stage_id = content.s_id
       }
       this.form.id = this.task.detail.id
       // 然后直接更新
@@ -1395,6 +1452,8 @@ export default {
       // 完成所有更新再添加日志
       if (item === 'header') {
         await this.newDialog(action, content.name)
+      } else if (item === 'stage') {
+        await this.newDialog(action, content.s_title)
       } else if (item === 'done') {
         await this.newDialog(action, '')
       } else if (item === 'rank') {

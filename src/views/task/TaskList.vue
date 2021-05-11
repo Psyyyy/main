@@ -350,9 +350,9 @@ export default {
         },
         {
           title: '迭代',
-          key: 't_stage_name',
+          key: 's_title',
           width: '80px',
-          dataIndex: 't_stage_name',
+          dataIndex: 's_title',
         },
         {
           title: '状态',

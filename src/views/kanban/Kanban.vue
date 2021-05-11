@@ -2,7 +2,7 @@
   <div class="kanban">
     <div v-if="showEmpty">  <a-empty>
           <span slot="description"> 当前项目尚未创建迭代</span>
-    <a-button type="primary" @click="isAddStageVisible=true">
+    <a-button type="primary" @click="openAddModal()">
       创建迭代
     </a-button>
       </a-empty>
@@ -14,8 +14,8 @@
           <div class="wl">
             <div class="wl mr-2 mt-1">
               <!-- 创建迭代按钮 -->
-              <a-button class="text-xl" @click="isAddStageVisible = true"
-                >+</a-button
+              <a-button class="text-xl" @click="openAddModal()">
+                +</a-button
               >
             </div>
             <!-- 迭代阶段切换 -->
@@ -549,41 +549,6 @@ export default {
       return true
     },
 
-    addNewBoard() {
-      this.taskList.push({ title: '默认标题', dataList: [] })
-    },
-
-    addNewItem() {
-      if (this.currAdd.content.length > 0) {
-        this.taskList.some((el) => {
-          if (el.title === this.currAdd.title) {
-            el.dataList.push({ id: '10086', content: this.currAdd.content })
-            this.reset()
-            return true
-          }
-          return false
-        })
-      }
-    },
-
-    orderList() {
-      this.list = this.list.sort((one, two) => one.order - two.order)
-    },
-    onMove({ relatedContext, draggedContext }) {
-      const relatedElement = relatedContext.element
-      const draggedElement = draggedContext.element
-      return (
-        (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-      )
-    },
-    // 删除任务
-    delTask(index, k) {
-      this.dragList[index].list.splice(k, 1)
-    },
-    // 删除任务阶段
-    delStage(index) {
-      this.dragList.splice(index, 1)
-    },
     changeStageTo(id, name) {
       // console.log(id)
       // console.log(name)
@@ -684,15 +649,19 @@ export default {
       // 做个创建迭代的弹窗
     },
     handleStage({ key }) {
-      switch (key) {
-        case 'edit':
-          this.openEditModal()
-          break
-        case 'delete':
-          this.openDeleteModal()
-          break
-        default:
-          return false
+      if (this.$store.state.user.info.role !== '管理员') {
+        this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
+      } else {
+        switch (key) {
+          case 'edit':
+            this.openEditModal()
+            break
+          case 'delete':
+            this.openDeleteModal()
+            break
+          default:
+            return false
+        }
       }
       return true
     },
@@ -705,7 +674,11 @@ export default {
       this.newStage.start = start
       this.newStage.end = end
     },
-
+    openAddModal() {
+      if (this.$store.state.user.info.role !== '管理员') {
+        this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
+      } else { this.isAddStageVisible = true }
+    },
     // 编辑/删除迭代
     openEditModal() {
       this.currEditStage = __clonedeep(this.currStageInfo)
