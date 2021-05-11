@@ -150,10 +150,10 @@ export default {
     async haveReadAll() {
       const res = await updateAllNotice(this.currUserID)
       if (res.meta.status !== 200) {
-        return this.$message.error('全部已读失败')
+        return this.$antdMessage.error('全部已读失败')
       }
       await this.getNoticeList()
-      this.$message.success('已全部标为已读')
+      this.$antdMessage.success('已全部标为已读')
       return true
     },
     async haveReadOne(nid) {

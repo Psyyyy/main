@@ -273,7 +273,7 @@ export default {
       const res = await getStageRecord(this.currStageId)
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('获取数据失败')
+        return this.$antdMessage.error('获取数据失败')
       }
       console.log('任务数据', res.data)
       this.data.finish = res.data.finish
@@ -291,7 +291,7 @@ export default {
       const res = await getStageAnalysisData(this.currStageId)
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('获取数据失败')
+        return this.$antdMessage.error('获取数据失败')
       }
       this.analysisData = res.data
       this.taskData = res.data.task

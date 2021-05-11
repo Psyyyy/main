@@ -91,7 +91,7 @@
                     class="w-full flex justify-center items-center"
                     size="large"
                     type="primary"
-                    @click="isAddProjectVisible = true"
+                    @click="addNewProject()"
                   >
                     <feather size="15" type="plus" />
                     创建新项目
@@ -800,7 +800,7 @@ export default {
       const CAN_LOGOUT = await this.$store.dispatch('user/logout')
 
       if (CAN_LOGOUT) {
-        this.$message.success('成功退出')
+        this.$antdMessage.success('成功退出')
         this.$router.replace({ name: 'Login' })
       }
     },
@@ -825,16 +825,16 @@ export default {
         this.$refs.addFormRef.validate(async (valid, field) => {
           // 有未校验通过的字段
           if (!valid) {
-            return this.$message.error('存在错误字段，无法创建')
+            return this.$antdMessage.error('存在错误字段，无法创建')
           }
           this.newProject.founder = this.info.id
           this.newProject.createTime = Date.parse(new Date()) / 1000
           const res = await newProject(this.newProject)
           // 创建项目失败
           if (res.meta.status !== 200) {
-            return this.$message.error('创建项目失败')
+            return this.$antdMessage.error('创建项目失败')
           }
-          this.$message.success('创建项目成功！')
+          this.$antdMessage.success('创建项目成功！')
           // 隐藏 dialog对话框
           this.$refs.addFormRef.resetFields()
           this.isAddProjectVisible = false
@@ -846,14 +846,14 @@ export default {
         this.$refs.addFormRef.validate(async (valid, field) => {
           // 有未校验通过的字段
           if (!valid) {
-            return this.$message.error('存在错误字段，无法提交编辑')
+            return this.$antdMessage.error('存在错误字段，无法提交编辑')
           }
           const res = await updateProject(this.currEditProject)
           // 更新项目失败
           if (res.meta.status !== 200) {
-            return this.$message.error('编辑项目失败')
+            return this.$antdMessage.error('编辑项目失败')
           }
-          this.$message.success('编辑项目成功！')
+          this.$antdMessage.success('编辑项目成功！')
           // 隐藏 dialog对话框
           this.$refs.addFormRef.resetFields()
           this.isEditVisible = false
@@ -876,40 +876,54 @@ export default {
         this.showProjectList = changeToList
       }
     },
+    addNewProject() {
+      if (this.$store.state.user.info.role !== '管理员') {
+        console.log('嗨')
+        this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
+      } else this.isAddProjectVisible = true
+    },
     openEditModal(id, title, content) {
-      this.isEditVisible = true
-      this.currEditProject.id = id
-      this.currEditProject.title = title
-      this.currEditProject.content = content
+      if (this.$store.state.user.info.role !== '管理员') {
+        this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
+      } else {
+        this.isEditVisible = true
+        this.currEditProject.id = id
+        this.currEditProject.title = title
+        this.currEditProject.content = content
+      }
     },
     openDeleteModal(title) {
-      const that = this
-      this.$antdConfirm({
-        title: (
+      if (this.$store.state.user.info.role !== '管理员') {
+        this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
+      } else {
+        const that = this
+        this.$antdConfirm({
+          title: (
           <p>
             此操作将删除<span class="warning">「{title}」</span>项目
           </p>
-        ),
-        content: '您确定要删除该项目吗？',
-        async onOk() {
-          const res = await deleteProject({ title })
-          // 更新项目失败
-          if (res.meta.status !== 200) {
-            return that.$message.error('删除项目失败')
-          }
-          that.$message.success('删除项目成功！')
-          // 重新获取列表数据
-          that.getProject()
-          return true
-        },
-      })
+          ),
+          content: '您确定要删除该项目吗？',
+          async onOk() {
+            const res = await deleteProject({ title })
+            // 更新项目失败
+            if (res.meta.status !== 200) {
+              return that.$message.error('删除项目失败')
+            }
+            that.$message.success('删除项目成功！')
+            // 重新获取列表数据
+            that.getProject()
+            return true
+          },
+        })
+      }
     },
     handleInfiniteOnLoad() {
       // 项目动态用的
       const { todos } = this
       this.loading = true
       if (todos.length > 6 && todos.length < 8) {
-        this.$message.warning('正在加载')
+        this.$antdMessage.warning('正在加载')
         this.busy = true
         this.loading = false
       }

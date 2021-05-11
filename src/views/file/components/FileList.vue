@@ -199,14 +199,14 @@ export default {
         file_name: fileName,
       }
       await deleteFile(params).then(() => {
-        this.$message.success('删除成功')
+        this.$antdMessage.success('删除成功')
         this.getFileList()
         // console.log('删除', file)
         if (file.sourceId) {
           this.newDialog(file, '删除了文件', fileName)
         }
       }).catch(() => {
-        // this.$message.warning('删除失败')
+        // this.$antdMessage.warning('删除失败')
       })
       return true
     },

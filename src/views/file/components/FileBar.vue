@@ -129,12 +129,12 @@ export default {
     },
     handleChange(info) {
       if (info.file.status !== 'uploading') {
-        this.$message.loading('正在上传')
+        this.$antdMessage.loading('正在上传')
       }
       if (info.file.status === 'done') {
-        this.$message.success(`成功上传 ${info.file.name}`)
+        this.$antdMessage.success(`成功上传 ${info.file.name}`)
       } else if (info.file.status === 'error') {
-        this.$message.error(`${info.file.name} 上传失败`)
+        this.$antdMessage.error(`${info.file.name} 上传失败`)
       }
     },
     async uploadFile(data) {
@@ -147,11 +147,11 @@ export default {
       console.log('上传pid', pid)
       const res = await uploadFile(formData, uid, pid)
       if (res.meta.status !== 200) {
-        this.$message.error('上传失败')
+        this.$antdMessage.error('上传失败')
       }
       this.getFileList()
       console.log(res.data)
-      this.$message.success(`【${res.data.f_name}】上传成功`)
+      this.$antdMessage.success(`【${res.data.f_name}】上传成功`)
       // await this.newDialog('上传了了文件', res.data.f_name)
     },
 

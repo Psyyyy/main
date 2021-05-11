@@ -174,9 +174,9 @@ export default {
       this.isAddMemberVisible = false
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('添加成员失败')
+        return this.$antdMessage.error('添加成员失败')
       }
-      this.$message.success('添加成员成功！')
+      this.$antdMessage.success('添加成员成功！')
       this.getMemberList()
       this.getAllUser(params.pid)
       return true

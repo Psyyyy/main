@@ -60,7 +60,7 @@ export default {
     onSearch() {
       if (this.searchContent.length > 0) {
         // TODO: 通过获取 this.searchContent 执行搜索逻辑
-        this.$message.info(`您输入了：${this.searchContent}`)
+        this.$antdMessage.info(`您输入了：${this.searchContent}`)
       }
     },
   },

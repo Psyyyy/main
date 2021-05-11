@@ -504,7 +504,7 @@ export default {
     async deleteTask(id) {
       try {
         const res = await deleteTask(id)
-        this.$message.success(res.meta.msg)
+        this.$antdMessage.success(res.meta.msg)
         this.getTask()
       } catch (err) {
         // console.log(err)
@@ -515,7 +515,7 @@ export default {
       const CAN_LOGOUT = await this.$store.dispatch('user/logout')
 
       if (CAN_LOGOUT) {
-        this.$message.success('成功退出')
+        this.$antdMessage.success('成功退出')
         this.$router.replace({ name: 'Login' })
       }
     },

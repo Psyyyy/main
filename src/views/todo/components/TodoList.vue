@@ -158,9 +158,9 @@ export default {
       this.$store.dispatch('task/finishTask', msg).then((result) => {
         if (result) {
           this.getTask()
-          this.$message.success('修改完成状态成功')
+          this.$antdMessage.success('修改完成状态成功')
         } else {
-          this.$message.error('修改完成状态失败')
+          this.$antdMessage.error('修改完成状态失败')
         }
       }).catch(() => {})
     },

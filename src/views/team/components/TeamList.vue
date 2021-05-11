@@ -189,9 +189,9 @@ export default {
       const res = await updateUser(this.memberInfo)
       // 更新项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('更新失败')
+        return this.$antdMessage.error('更新失败')
       }
-      this.$message.success('更新成功！')
+      this.$antdMessage.success('更新成功！')
       this.memberInfo = {
         role: '',
         is_active: true,

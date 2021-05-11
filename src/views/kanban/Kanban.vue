@@ -745,11 +745,11 @@ export default {
         this.$refs.addFormRef.validate(async (valid, field) => {
           // 有未校验通过的字段
           if (!valid) {
-            return this.$message.error('存在错误字段，无法创建')
+            return this.$antdMessage.error('存在错误字段，无法创建')
           }
           if (this.newStage.s_start_time && this.newStage.s_end_time) {
             if (this.newStage.s_start_time - this.newStage.s_end_time > 0) {
-              this.$message.warning('截止时间早于开始时间！')
+              this.$antdMessage.warning('截止时间早于开始时间！')
               return false
             }
           }
@@ -769,9 +769,9 @@ export default {
           // console.log('newStage', res)
           // 创建项目失败
           if (res.meta.status !== 200) {
-            return this.$message.error('创建迭代失败')
+            return this.$antdMessage.error('创建迭代失败')
           }
-          this.$message.success('创建迭代成功！')
+          this.$antdMessage.success('创建迭代成功！')
           // 隐藏 dialog对话框
           this.$refs.addFormRef.resetFields()
           this.isAddStageVisible = false
@@ -789,7 +789,7 @@ export default {
             this.currEditStage.s_start_time - this.currEditStage.s_end_time
             > 0
           ) {
-            this.$message.warning('截止时间早于开始时间！')
+            this.$antdMessage.warning('截止时间早于开始时间！')
             return false
           }
         }
@@ -807,9 +807,9 @@ export default {
         const res = await updateStage(this.currEditStage)
         // 更新项目失败
         if (res.meta.status !== 200) {
-          return this.$message.error('编辑项目失败')
+          return this.$antdMessage.error('编辑项目失败')
         }
-        this.$message.success('编辑项目成功！')
+        this.$antdMessage.success('编辑项目成功！')
         // 隐藏 dialog对话框
         this.currEditStage = {
           s_id: '',
@@ -912,7 +912,7 @@ export default {
     async deleteTask(id) {
       try {
         const res = await deleteTask(id)
-        this.$message.success(res.meta.msg)
+        this.$antdMessage.success(res.meta.msg)
         this.getTask()
       } catch (err) {
         // console.log(err)

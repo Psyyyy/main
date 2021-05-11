@@ -119,13 +119,13 @@ export default {
               const res = await resetPassword(params)
               console.log(res)
               if (res.meta.status !== 200) {
-                return this.$message.error('更新失败')
+                return this.$antdMessage.error('更新失败')
               }
-              this.$message.success('密码修改成功,请重新登录')
+              this.$antdMessage.success('密码修改成功,请重新登录')
               removeToken()
               this.$router.replace({ name: 'Login' })
             } else {
-              this.$message.error('密码修改失败')
+              this.$antdMessage.error('密码修改失败')
             }
           } finally {
             this.loading = false

@@ -236,7 +236,7 @@ export default {
       this.formatForm = _clonedeep(this.form) // 这里要用深拷贝，要不然只是复制了指针而已
       if (this.formatForm.start && this.formatForm.end) {
         if (this.formatForm.start - this.formatForm.end > 0) {
-          this.$message.warning('截止时间早于开始时间！')
+          this.$antdMessage.warning('截止时间早于开始时间！')
           return false
         }
       }
@@ -259,7 +259,7 @@ export default {
       // console.log('filter', res)
       this.$store.commit('task/SET_TASK_LIST', res)
       console.log('filter', res)
-      this.$message.success('列表已更新！')
+      this.$antdMessage.success('列表已更新！')
       this.closeFilter()
       this.form = {
         member: [],

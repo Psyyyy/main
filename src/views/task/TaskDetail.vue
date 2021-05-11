@@ -1187,7 +1187,7 @@ export default {
       try {
         const { id } = this.task.detail
         const res = await deleteTask(id)
-        this.$message.success(res.meta.msg)
+        this.$antdMessage.success(res.meta.msg)
         this.detailClose()
       } catch (err) {
         // console.log(err)
@@ -1214,9 +1214,9 @@ export default {
       const res = await getComment(params)
       // this.dialogList = res
       if (res.meta.status !== 200) {
-        return this.$message.error('获取评论失败')
+        return this.$antdMessage.error('获取评论失败')
       }
-      // this.$message.success('获取评论成功！')
+      // this.$antdMessage.success('获取评论成功！')
       this.$store.commit('task/SET_TASK_COMMENT', res.data)
       this.showComment = true
       return true
@@ -1256,11 +1256,11 @@ export default {
         file_name: fileName,
       }
       await deleteFile(params).then(() => {
-        this.$message.success('删除成功')
+        this.$antdMessage.success('删除成功')
         this.newDialog('删除了文件', fileName)
         this.getFileList()
       }).catch(() => {
-        this.$message.warning('删除成功')
+        this.$antdMessage.warning('删除成功')
       })
       return true
     },
@@ -1274,10 +1274,10 @@ export default {
       console.log('上传', tid)
       const res = await uploadFile(formData, uid, pid, tid)
       if (res.meta.status !== 200) {
-        this.$message.error('上传失败')
+        this.$antdMessage.error('上传失败')
       }
       console.log(res.data)
-      this.$message.success(`【${res.data.f_name}】上传成功`)
+      this.$antdMessage.success(`【${res.data.f_name}】上传成功`)
       await this.newDialog('上传了文件', res.data.f_name)
       this.getFileList()
     },
@@ -1307,9 +1307,9 @@ export default {
       const res = await newComment(this.commentForm)
       console.log('评论', res)
       if (res.meta.status !== 200) {
-        return this.$message.error('评论失败')
+        return this.$antdMessage.error('评论失败')
       }
-      this.$message.success('评论成功！')
+      this.$antdMessage.success('评论成功！')
       this.commentForm = {
         pid: this.currProjectID,
         uid: window.sessionStorage.getItem('currUserID'),
@@ -1386,9 +1386,9 @@ export default {
       const res = await updateTask(this.form)
       // 更新项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('更新失败')
+        return this.$antdMessage.error('更新失败')
       }
-      this.$message.success('更新成功！')
+      this.$antdMessage.success('更新成功！')
       this.resetForm()
       this.updateFinish = true
       await this.getTaskDetail()
@@ -1437,9 +1437,9 @@ export default {
       this.resetForm()
       // 更新项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('更新失败')
+        return this.$antdMessage.error('更新失败')
       }
-      this.$message.success('更新成功！')
+      this.$antdMessage.success('更新成功！')
       this.getTaskDetail()
       return true
     },
@@ -1559,9 +1559,9 @@ export default {
       this.resetForm()
       // 更新项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('更新失败')
+        return this.$antdMessage.error('更新失败')
       }
-      this.$message.success('更新成功！')
+      this.$antdMessage.success('更新成功！')
       await this.newDialog('更新了任务起止时间', '')
       this.getTaskDetail()
       return true
@@ -1583,12 +1583,12 @@ export default {
       this.resetForm()
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('添加成员失败')
+        return this.$antdMessage.error('添加成员失败')
       }
       if (res.data === '重复添加') {
-        return this.$message.warning(res.data)
+        return this.$antdMessage.warning(res.data)
       }
-      this.$message.success('添加成员成功！')
+      this.$antdMessage.success('添加成员成功！')
       await this.newDialog('更新了任务成员', '')
       this.getTaskDetail()
       return true
@@ -1611,9 +1611,9 @@ export default {
       this.resetForm()
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('移出成员失败')
+        return this.$antdMessage.error('移出成员失败')
       }
-      this.$message.success('移出成员成功！')
+      this.$antdMessage.success('移出成员成功！')
       await this.newDialog('更新了任务成员', '')
       this.getTaskDetail()
       return true

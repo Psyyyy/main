@@ -119,7 +119,7 @@ export default {
           }
         }
       } else {
-        this.$message.error('图片大小不能超过 2MB！')
+        this.$antdMessage.error('图片大小不能超过 2MB！')
       }
 
       return false
@@ -150,7 +150,7 @@ export default {
         formData.append('avatar', blob, this.avatarInfo.avatar)
         uploadImage()
           .then(() => {
-            this.$message.success('头像上传成功')
+            this.$antdMessage.success('头像上传成功')
           })
           .finally(() => {
             this.uploading = false

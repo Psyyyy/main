@@ -123,10 +123,10 @@ export default {
           try {
             const res = await register(values)
             if (res.meta.status !== 201) {
-              return this.$message.error(`注册失败：${res.meta.msg}`)
+              return this.$antdMessage.error(`注册失败：${res.meta.msg}`)
             }
             console.log('register', res)
-            this.$message.success('注册成功，请登录')
+            this.$antdMessage.success('注册成功，请登录')
             this.$router.push('Login')
           } finally {
             this.loading = false

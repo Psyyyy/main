@@ -46,9 +46,9 @@ export default {
         console.log(info.file, info.fileList)
       }
       if (info.file.status === 'done') {
-        this.$message.success(`成功上传 ${info.file.name}`)
+        this.$antdMessage.success(`成功上传 ${info.file.name}`)
       } else if (info.file.status === 'error') {
-        this.$message.error(`${info.file.name} 上传失败`)
+        this.$antdMessage.error(`${info.file.name} 上传失败`)
       }
     },
   },

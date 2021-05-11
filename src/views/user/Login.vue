@@ -116,7 +116,7 @@ export default {
             this.$store.dispatch('user/login', values).then((data) => {
               console.log('login', data)
               if (data) {
-                this.$message.success('登录成功')
+                this.$antdMessage.success('登录成功')
                 const { redirectPath } = this.$store.state// 获取之前重定向到登陆页面前存的要去的界面
                 if (redirectPath) {
                 // 通过记录重定向路径，前往授权前想要访问的页面

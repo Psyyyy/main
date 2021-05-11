@@ -297,7 +297,7 @@ export default {
       const res = await getProjectRecord(this.currProjectID)
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('获取数据失败')
+        return this.$antdMessage.error('获取数据失败')
       }
       this.data = {
         finish: [],
@@ -320,7 +320,7 @@ export default {
       const res = await getProjectAnalysisData(this.currProjectID)
       // 创建项目失败
       if (res.meta.status !== 200) {
-        return this.$message.error('获取数据失败')
+        return this.$antdMessage.error('获取数据失败')
       }
       console.log('分析数据', res.data)
       // this.analysisData = res.data

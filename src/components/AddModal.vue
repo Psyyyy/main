@@ -263,7 +263,7 @@ export default {
       this.formatForm = _clonedeep(this.form) // 这里要用深拷贝，要不然只是复制了指针而已
       if (this.formatForm.start_time && this.formatForm.end_time) {
         if (this.formatForm.start_time - this.formatForm.end_time > 0) {
-          this.$message.warning('截止时间早于开始时间！')
+          this.$antdMessage.warning('截止时间早于开始时间！')
           return false
         }
       }
@@ -297,7 +297,7 @@ export default {
         const { data: res } = await addTask(this.formatForm)
         console.log('add结果', res)
         // this.$store.commit('task/SET_TASK_LIST', res)
-        this.$message.success('成功新增需求！')
+        this.$antdMessage.success('成功新增需求！')
 
         this.closeAdd()
         this.$store.commit('add/SET_SUBMIT', true)

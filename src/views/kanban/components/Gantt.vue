@@ -72,7 +72,7 @@ export default {
       const sid = this.currStageId
       const res = await getGanttTaskList(pid, sid)
       if (res.meta.status !== 200) {
-        return this.$message.error('获取甘特图数据失败')
+        return this.$antdMessage.error('获取甘特图数据失败')
       }
       console.log('甘特图任务', res.data)
       this.ganttTask = res.data
