@@ -115,12 +115,10 @@
                     pro_create_time,
                     finish_task_sum,
                     all_task_sum
-                  },
-                  i) in projectList"
+                  }) in projectList"
                   :key="pro_id"
                   @click="enterProject(pro_id, pro_title)"
                 >
-                  <a-checkbox v-model="projectList[i].pro_done" />
                   <div class="mx-4 truncate text-gray-600">
                     {{ pro_title }}
                     <span class="ml-4 text-base text-gray-400">{{

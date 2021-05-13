@@ -204,10 +204,6 @@
 </template>
 
 <script>
-import AnalyticsBarChart from '@comp/charts/AnalyticsBarChart.vue'
-import RegistrationChart from '@comp/charts/RegistrationChart.vue'
-import SalesChart from '@comp/charts/SalesChart.vue'
-import GrowthChart from '@comp/charts/GrowthChart.vue'
 
 import { getProjectRecord, getProjectAnalysisData } from '@/api/analysis'
 import { getTaskRank } from '@/api/task'
@@ -220,7 +216,7 @@ export default {
   name: 'Analytics',
 
   components: {
-    PieChart, LineChart, TaskLogChart, AnalyticsBarChart, RegistrationChart, SalesChart, GrowthChart,
+    PieChart, LineChart, TaskLogChart,
   },
 
   data: () => ({

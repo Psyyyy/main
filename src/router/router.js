@@ -39,20 +39,6 @@ export const constantRoutes = [// 所有权限都能访问的页面
     ],
   },
 
-  // 测试页面
-  {
-    path: '',
-    hidden: true,
-    component: UserLayout,
-    children: [
-      {
-        path: '/test',
-        name: 'Test',
-        component: () => import(/* webpackChunkName: 'Test' */ '@/views/Test.vue'),
-        meta: { title: '测试' },
-      },
-    ],
-  },
   // 项目选择页面
   {
     path: '/project',

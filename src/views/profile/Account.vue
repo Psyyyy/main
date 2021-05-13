@@ -79,32 +79,19 @@
       <a-button size="large" @click="resetForm">取消</a-button>
     </div>
 
-    <a-modal
-      centered
-      title="更改头像"
-      v-model="avatarUploadVisible"
-      :mask-closable="false"
-      :footer="null"
-    >
-      <avatar-upload />
-    </a-modal>
   </div>
 </template>
 
 <script>
-import AvatarUpload from '@comp/AvatarUpload.vue'
 import _clonedeep from 'lodash.clonedeep'
 import { getUserInfo, updateUser } from '@/api/user'
 
 export default {
   name: 'Account',
 
-  components: { AvatarUpload },
-
   data() {
     return {
       form: {},
-      avatarUploadVisible: false,
     }
   },
 

@@ -62,7 +62,9 @@ export default {
   created() {
     this.getGanttTask()
   },
-  mounted() {},
+  mounted() {
+    this.getGanttTask()
+  },
   methods: {
     handleRowClick(row) {
       this.showDetail(row.id)
