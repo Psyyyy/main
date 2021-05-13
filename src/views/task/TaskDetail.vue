@@ -565,8 +565,8 @@
                             >
                               <div v-for="done in [0, 1]" :key="done">
                                 <div
-                                  v-for="childTask in task.children"
-                                  :key="childTask.id"
+                                  v-for="(childTask,index) in task.children"
+                                  :key="index"
                                 >
                                   <div
                                     class="list-item task"
@@ -773,8 +773,8 @@
               <div class="member-list">
                 <a-tooltip
                   :mouse-enter-delay="0.5"
-                  v-for="member in task.taskMemberList"
-                  :key="member.uid"
+                  v-for="(member,index) in task.taskMemberList"
+                  :key="index"
                 >
                   <template slot="title">
                     <span
@@ -821,8 +821,8 @@
                           'log-comment': false,
                           'list-item': true
                         }"
-                        v-for="log in dialogList"
-                        :key="log.d_id"
+                        v-for="(log,index) in dialogList"
+                        :key="index"
                       >
                         <template>
                           <a-avatar
@@ -859,8 +859,8 @@
                           'log-comment': false,
                           'list-item': true
                         }"
-                        v-for="comment in commentList"
-                        :key="comment.com_id"
+                        v-for="(comment,index) in commentList"
+                        :key="index"
                       >
                         <template>
                           <a-avatar
@@ -1264,7 +1264,7 @@ export default {
       const type = this.task.detail.t_type === 1 ? 'task' : 'bug'
       const params = {
         source: type,
-        sid: this.task.detail.id,
+        sid: this.currEditTask,
       }
       const res = await getComment(params)
       console.log('评论列表', res.data)
@@ -1692,6 +1692,7 @@ export default {
     // 暂时不用
     doTask(action) {
       // const app = this
+      console.log('doTask', action)
       const actionKey = action.key
       switch (actionKey) {
         case 'delete':
@@ -1728,6 +1729,7 @@ export default {
     // },
     // 更新数据库 修改优先级
     doPri(item) {
+      console.log('doPri', item)
       this.editTaskItem('rank', item.key)
     },
 
