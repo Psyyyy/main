@@ -101,7 +101,7 @@
             </div>
             <!-- 项目列表 -->
             <div
-              v-if="showProjectList"
+              v-if="showProjectList&&projectList.length"
               style="height:550px"
               class="overflow-auto"
             >
@@ -178,6 +178,7 @@
                 </li>
               </ul>
             </div>
+            <div class="pt-6" style="height:540px" v-if="showProjectList&&!projectList.length"><a-empty :image="simpleImage" /></div>
             <!-- 项目图示 -->
             <div
               v-if="!showProjectList"
@@ -288,7 +289,7 @@
                 <a-button @click.stop="viewAll()">查看所有任务</a-button>
               </div>
             </div>
-            <div style="height:180px" class="overflow-auto">
+            <div v-if="todoList.length" style="height:180px" class="overflow-auto">
               <ul>
                 <li
                   class="px-5 py-4 flex items-center hover:bg-gray-100 transition cursor-pointer"
@@ -347,6 +348,7 @@
                 </li>
               </ul>
             </div>
+             <div v-if="!todoList.length" class="pt-6" style="height:180px"><a-empty :image="simpleImage" /></div>
           </div>
         </div>
         <!-- 项目动态-vue滚动加载 -->
@@ -467,6 +469,7 @@
 
 <script>
 import _debounce from 'lodash.debounce'
+import { Empty } from 'ant-design-vue'
 import { getDay, isValidUrl } from '@/utils/util'
 // import reqwest from 'reqwest'
 import {
@@ -706,6 +709,7 @@ export default {
       title: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
       content: [{ required: true, message: '请输入项目内容', trigger: 'blur' }],
     },
+    // simpleImage: '',
     news: [],
     isFullScreen: false,
     showProjectList: false,
@@ -741,6 +745,9 @@ export default {
     fileIcon() {
       return this.$store.state.file.fileIcon
     },
+  },
+  beforeCreate() {
+    this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE
   },
   created() {
     this.getProject()

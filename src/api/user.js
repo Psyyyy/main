@@ -7,8 +7,8 @@ import axios from './registerAxios'
 // import request from './request'
 
 export function register(data) {
-  return request({
-    url: '/register',
+  return axios({
+    url: '/register/',
     method: 'post',
     data,
   })
