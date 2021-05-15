@@ -7,7 +7,7 @@ import axios from './registerAxios'
 // import request from './request'
 
 export function register(data) {
-  return axios({
+  return request({
     url: '/register',
     method: 'post',
     data,

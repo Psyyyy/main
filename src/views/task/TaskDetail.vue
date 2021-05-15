@@ -1696,7 +1696,7 @@ export default {
       const actionKey = action.key
       switch (actionKey) {
         case 'delete':
-          this.$confirm({
+          this.$antdConfirm({
             title: (
               <p>
                 此操作将删除

@@ -7,17 +7,26 @@
           <div class="mb-4 flex items-center justify-around">
             <div
               class="flex flex-col justify-center items-center -mt-4"
-              v-for="({ label, percent, value, icon, color }) in [
-                { label: '需求', percent: taskRate, value: taskRate+'%', icon: 'layers', color: 'success' },
-                { label: '缺陷', percent: bugRate, value: bugRate+'%', icon: 'alert-octagon', color: 'danger' },
+              v-for="{ label, percent, value, icon, color } in [
+                {
+                  label: '需求',
+                  percent: taskRate,
+                  value: taskRate + '%',
+                  icon: 'layers',
+                  color: 'success'
+                },
+                {
+                  label: '缺陷',
+                  percent: bugRate,
+                  value: bugRate + '%',
+                  icon: 'alert-octagon',
+                  color: 'danger'
+                }
               ]"
               :key="label"
             >
               <div class="mb-2 flex items-center text-gray-600">
-                <feather
-                  size="18"
-                  :type="icon"
-                />
+                <feather size="18" :type="icon" />
                 <span class="ml-2">{{ label }}</span>
               </div>
               <div class="flex items-center">
@@ -29,7 +38,7 @@
                   :stroke-color="{
                     '0%': `rgba(var(--${color}), .6)`,
                     '50%': `rgba(var(--${color}), .8)`,
-                    '100%': `rgba(var(--${color}), .9)`,
+                    '100%': `rgba(var(--${color}), .9)`
                   }"
                   :percent="percent"
                 />
@@ -37,11 +46,14 @@
               </div>
             </div>
           </div>
-         <a-divider />
-                   <div class="-mt-12 -mb-8 w-full inline-block" style="height:350px">
-              <!-- <div  style="height:100%;width:100%;" id="myChart"></div> -->
-              <task-log-chart :id="'project'" :show-title="false" :series-data="data"/>
-            </div>
+          <a-divider />
+          <div class="-mt-12 -mb-8 w-full inline-block" style="height:350px">
+            <task-log-chart
+              :id="'project'"
+              :show-title="false"
+              :series-data="data"
+            />
+          </div>
         </div>
       </div>
       <div class="w-1/2 pl-3">
@@ -53,9 +65,16 @@
                 <div>
                   <div class="font-bold text-xl">任务总数</div>
                 </div>
-                <div class="text-3xl font-semibold">{{finishData+unfinishData}}<span class="text-xl">个</span></div>
+                <div class="text-3xl font-semibold">
+                  {{ finishData + unfinishData }}<span class="text-xl">个</span>
+                </div>
               </div>
-              <line-chart :id="'all'" :series-data="data.all" :date="data.date" :series-name="'任务总数'"></line-chart>
+              <line-chart
+                :id="'all'"
+                :series-data="data.all"
+                :date="data.date"
+                :series-name="'任务总数'"
+              ></line-chart>
               <!-- <bar-negative-chart></bar-negative-chart> -->
             </div>
           </div>
@@ -66,9 +85,16 @@
                 <div>
                   <div class="font-bold text-xl">延误任务</div>
                 </div>
-                 <div class="text-3xl font-semibold">{{delayData}}<span class="text-xl">个</span></div>
+                <div class="text-3xl font-semibold">
+                  {{ delayData }}<span class="text-xl">个</span>
+                </div>
               </div>
-              <line-chart :id="'delay'" :series-data="data.delay" :date="data.date" :series-name="'延误任务'"></line-chart>
+              <line-chart
+                :id="'delay'"
+                :series-data="data.delay"
+                :date="data.date"
+                :series-name="'延误任务'"
+              ></line-chart>
             </div>
           </div>
         </div>
@@ -80,11 +106,18 @@
               <div class="flex items-center justify-between">
                 <div>
                   <div class="font-bold text-xl">待处理任务</div>
-
                 </div>
-<div class="text-3xl font-semibold">{{data.unfinish[data.unfinish.length-1]}}<span class="text-xl">个</span></div>
+                <div class="text-3xl font-semibold">
+                  {{ data.unfinish[data.unfinish.length - 1]
+                  }}<span class="text-xl">个</span>
+                </div>
               </div>
-               <line-chart :id="'unfinish'" :series-data="data.unfinish" :date="data.date" :series-name="'待处理任务'"></line-chart>
+              <line-chart
+                :id="'unfinish'"
+                :series-data="data.unfinish"
+                :date="data.date"
+                :series-name="'待处理任务'"
+              ></line-chart>
             </div>
           </div>
           <!-- 右下2 -->
@@ -130,9 +163,16 @@
                 <div>
                   <div class="font-bold text-xl">已完成任务</div>
                 </div>
-                <div class="text-3xl font-semibold">{{finishData}}<span class="text-xl">个</span></div>
+                <div class="text-3xl font-semibold">
+                  {{ finishData }}<span class="text-xl">个</span>
+                </div>
               </div>
-             <line-chart :id="'finish'" :series-data="data.finish" :date="data.date" :series-name="'已完成任务'"></line-chart>
+              <line-chart
+                :id="'finish'"
+                :series-data="data.finish"
+                :date="data.date"
+                :series-name="'已完成任务'"
+              ></line-chart>
             </div>
           </div>
         </div>
@@ -143,23 +183,23 @@
         <div class="dashboard-card">
           <h3 class="dashboard-card-title mb-6">任务优先级分布</h3>
           <div class="mb-4 flex items-center justify-around">
-                               <div class="-mt-12 -mb-8 w-full inline-block" style="height:350px">
+            <div class="-mt-12 -mb-8 w-full inline-block" style="height:350px">
               <!-- <div  style="height:100%;width:100%;" id="myChart"></div> -->
-              <pie-chart v-if="showPie" :id="'rank'" :rank="rankData"></pie-chart>
+              <pie-chart
+                v-if="showPie"
+                :id="'rank'"
+                :rank="rankData"
+              ></pie-chart>
             </div>
-
           </div>
         </div>
       </div>
-            <div class="w-1/2 pr-3 pl-3">
+      <div class="w-1/2 pr-3 pl-3">
         <div class="dashboard-card">
           <h3 class="dashboard-card-title">项目动态</h3>
           <div class="flex mb-4">
             <!-- 动态标题 -->
-            <div
-              style="width:100%;height:250px"
-              class="overflow-auto"
-            >
+            <div style="width:100%;height:250px" class="overflow-auto">
               <a-list
                 class="comment-list"
                 item-layout="horizontal"
@@ -172,7 +212,7 @@
                       class="flex-wrap text-xs primary bg-primary-light"
                       :size="40"
                     >
-                        {{ item.name }}
+                      {{ item.name }}
                     </a-avatar>
                     <template slot="actions">
                       <span
@@ -204,7 +244,6 @@
 </template>
 
 <script>
-
 import { getProjectRecord, getProjectAnalysisData } from '@/api/analysis'
 import { getTaskRank } from '@/api/task'
 import { getDialog } from '@/api/dialog'
@@ -216,7 +255,9 @@ export default {
   name: 'Analytics',
 
   components: {
-    PieChart, LineChart, TaskLogChart,
+    PieChart,
+    LineChart,
+    TaskLogChart,
   },
 
   data: () => ({
@@ -241,19 +282,32 @@ export default {
     },
     taskRate() {
       if (this.taskData.finish + this.taskData.unfinish) {
-        return Math.floor(((this.taskData.finish / (this.taskData.finish + this.taskData.unfinish)) * 100) * 10) / 10
+        return (
+          Math.floor(
+            (this.taskData.finish
+              / (this.taskData.finish + this.taskData.unfinish))
+              * 100
+              * 10,
+          ) / 10
+        )
       }
       return 0
     },
     bugRate() {
       if (this.bugData.finish + this.bugData.unfinish) {
-        return Math.floor(((this.bugData.finish / (this.bugData.finish + this.bugData.unfinish)) * 100) * 10) / 10
+        return (
+          Math.floor(
+            (this.bugData.finish
+              / (this.bugData.finish + this.bugData.unfinish))
+              * 100
+              * 10,
+          ) / 10
+        )
       }
       return 0
     },
   },
   watch: {
-
     currProjectID: {
       immediate: true,
       handler() {
@@ -262,7 +316,6 @@ export default {
         this.getProjectAnalysisData()
         this.getTaskRank()
       },
-
     },
   },
   created() {
