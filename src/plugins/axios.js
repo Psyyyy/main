@@ -4,6 +4,7 @@ import { getToken, removeToken } from '@/utils/token'
 import responseHandler from '@/utils/response-handler'
 
 const errorHandler = (error) => {
+  console.log('错误', error)
   const { status = 'default', statusText = '错误信息' } = error.response
   responseHandler[status](status, statusText)
 
@@ -12,8 +13,8 @@ const errorHandler = (error) => {
 
 const service = axios.create({
   // baseURL: process.env.VUE_APP_REQUEST_BASE_URL,http://120.53.120.229:8888/api/private/v1/
-  baseURL: 'http://106.14.132.104:8888/api/private/v1/',
-  // baseURL: 'http://127.0.0.1:8888/api/private/v1/',
+  // baseURL: 'http://106.14.132.104:8888/api/private/v1/',
+  baseURL: 'http://127.0.0.1:8888/api/private/v1/',
   timeout: 20000,
   responseType: 'json',
   // withCredentials: true,
