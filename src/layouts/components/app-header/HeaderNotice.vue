@@ -94,7 +94,6 @@ export default {
     checkNotice() {
       this.visible = false
       this.$router.push({ path: '/notice' })
-      console.log(this.$router)
     },
     async getNoticeList() {
       const uid = window.sessionStorage.getItem('currUserID')

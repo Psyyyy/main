@@ -23,11 +23,9 @@
               </div>
               <div>
                 <a-avatar
-                  class="flex items-center justify-center"
-                  size="large"
-                  :icon="info.avatar ? '' : 'user'"
-                  :src="info.avatar"
-                />
+                  class="flex items-center justify-center bg-primary"
+                  size="large">
+               {{info.name}}</a-avatar>
               </div>
             </div>
           </div>
@@ -213,12 +211,10 @@
                             percentCalc(item.finish_task_sum, item.all_task_sum)
                           "
                         />
-                        <a-avatar
-                          class="items-center justify-center"
-                          size="large"
-                          :icon="info.avatar ? '' : 'user'"
-                          :src="info.avatar"
-                        />
+      <a-avatar
+                  class="items-center justify-center bg-primary"
+                  size="large">
+               {{info.name}}</a-avatar>
                         <a-dropdown class="float-right mt-3">
                           <div
                             class="flex items-center text-base text-gray-500 cursor-pointer"
@@ -250,7 +246,7 @@
                               </a-menu-item>
                               <a-menu-item
                                 class="flex items-center"
-                                @click="openDeleteModal(item.pro_title)"
+                                @click="openDeleteModal(item.pro_id,item.pro_title)"
                               >
                                 <feather
                                   class="mr-2 cursor-pointer"
@@ -363,6 +359,7 @@
             </div>
 
             <div
+            v-if="dialogList.length"
               style="height:250px"
               class="px-4 overflow-auto"
             >
@@ -408,6 +405,7 @@
                 </a-list-item>
               </a-list>
             </div>
+            <div v-if="!dialogList.length" class="pt-6" style="height:180px"><a-empty :image="simpleImage" /></div>
           </div>
         </div>
       </section>
@@ -789,7 +787,8 @@ export default {
       return tmp * 100
     },
     viewAll() {
-      this.$router.push({ name: 'Todo' })
+      // this.$router.push({ name: 'Todo' })
+      this.$router.push({ path: '/todo' })
     },
     viewFiles() {
       this.$router.push({ name: 'File' })
@@ -799,6 +798,10 @@ export default {
       const { data: res } = await getProjectList(uid)
       console.log('项目列表', res)
       this.projectList = res
+      this.$store.commit('project/SET_CURR_PROJECT_NAME', res[0].pro_title)
+      this.$store.commit('project/SET_CURR_PROJECT_ID', res[0].pro_id)
+      window.localStorage.setItem('currProject', res[0].pro_title)
+      window.localStorage.setItem('currProjectID', res[0].pro_id)
       return true
     },
     async logOut() {
@@ -888,7 +891,7 @@ export default {
       } else this.isAddProjectVisible = true
     },
     openEditModal(id, title, content) {
-      if (this.$store.state.user.info.role !== '管理员') {
+      if (this.$store.state.user.info.role !== '管理员' && id !== 11) {
         this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
       } else {
         this.isEditVisible = true
@@ -897,7 +900,7 @@ export default {
         this.currEditProject.content = content
       }
     },
-    openDeleteModal(title) {
+    openDeleteModal(id, title) {
       if (this.$store.state.user.info.role !== '管理员') {
         this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
       } else {

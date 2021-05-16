@@ -7,7 +7,7 @@
           全部标为已读 <a-icon type="check"></a-icon>
         </a-button>
       </h3>
-      <div class="mt-2">
+      <div class="mt-2" v-if="noticeList.length">
         <ul class="notice-list ">
           <div class="px-6" v-for="notice in noticeList" :key="notice.id">
              <a-comment v-if="notice.uid!==currUserID" class="notice-item" @click="showDetail(notice.sourceId,notice.id)">
@@ -27,6 +27,10 @@
           </div>
         </ul>
       </div>
+       <a-empty
+        v-else
+        class="h-full flex flex-col justify-center items-center"
+      />
     </div>
      <task :pop-visible="showTask" detail="detailTaskId" @close="showTask = false" />
       <add-modal />
@@ -133,7 +137,7 @@ export default {
       const uid = window.sessionStorage.getItem('currUserID')
       const { data: res } = await getNoticeList(uid)
       this.$store.commit('notice/SET_NOTICE_LIST', res)
-      console.log('notice', res)
+      console.log('进来了')
       let haveNew = false
       this.news = []
       for (let i = 0; i < res.length; i += 1) {

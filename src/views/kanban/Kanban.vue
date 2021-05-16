@@ -649,7 +649,7 @@ export default {
       // 做个创建迭代的弹窗
     },
     handleStage({ key }) {
-      if (this.$store.state.user.info.role !== '管理员') {
+      if (this.$store.state.user.info.role !== '管理员' && this.currProjectID !== 11) {
         this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
       } else {
         switch (key) {
@@ -675,7 +675,7 @@ export default {
       this.newStage.end = end
     },
     openAddModal() {
-      if (this.$store.state.user.info.role !== '管理员') {
+      if (this.$store.state.user.info.role !== '管理员' && this.currProjectID !== 11) {
         this.$antdMessage.warning('抱歉，非管理员用户无法进行该操作')
       } else { this.isAddStageVisible = true }
     },

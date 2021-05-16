@@ -29,7 +29,7 @@
           <feather class="ml-1 text-gray-500" size="18" type="chevron-down" />
         </div>
         <template #overlay>
-          <a-menu>
+          <a-menu v-if="projectList.length">
             <a-menu-item v-for="{ pro_id,pro_title } in projectList" :key="pro_title" @click="changeProjectTo(pro_id,pro_title)">
               {{pro_title}}
             </a-menu-item>
@@ -155,6 +155,7 @@ export default {
       const uid = window.sessionStorage.getItem('currUserID')
       const { data: res } = await getProjectList(uid)
       this.projectList = res
+      console.log('当前项目', this.currProject)
       return true
     },
     async logOut() {
