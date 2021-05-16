@@ -192,6 +192,9 @@ export default {
     currListType() {
       return this.$store.state.task.currListType
     },
+    currProjectID() {
+      return this.$store.state.project.currProjectId
+    },
   },
   data: () => ({
     currFilter: {},
@@ -208,6 +211,7 @@ export default {
       name: '',
       start: '',
       end: '',
+      pid: '',
     },
     formatForm: {},
   }),
@@ -233,6 +237,7 @@ export default {
     },
     // 表单部分
     async onSubmit() {
+      this.form.pid = this.currProjectID
       this.formatForm = _clonedeep(this.form) // 这里要用深拷贝，要不然只是复制了指针而已
       if (this.formatForm.start && this.formatForm.end) {
         if (this.formatForm.start - this.formatForm.end > 0) {
@@ -269,6 +274,7 @@ export default {
         name: '',
         start: '',
         end: '',
+        pid: '',
       }
       return true
     },
@@ -283,6 +289,7 @@ export default {
         name: '',
         start: '',
         end: '',
+        pid: '',
       }
     },
   },

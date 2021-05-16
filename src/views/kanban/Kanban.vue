@@ -60,7 +60,7 @@
                 size="18"
                 type="bookmark"
                 style="cursor:pointer;color:#98adf9"
-                @click="target"
+                @click="target(currStageInfo.s_target)"
               />
               <div
                 class=" flex-no-wrap inline-block "
@@ -563,17 +563,14 @@ export default {
       // 这里需要向后台提交id拿项目数据，拿回来后重新渲染当前界面
       // 进入管理界面后每次请求都应该附带id，但是要设置默认id是第一个项目
     },
-    target() {
-      const h = this.$createElement
-      this.$info({
-        title: '迭代目标：',
-        content: h('div', {}, [
-          h(
-            'h3',
-            this.stageList[window.localStorage.getItem('currStageId')].target,
-          ),
-        ]),
-        onOk() {},
+    target(target) {
+      this.$antdConfirm({
+        title: (
+              <p>
+                <span>迭代目标</span>
+              </p>
+        ),
+        content: target,
       })
     },
     onChange({ target }) {
@@ -728,12 +725,12 @@ export default {
           }
           if (this.newStage.s_start_time) {
             this.newStage.s_start_time = getTimestamp(
-              this.newStage.s_start_time.format('YYYY-MM-DD h:m:s'),
+              this.newStage.s_start_time.toString(),
             )
           }
           if (this.newStage.s_end_time) {
             this.newStage.s_end_time = getTimestamp(
-              this.newStage.s_end_time.format('YYYY-MM-DD h:m:s'),
+              this.newStage.s_end_time.toString(),
             )
           }
           this.newStage.pro_id = this.currProjectID
@@ -768,12 +765,12 @@ export default {
         }
         if (this.currEditStage.s_start_time) {
           this.currEditStage.s_start_time = getTimestamp(
-            this.currEditStage.s_start_time.format('YYYY-MM-DD h:m:s'),
+            this.currEditStage.s_start_time.toString(),
           )
         }
         if (this.currEditStage.s_end_time) {
           this.currEditStage.s_end_time = getTimestamp(
-            this.currEditStage.s_end_time.format('YYYY-MM-DD h:m:s'),
+            this.currEditStage.s_end_time.toString(),
           )
         }
         this.currEditStage.pro_id = this.currProjectID

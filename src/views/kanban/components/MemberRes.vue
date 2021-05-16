@@ -3,10 +3,10 @@
     <div>
       <div class="relative flex flex-no-wrap task-list mt-3 pl-6">
         <h3 class="section-card__title">成员任务跟踪</h3>
-                 <a-button class="ml-2 w-30 flex " type="primary" @click="onOpenAdd()" >
+                 <!-- <a-button class="ml-2 w-30 flex " type="primary" @click="onOpenAdd()" >
             <feather class="mr-1 mt-1 " size="20" type="plus" />
             <span class="mt-1">新增</span>
-          </a-button>
+          </a-button> -->
         <div class="flex ml-auto">
         </div>
       </div>
