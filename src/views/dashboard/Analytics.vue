@@ -108,7 +108,7 @@
                   <div class="font-bold text-xl">待处理任务</div>
                 </div>
                 <div class="text-3xl font-semibold">
-                  {{ data.unfinish[data.unfinish.length - 1]
+                  {{ data.unfinish.length==0?0:data.unfinish[data.unfinish.length - 1]
                   }}<span class="text-xl">个</span>
                 </div>
               </div>

@@ -111,8 +111,8 @@
                     pro_title,
                     pro_content,
                     pro_create_time,
-                    finish_task_sum,
-                    all_task_sum
+                    sum_all,
+                    sum_finish
                   }) in projectList"
                   :key="pro_id"
                   @click="enterProject(pro_id, pro_title)"
@@ -129,7 +129,7 @@
                       class="w-40  mr-10"
                       :stroke-width="4"
                       stroke-color="#6485ff"
-                      :percent="percentCalc(finish_task_sum, all_task_sum)"
+                      :percent="percentCalc(sum_finish, sum_all)"
                     />
                     <span class="flex-1 mr-2 text-right text-gray-400">{{
                       pro_create_time | dateFormat
@@ -208,7 +208,7 @@
                           stroke-color="#6485ff"
                           :show-info="false"
                           :percent="
-                            percentCalc(item.finish_task_sum, item.all_task_sum)
+                            percentCalc(item.sum_finish, item.sum_all)
                           "
                         />
       <a-avatar
@@ -784,7 +784,7 @@ export default {
   methods: {
     percentCalc(done, all) {
       const tmp = done / all
-      return tmp * 100
+      return Math.floor(tmp * 100)
     },
     viewAll() {
       // this.$router.push({ name: 'Todo' })
