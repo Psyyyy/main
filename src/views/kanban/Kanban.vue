@@ -823,7 +823,7 @@ export default {
     async getDialog(id) {
       const obj = {
         pid: this.currProjectID,
-        source: 'task',
+        // source: 'task',
         sid: id,
       }
       const { data: res } = await getDialog(obj)

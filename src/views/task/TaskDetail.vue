@@ -618,13 +618,13 @@
                                         }}</span>
                                       </template>
                                       <a-avatar
-                                        class="task-item"
+                                        class="task-item bg-primary"
                                         :class="{
                                           disabled: task.detail.is_del
                                         }"
                                         size="small"
-                                        icon="user"
-                                      ></a-avatar>
+
+                                      >{{childTask.t_header_name}}</a-avatar>
                                     </a-tooltip>
                                     <!-- 任务标题 -->
                                     <div
@@ -785,12 +785,12 @@
                     </span>
                   </template>
                   <a-avatar
-                    class="member-item"
-                    icon="user"
+                    class="member-item bg-primary"
+
                     size="small"
-                    :src="member.avatar"
+
                     @click="removeMember(member.uid)"
-                  />
+                  >{{member.name}}</a-avatar>
                 </a-tooltip>
                 <a-tooltip :mouse-enter-delay="0.5">
                   <template slot="title">
@@ -815,7 +815,7 @@
               <a-tabs default-active-key="1">
                 <a-tab-pane key="1" tab="动态">
                   <vue-scroll>
-                    <div class="log-list muted">
+                    <div class="log-list  muted">
                       <div
                         :class="{
                           'log-comment': false,
@@ -826,13 +826,11 @@
                       >
                         <template>
                           <a-avatar
-                            class="log-item"
-                            icon="user"
+                            class="log-item bg-primary"
                             size="small"
-                            :src="log.avatar"
-                          />
+                          >{{ log.name }}</a-avatar>
                           <div class="log-item log-txt">
-                            <div class="log-name">
+                            <div class="log-name ">
                               {{ log.name }}
                             </div>
                             <div v-if="log.d_action" class="log-content">
@@ -864,11 +862,10 @@
                       >
                         <template>
                           <a-avatar
-                            class="log-item"
-                            icon="user"
+                            class="log-item bg-primary"
+
                             size="small"
-                            :src="comment.avatar"
-                          />
+                          >{{comment.name}}</a-avatar>
                           <div class="log-item log-txt">
                             <div class="log-name">
                               {{ comment.name }}
@@ -933,8 +930,7 @@
                     class="ml-1 mb-2 "
                     :size="20"
                     slot="avatar"
-                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                  />
+                  >{{item.name}}</a-avatar>
 
                   {{ item.name }}
                 </a-select-option>
@@ -1090,7 +1086,9 @@ export default {
     stateFilter() {
       return this.$store.getters['filter/stateFilter']
     },
-
+    isFromDetail() {
+      return this.$store.state.stage.isFromDetail
+    },
     ...mapState({
       // userInfo: (state) => state.userInfo,
       // uploader: (state) => state.common.uploader,
@@ -1161,7 +1159,7 @@ export default {
       this.getTaskDetail()
       if (this.isAddModalOpened === false) {
         console.log('submitAdd', this.submitAdd)
-        if (this.submitAdd === true) {
+        if (this.submitAdd === true && this.isFromDetail === true) {
           this.newDialog('添加了子任务', this.submitName)
         }
       }
@@ -1251,7 +1249,7 @@ export default {
     async getDialog() {
       const obj = {
         pid: this.currProjectID,
-        source: 'task',
+        // source: 'task',
         sid: this.currEditTask,
       }
       const { data: res } = await getDialog(obj)
@@ -2219,6 +2217,7 @@ export default {
                 flex: 1 1;
               }
               .log-name {
+                margin-top:-10px;
                 font-size: 16px;
                 color: #bdc0c9;
               }

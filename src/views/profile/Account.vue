@@ -3,8 +3,8 @@
     <div class="flex items-center">
       <a-avatar
         :size="80"
-        :src="info.avatar"
-      />
+        class="bg-primary"
+      >{{info.name}}</a-avatar>
       <div class="ml-4">
         <div class="mb-2 text-xl">{{ info.name }}</div>
         <div>

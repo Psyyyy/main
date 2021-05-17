@@ -7,7 +7,7 @@
             <wlGantt
               :edit="false"
               :data="ganttTask"
-              start-date="2021-2-15"
+              start-date="2021-4-1"
               end-date="2021-7-24"
               @row-click="handleRowClick"
             >
@@ -94,7 +94,7 @@ export default {
     async getDialog(id) {
       const obj = {
         pid: this.currProjectID,
-        source: 'task',
+        // source: 'task',
         sid: id,
       }
       const { data: res } = await getDialog(obj)

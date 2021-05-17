@@ -13,14 +13,14 @@
         item-layout="horizontal"
         :data-source="filterItems"
       >
-        <a-list-item class="member-item" slot="renderItem" slot-scope="item">
+        <a-list-item v-show="item.uid!==Number(currUserID)" class="member-item" slot="renderItem" slot-scope="item">
           <a class="ml-1 mr-2 cursor-pointer" slot="actions">
             <a-tooltip placement="bottom">
               <template slot="title">
                 移出项目
               </template>
               <a-popconfirm placement="topRight" title="确定将该成员移出项目？"  @confirm="updateUser('project',null,item.uid)">
-                <feather size="20" type="user-minus" />
+                <feather size="20" type="user-minus"  />
                 <!-- <a-button type="danger" icon="delete" size="small" /> -->
               </a-popconfirm>
             </a-tooltip>
@@ -108,7 +108,9 @@ export default {
     filterItems() {
       return this.$store.getters['team/filterItems']
     },
-
+    currUserID() {
+      return window.sessionStorage.getItem('currUserID')
+    },
     currEditMember() {
       return this.$store.state.team.currEditMember
     },
@@ -175,7 +177,7 @@ export default {
       return true
     },
     async updateUser(item, content, uid) {
-      this.memberInfo.uid = uid
+      if (uid === this.currUser) this.memberInfo.uid = uid
       if (item === 'role') {
         this.memberInfo.role = content
       } else if (item === 'active') {

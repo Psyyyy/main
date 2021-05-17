@@ -79,8 +79,8 @@
                     class="ml-1 mb-2 primary bg-primary-light"
                     :size="20"
                     slot="avatar"
-                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                  />
+
+                  >{{ item.name }}</a-avatar>
 
                   {{ item.name }}
                 </a-select-option>

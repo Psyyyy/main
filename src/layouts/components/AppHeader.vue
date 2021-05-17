@@ -59,11 +59,9 @@
             </div>
             <div>
               <a-avatar
-                class="flex items-center justify-center"
+                class="flex items-center justify-center bg-primary"
                 size="large"
-                :icon="info.avatar ? '' : 'user'"
-                :src="info.avatar"
-              />
+              >{{info.name}}</a-avatar>
             </div>
           </div>
         </div>

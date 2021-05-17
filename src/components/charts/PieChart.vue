@@ -25,7 +25,7 @@ export default {
     }
   },
   watch: {
-    seriesData: {
+    rank: {
       deep: true,
       handler() {
         this.loadChart()

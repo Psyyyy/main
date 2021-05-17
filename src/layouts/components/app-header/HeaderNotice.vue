@@ -1,50 +1,51 @@
 <template>
-  <a-popover
-    v-model="visible"
-    trigger="click"
-    placement="bottom"
-  >
+  <a-popover v-model="visible" trigger="click" placement="bottom">
     <template #content>
       <div class="w-64">
         <div class="flex justify-between items-center">
-          <div class="text-gray-900">{{news.length}}条新通知</div>
+          <div class="text-gray-900">{{ news.length }}条新通知</div>
           <div
             class="text-gray-500 hover:primary transition cursor-pointer"
             @click="haveRead"
-          >全部已读</div>
+          >
+            全部已读
+          </div>
         </div>
 
         <div class="divider"></div>
 
         <a-spin :spinning="spinning" class="notice-board">
-           <div v-for="notice in news" :key="notice.id">
-             <a-comment v-if="notice.uid!==1">
-    <a slot="author" class="text-base"> {{notice.user}}</a>
-    <a-avatar
-      slot="avatar"
-      class="bg-primary"
-    >{{notice.user}}</a-avatar>
-   <p slot="content" class="notice-item">
-
-     <span class="warning">{{notice.title}}</span>：{{notice.action}} <span class="warning" v-if="notice.target!==''">「{{notice.target}}」</span>
-    </p>
-    <a-tooltip slot="datetime" >
-      <span>{{notice.create|dateFormat}}</span>
-    </a-tooltip>
-  </a-comment>
+          <div v-for="notice in newNotice" :key="notice.id">
+            <a-comment v-if="notice.uid !== Number(currUserID)">
+              <a slot="author" class="text-base"> {{ notice.user }}</a>
+              <a-avatar slot="avatar" class="bg-primary">{{
+                notice.user
+              }}</a-avatar>
+              <p slot="content" class="notice-item">
+                <span class="warning">{{ notice.title }}</span
+                >：{{ notice.action }}
+                <span class="warning" v-if="notice.target !== ''"
+                  >「{{ notice.target }}」</span
+                >
+              </p>
+              <a-tooltip slot="datetime">
+                <span>{{ notice.create | dateFormat }}</span>
+              </a-tooltip>
+            </a-comment>
           </div>
         </a-spin>
 
         <div class="divider"></div>
 
-        <div @click="checkNotice" class="primary text-center cursor-pointer opacity-75 hover:opacity-100 transition">查看全部通知</div>
+        <div
+          @click="checkNotice"
+          class="primary text-center cursor-pointer opacity-75 hover:opacity-100 transition"
+        >
+          查看全部通知
+        </div>
       </div>
     </template>
-    <a-badge
-:count="news.length"
-dot
-      class="mt-1"
-    >
+    <a-badge :count="newNotice.length" dot class="mt-1">
       <feather type="bell" />
     </a-badge>
   </a-popover>
@@ -72,7 +73,7 @@ export default {
       return window.sessionStorage.getItem('currUserID')
     },
     newNotice() {
-      return this.$store.state.notice.NewNotice
+      return this.$store.state.notice.newNotice
     },
     haveNewNotice() {
       return this.$store.state.notice.haveNewNotice
@@ -103,12 +104,12 @@ export default {
       let haveNew = false
       this.news = []
       for (let i = 0; i < res.length; i += 1) {
-        if (res[i].read === 0 && res[i].uid !== 1) {
+        if (res[i].read === 0 && res[i].uid !== Number(this.currUserID)) {
           haveNew = true
           this.news.push(res[i])
         }
       }
-      console.log('noticelist', this.news)
+      console.log('newslist', this.news)
       this.$store.commit('notice/SET_NEW_NOTICE', this.news)
       this.$store.commit('notice/SET_NOTICE_STATUS', haveNew)
       return true
@@ -146,13 +147,13 @@ export default {
   width: 100%;
   height: 1px;
 }
-.notice-item{
+.notice-item {
   overflow: hidden;
-text-overflow:ellipsis;
-white-space: nowrap;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.notice-board{
-  height:200px;
-  overflow-y:scroll;
+.notice-board {
+  height: 200px;
+  overflow-y: scroll;
 }
 </style>

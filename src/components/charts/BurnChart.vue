@@ -100,7 +100,8 @@ export default {
       }
       // 基线
       for (let i = 0; i < this.daySum; i += 1) {
-        const y = -(this.taskSum / this.daySum) * i + this.taskSum
+        let y = -(this.taskSum / this.daySum) * i + this.taskSum
+        y = y.toFixed(2)
         this.baseline.push(y)
       }
       console.log('基线数据', this.baseline)
@@ -158,6 +159,7 @@ export default {
           splitLine: {
             show: false,
           },
+          minInterval: 1,
           axisline: {
             lineStyle: {
               width: 2,

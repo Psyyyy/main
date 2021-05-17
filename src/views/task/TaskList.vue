@@ -28,23 +28,9 @@
             @click="resetTable()"
           >
             <!-- <feather class="mr-1 " size="18" type="refresh-cw" /> -->
-            <span class="mt-1">清除筛选</span>
+            <span class="mt-1 ">清除筛选</span>
             </a-button
           >
-        </div>
-        <div class="mr-4">
-          <a-dropdown>
-            <a-button >更多操作<a-icon type="down" /></a-button>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a>导入需求</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a>导出需求</a>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-
         </div>
       </div>
       <div>
@@ -691,7 +677,7 @@ export default {
     async getDialog(id) {
       const obj = {
         pid: this.currProjectID,
-        source: 'task',
+        // source: 'task',
         sid: id,
       }
       const { data: res } = await getDialog(obj)

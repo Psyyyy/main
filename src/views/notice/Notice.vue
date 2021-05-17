@@ -41,9 +41,14 @@
 import { getTaskDetail } from '@/api/task'
 import { getComment } from '@/api/comment'
 import { getDialog } from '@/api/dialog'
+import { getMemberList } from '@/api/member'
 import { getNoticeList, updateAllNotice, updateOneNotice } from '@/api/notice'
 import AddModal from '@/components/AddModal.vue'
 import Task from '@/views/task/Task.vue'
+import {
+  getStageList,
+
+} from '@/api/stage'
 
 export default {
   name: 'Notice',
@@ -99,15 +104,17 @@ export default {
       const { data: res } = await getTaskDetail(pid, id)
       this.$store.commit('task/SET_TASK_DETAIL', res)
       if (res.detail.t_level !== 0) {
-        console.log('当前任务的father', res.parent[0])
         this.$store.commit('task/SET_CURR_FATHER_TASK', res.parent[0])
       }
+      console.log('任务详情', res.detail)
+      this.changeProjectTo(res.detail.t_project_id, res.detail.pro_title)
+      this.changeStageTo(res.detail.t_stage_id, res.detail.s_title)
       return true
     },
     async getDialog(id) {
       const obj = {
         pid: this.currProjectID,
-        source: 'task',
+        // source: 'task',
         sid: id,
       }
       const { data: res } = await getDialog(obj)
@@ -164,6 +171,25 @@ export default {
       await updateOneNotice(nid)
       await this.getNoticeList()
       return true
+    },
+    // 设置项目
+    async changeProjectTo(id, name) {
+      const { data: res } = await getMemberList(id)
+      const { data: stage } = await getStageList(id)
+      this.$store.commit('stage/SET_STAGE_LIST', stage.stagelist)
+      this.$store.commit('project/SET_CURR_PROJECT_NAME', name)
+      this.$store.commit('project/SET_CURR_PROJECT_ID', id)
+      this.$store.commit('team/SET_CURR_PROJECT_MEMBER_LIST', res)
+      window.localStorage.setItem('currProject', name)
+      window.localStorage.setItem('currProjectID', id)
+    },
+    // 设置迭代
+    changeStageTo(id, name) {
+      this.$store.commit('stage/SET_CURR_STAGE_NAME', name)
+      this.$store.commit('stage/SET_CURR_STAGE_ID', id)
+      window.localStorage.setItem('currStageId', id)
+      window.localStorage.setItem('currStage', name)
+      window.localStorage.setItem('currStageId', id)
     },
   },
 }

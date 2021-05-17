@@ -253,10 +253,12 @@ export default {
     closeAdd() {
       this.resetForm()
       this.$store.commit('add/SET_ADD_MODAL_STATUS', false)
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
     },
     handleOk() {
       this.resetForm()
       this.$store.commit('add/SET_ADD_MODAL_STATUS', false)
+      this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
     },
     // 表单部分
     async onSubmit() {
@@ -303,6 +305,7 @@ export default {
         this.$store.commit('add/SET_SUBMIT', true)
         console.log('提交名字', this.form.t_title)
         this.$store.commit('add/SET_SUBMIT_NAME', res.t_title)
+        this.$store.commit('add/SET_ADD_FROM_DETAIL', false)
         this.form = {
           t_pid: '', // 这里要根据是在哪里打开新增窗口判断，默认pid=0
           t_level: '', // 这个也要判断，默认0
