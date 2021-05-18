@@ -177,12 +177,14 @@ export default {
       return true
     },
     async updateUser(item, content, uid) {
-      if (uid === this.currUser) this.memberInfo.uid = uid
+      if (uid === this.currUser) this.memberInfo.uid = uid// 看不懂这行我想干啥
       if (item === 'role') {
         this.memberInfo.role = content
       } else if (item === 'active') {
         this.memberInfo.is_active = content === true ? 1 : 0
       } else if (item === 'project') {
+        console.log('uid', uid)
+        this.memberInfo.uid = uid
         this.memberInfo.pid = this.currProjectID
         this.memberInfo.option = 'del'
       }

@@ -214,7 +214,7 @@
       <a-avatar
                   class="items-center justify-center bg-primary"
                   size="large">
-               {{info.name}}</a-avatar>
+               {{item.name}}</a-avatar>
                         <a-dropdown class="float-right mt-3">
                           <div
                             class="flex items-center text-base text-gray-500 cursor-pointer"
