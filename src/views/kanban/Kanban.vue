@@ -167,7 +167,7 @@
                   <div
                     v-html="t_title"
                     class="boardItem"
-                    :class="{ done: is_done }"
+                    :class="{ done: is_done,delay:(end_time<currDate&&!is_done) }"
                   ></div>
                   <div
                     class="text-sm text-gray-500 boardItem"
@@ -435,6 +435,7 @@ export default {
     // console.log('tasklist', this.taskList)
   },
   computed: {
+    currDate() { return Date.parse(new Date()) / 1000 },
     currProjectID() {
       return this.$store.state.project.currProjectId
     },
@@ -1008,6 +1009,9 @@ export default {
   &.done {
     color: #b7b8bb;
     text-decoration: line-through;
+  }
+      &.delay {
+    color: red;
   }
 }
 </style>

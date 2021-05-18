@@ -118,7 +118,7 @@
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
                 class="task-pointer taskItem"
-                :class="{ done: record.is_done,delay:(record.end_time<currDate)  }"
+                :class="{ done: record.is_done,delay:(record.end_time<currDate&&!record.is_done)  }"
                 @click="showDetail(record.id)"
               >
                 <template
@@ -139,7 +139,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer taskItem" :class="{ done: record.is_done,delay:record.end_time<currDate }" @click="showDetail(record.id)">
+                <span class="task-pointer taskItem" :class="{ done: record.is_done,delay:(record.end_time<currDate&&!record.is_done) }" @click="showDetail(record.id)">
                   <a-tag v-if="currListType==='stage'" :color="record.t_type===1?'blue':'red'">
        {{record.t_type===1?'需求':'缺陷'}}
       </a-tag>
@@ -410,7 +410,6 @@ export default {
     }
   },
   created() {
-    console.log('当前日期', this.currDate)
     this.getTask()
     this.getMemberList()
   },

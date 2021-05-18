@@ -61,10 +61,10 @@
           <a-select v-model="form.stage"  mode="multiple" placeholder="点击选择迭代">
             <a-select-option
               v-for="item in stageList"
-              :key="item.id"
-              :value="item.id"
+              :key="item.s_id"
+              :value="item.s_id"
             >
-              {{ item.name }}
+              {{ item.s_title }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -195,6 +195,9 @@ export default {
     currProjectID() {
       return this.$store.state.project.currProjectId
     },
+    currAddType() {
+      return this.$store.state.add.currAddType
+    },
   },
   data: () => ({
     currFilter: {},
@@ -212,6 +215,7 @@ export default {
       start: '',
       end: '',
       pid: '',
+      type: 1,
     },
     formatForm: {},
   }),
@@ -238,6 +242,9 @@ export default {
     // 表单部分
     async onSubmit() {
       this.form.pid = this.currProjectID
+      if (this.currAddType === 'bug') { // 数据库默认是1 task
+        this.form.type = 0
+      } else this.form.type = 1
       this.formatForm = _clonedeep(this.form) // 这里要用深拷贝，要不然只是复制了指针而已
       if (this.formatForm.start && this.formatForm.end) {
         if (this.formatForm.start - this.formatForm.end > 0) {
@@ -275,6 +282,7 @@ export default {
         start: '',
         end: '',
         pid: '',
+        type: 1,
       }
       return true
     },
@@ -290,6 +298,7 @@ export default {
         start: '',
         end: '',
         pid: '',
+        type: 1,
       }
     },
   },
