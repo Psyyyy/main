@@ -118,7 +118,7 @@
               <span
                 v-if="searchText && searchedColumn === column.dataIndex"
                 class="task-pointer taskItem"
-                :class="{ done: record.is_done }"
+                :class="{ done: record.is_done,delay:(record.end_time<currDate)  }"
                 @click="showDetail(record.id)"
               >
                 <template
@@ -139,7 +139,7 @@
               </span>
 
               <template v-else>
-                <span class="task-pointer taskItem" :class="{ done: record.is_done }" @click="showDetail(record.id)">
+                <span class="task-pointer taskItem" :class="{ done: record.is_done,delay:record.end_time<currDate }" @click="showDetail(record.id)">
                   <a-tag v-if="currListType==='stage'" :color="record.t_type===1?'blue':'red'">
        {{record.t_type===1?'需求':'缺陷'}}
       </a-tag>
@@ -405,17 +405,18 @@ export default {
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       nouseData: '',
       detailTaskId: '',
-
       dialogList: {},
       detail: {},
     }
   },
   created() {
+    console.log('当前日期', this.currDate)
     this.getTask()
     this.getMemberList()
   },
 
   computed: {
+    currDate() { return Date.parse(new Date()) / 1000 },
     data() {
       return this.$store.state.task.taskList
     },
@@ -744,6 +745,9 @@ button {
   &.done {
     color: #b7b8bb;
     text-decoration: line-through;
+  }
+    &.delay {
+    color: red;
   }
 }
 .expand-icon {

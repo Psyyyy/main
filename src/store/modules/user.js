@@ -6,6 +6,7 @@ import { resetRouter } from '@/router/router'
 const state = {
   permissions: null, // NOTE: 此处 permission 不能初始化为空数组
   info: {}, // 存储用户信息
+  currDate: 0,
 }
 
 const mutations = {
@@ -18,15 +19,21 @@ const mutations = {
   SET_USER_PERMISSIONS(state, permissions) {
     state.permissions = permissions
   },
+  SET_CURR_DATE(state, date) {
+    state.currDate = date
+  },
 }
 
 const actions = {
-  async login(_, { username, password }) {
+  async login({ commit }, { username, password }) {
     try {
       const { data: result } = await login({ username, password })
       // console.log('store', result.token)
       setToken(result.token)
       window.sessionStorage.setItem('currUserID', result.info.id)
+      const timestamp = Date.parse(new Date())
+      commit('SET_CURR_DATE', timestamp)
+      window.sessionStorage.setItem('currDate', timestamp)
       return true
     } catch {
       return false
