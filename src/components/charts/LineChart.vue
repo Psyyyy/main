@@ -97,18 +97,18 @@ export default {
           bottom: '22%',
           left: '6%',
         },
-        toolbox: {
-          feature: {
-            saveAsImage: {
-              IconStyle: {
-                marginLeft: '-100px',
-              },
-            },
-          },
-        },
+        // toolbox: {
+        //   feature: {
+        //     saveAsImage: {
+        //       IconStyle: {
+        //         marginLeft: '-100px',
+        //       },
+        //     },
+        //   },
+        // },
         yAxis: {
           show: false,
-          max: 25,
+          max: 50,
         },
         // legend: {
         //   data: ['已完成', '已延误', '待处理'],

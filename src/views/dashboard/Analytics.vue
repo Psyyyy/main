@@ -65,9 +65,9 @@
                 <div>
                   <div class="font-bold text-xl">任务总数</div>
                 </div>
-                <div class="text-3xl font-semibold">
+                <!-- <div class="text-3xl font-semibold">
                   {{ finishData + unfinishData }}<span class="text-xl">个</span>
-                </div>
+                </div> -->
               </div>
               <line-chart
                 :id="'all'"
@@ -85,9 +85,9 @@
                 <div>
                   <div class="font-bold text-xl">延误任务</div>
                 </div>
-                <div class="text-3xl font-semibold">
+                <!-- <div class="text-3xl font-semibold">
                   {{ delayData }}<span class="text-xl">个</span>
-                </div>
+                </div> -->
               </div>
               <line-chart
                 :id="'delay'"
@@ -107,10 +107,10 @@
                 <div>
                   <div class="font-bold text-xl">待处理任务</div>
                 </div>
-                <div class="text-3xl font-semibold">
+                <!-- <div class="text-3xl font-semibold">
                   {{ data.unfinish.length==0?0:data.unfinish[data.unfinish.length - 1]
                   }}<span class="text-xl">个</span>
-                </div>
+                </div> -->
               </div>
               <line-chart
                 :id="'unfinish'"
@@ -163,9 +163,9 @@
                 <div>
                   <div class="font-bold text-xl">已完成任务</div>
                 </div>
-                <div class="text-3xl font-semibold">
+                <!-- <div class="text-3xl font-semibold">
                   {{ finishData }}<span class="text-xl">个</span>
-                </div>
+                </div> -->
               </div>
               <line-chart
                 :id="'finish'"

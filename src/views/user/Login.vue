@@ -41,7 +41,7 @@
       </a-form-item>
       <a-form-item style="margin: -15px 0 5px 0;">
         <div class="flex justify-between">
-          <span class="transition hover:primary cursor-pointer">忘记密码？</span>
+          <span class="transition hover:primary cursor-pointer"></span>
         </div>
       </a-form-item>
       <a-form-item>

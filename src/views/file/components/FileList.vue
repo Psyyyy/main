@@ -189,7 +189,7 @@ export default {
 
     async downloadFile(file) {
       const fileName = `${file.name}.${file.end}`
-      window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
+      window.location.href = `http://106.14.132.104:8888/api/public/file/download?file_name=${fileName}`
       return false
     },
     async deleteFile(file) {

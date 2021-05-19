@@ -7,8 +7,8 @@
             <wlGantt
               :edit="false"
               :data="ganttTask"
-              start-date="2021-4-1"
-              end-date="2021-7-24"
+              start-date="2021-6-1"
+              end-date="2021-7-30"
               @row-click="handleRowClick"
             >
               <el-table-column fixed width="65" label="成员">

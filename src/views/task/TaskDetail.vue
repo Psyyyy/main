@@ -694,7 +694,7 @@
                            <a-upload
                             multiple
                             name="file"
-                            action="http://127.0.0.1:8888/api/private/v1/file/upload"
+                            action="http://106.14.132.104:8888/api/private/v1/file/upload"
                             :headers="headers"
                             :file-list="[]"
                             :custom-request="uploadFile"
@@ -1299,7 +1299,7 @@ export default {
     async downloadFile(file) {
       const uid = window.sessionStorage.getItem('currUserID')
       const fileName = `${file.name}.${file.end}`
-      window.location.href = `http://127.0.0.1:8888/api/public/file/download?file_name=${fileName}`
+      window.location.href = `http://106.14.132.104:8888/api/public/file/download?file_name=${fileName}`
       return false
     },
     async cutDownFile(file) {
