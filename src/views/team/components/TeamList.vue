@@ -80,7 +80,7 @@
 
 <script>
 // import FlipList from '@/components/animation/FlipList.vue'
-import { getMemberList, deleteMember } from '@/api/member'
+import { getMemberList, getOtherMemberList } from '@/api/member'
 import { getUserInfo, updateUser } from '@/api/user'
 import { getProjectList } from '@/api/project'
 import { getUserTaskList } from '@/api/task'
@@ -129,6 +129,7 @@ export default {
   methods: {
     init() {
       this.getMemberList()
+      this.getOtherUser()
     },
     initMember(uid) {
       this.getMemberInfo(uid)
@@ -168,6 +169,12 @@ export default {
       this.$store.commit('team/SET_MEMBER_PROJECT', res)
       console.log('member Project', res)
       return true
+    },
+    async getOtherUser() {
+      const id = this.currProjectID
+      const { data: res } = await getOtherMemberList(id)
+      // console.log('memberlist', res)
+      this.$store.commit('team/SET_OTHER_MEMBER_LIST', res)
     },
     async getTask(uid) {
       const { data: res } = await getUserTaskList(uid)

@@ -5,7 +5,7 @@
         class="w-full flex justify-center items-center"
         size="large"
         type="primary"
-        @click="isAddMemberVisible = true"
+        @click="addMemberModal()"
       >
         <feather class="mr-1" size="20" type="plus" />
         添加成员
@@ -69,6 +69,7 @@
                 style="width: 95%"
                 :filter-option="filterOption"
                  @change="addMember"
+                 :value="defaulSelectMember"
               >
                 <a-select-option
                   v-for="(item, index) in otherMemberList"
@@ -114,6 +115,7 @@ export default {
     ],
     isAddMemberVisible: false,
     addMemnberId: '',
+    defaulSelectMember: '',
   }),
 
   computed: {
@@ -137,6 +139,13 @@ export default {
     this.getAllUser()
   },
   methods: {
+    addMemberModal() {
+      this.defaulSelectMember = ''
+      this.getAllUser()
+      if (this.otherMemberList.length) {
+        this.isAddMemberVisible = true
+      } else this.$antdMessage.warning('无可添加成员')
+    },
     onOpenDrawer() {
       this.$store.commit('team/SET_TEAM_DRAWER_STATUS', true)
     },
@@ -162,6 +171,7 @@ export default {
     },
     addMember(value) {
       this.addMemnberId = value
+      this.defaulSelectMember = value
     },
     async confirmAddMember() {
       // 然后直接更新
@@ -178,7 +188,7 @@ export default {
       }
       this.$antdMessage.success('添加成员成功！')
       this.getMemberList()
-      this.getAllUser(params.pid)
+      this.getAllUser()
       return true
     },
     async getMemberList() {
